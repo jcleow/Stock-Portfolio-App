@@ -1,3 +1,3 @@
-# react
-# Stock-Portfolio-App
+<!-- @format -->
+
 # Stock-Portfolio-App
