@@ -12,6 +12,7 @@ import {
   LineMarkSeries,
   LineSeriesCanvas,
   Crosshair,
+  Hint,
 } from 'react-vis';
 
 function StockDisplay({ quoteData }) {
@@ -19,13 +20,15 @@ function StockDisplay({ quoteData }) {
     const dataPoint = { x: data.date, y: Number(data.close) };
     return dataPoint;
   });
-  const [value, setValue] = useState({ value: null });
+  const [value, setValue] = useState(null);
+  // setting for the lowest point in the y axis
+  const YLOW = 45;
 
   const forgetValue = () => {
-    setValue({ value: null });
+    setValue(null);
   };
   const rememberValue = (val) => {
-    setValue({ val });
+    setValue(val);
   };
 
   return (
@@ -37,10 +40,33 @@ function StockDisplay({ quoteData }) {
           {/* <XAxis /> */}
           <YAxis />
           <LineMarkSeries
-            onValueMouseOver={rememberValue}
+            onNearestX={rememberValue}
             onValueMouseOut={forgetValue}
             data={dataPoints}
+            size={2}
           />
+          {value ? (
+            <LineSeries
+              data={[{ x: value.x, y: value.y }, { x: value.x, y: YLOW }]}
+              stroke="grey"
+              size={1}
+            />
+          ) : null}
+          {value
+          && (
+          <Hint value={value}>
+            <div className="rv-hint_content" style={{ background: 'lightgray', color: 'black' }}>
+              <p>
+                Date:
+                {value.x}
+              </p>
+              <p>
+                Price:$
+                {value.y}
+              </p>
+            </div>
+          </Hint>
+          )}
         </XYPlot>
       </div>
     </div>
