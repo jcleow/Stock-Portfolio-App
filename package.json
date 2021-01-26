@@ -55,6 +55,7 @@
     "express": "^4.17.1",
     "method-override": "^3.0.0",
     "pg": "^8.5.1",
+    "react-vis": "^1.11.7",
     "sequelize": "^6.4.0"
   }
 }
