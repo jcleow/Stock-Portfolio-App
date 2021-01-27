@@ -1,56 +1,58 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Search } from 'react-bootstrap-icons';
+
 import PriceChart from './components/PriceChart.jsx';
+import CoyInfo from './components/CoyInfo.jsx';
+import SearchCompanyInput from './components/SearchCompanyInput.jsx';
 
-function SearchCompanyInput({ searchProps }) {
-  const { setCoyInfo, setSymbol } = searchProps;
-  const [symbolInput, setSymbolInput] = useState('');
+// function SearchCompanyInput({ searchProps }) {
+//   const { setCoyInfo, setSymbol } = searchProps;
+//   const [symbolInput, setSymbolInput] = useState('');
 
-  const handleSearch = () => {
-    axios.get(`/${symbolInput}/company`)
-      .then((result) => {
-        setSymbol(symbolInput);
-        setSymbolInput('');
-        setCoyInfo(result.data);
-      })
-      .catch((error) => { console.log(error); });
-  };
-  const handleInput = (event) => {
-    setSymbolInput(event.target.value);
-  };
+//   const handleSearch = () => {
+//     axios.get(`/${symbolInput}/company`)
+//       .then((result) => {
+//         setSymbol(symbolInput);
+//         setSymbolInput('');
+//         setCoyInfo(result.data);
+//       })
+//       .catch((error) => { console.log(error); });
+//   };
+//   const handleInput = (event) => {
+//     setSymbolInput(event.target.value);
+//   };
 
-  return (
-    <div>
-      <label htmlFor="coy-lookup">Company Lookup</label>
-      <input id="coy-lookup" value={symbolInput} onChange={handleInput} />
-      <button type="submit" onClick={handleSearch}><Search /></button>
-    </div>
-  );
-}
+//   return (
+//     <div>
+//       <label htmlFor="coy-lookup">Symbol Lookup</label>
+//       <input id="coy-lookup" value={symbolInput} onChange={handleInput} />
+//       <button type="submit" onClick={handleSearch}><Search /></button>
+//     </div>
+//   );
+// }
 
-function CoyInfo({ coyInfo }) {
-  const {
-    companyName, latestPrice, change, changePercent, isUSMarketOpen,
-  } = coyInfo;
-  console.log(coyInfo);
-  return (
-    <div>
-      <h1>{companyName}</h1>
-      <h2>{latestPrice}</h2>
-      <h5>
-        {change > 0 ? '+' : '-'}
-        {change}
-      </h5>
-      <h5>
-        {changePercent > 0 ? '+' : '-'}
-        {changePercent}
-        %
-      </h5>
-      <h6>{isUSMarketOpen ? 'Open' : 'Closed'}</h6>
-    </div>
-  );
-}
+// function CoyInfo({ coyInfo }) {
+//   const {
+//     companyName, latestPrice, change, changePercent, isUSMarketOpen,
+//   } = coyInfo;
+//   console.log(coyInfo);
+//   return (
+//     <div className="container">
+//       <h1>{companyName}</h1>
+//       <h2>{latestPrice}</h2>
+//       <h5>
+//         {change > 0 && '+' }
+//         {change}
+//       </h5>
+//       <h5>
+//         {changePercent > 0 && '+'}
+//         {changePercent}
+//         %
+//       </h5>
+//       <h6>{isUSMarketOpen ? 'Open' : 'Closed'}</h6>
+//     </div>
+//   );
+// }
 
 export default function App() {
   // Track the price quote data for the price chart
@@ -91,7 +93,7 @@ export default function App() {
 
   return (
     <div>
-      <div className="container">
+      <div className="container mt-5">
         <div className="row">
           <div className="col d-flex justify-content-between">
             <SearchCompanyInput searchProps={searchProps} />
@@ -99,7 +101,9 @@ export default function App() {
           </div>
         </div>
       </div>
-      <CoyInfo coyInfo={coyInfo} />
+      {symbol
+        ? <CoyInfo coyInfo={coyInfo} />
+        : null}
       <PriceChart priceChartProps={priceChartProps} />
     </div>
   );
