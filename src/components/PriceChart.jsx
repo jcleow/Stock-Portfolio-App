@@ -8,7 +8,8 @@ import {
   Hint,
 } from 'react-vis';
 
-export default function StockDisplay({ quoteData, duration }) {
+export default function PriceChart({ priceChartProps }) {
+  const { quoteData, duration } = priceChartProps;
   // Set the state for the hint value
   const [value, setValue] = useState(null);
 
@@ -60,7 +61,7 @@ export default function StockDisplay({ quoteData, duration }) {
   return (
     <div className="container">
       <div className="d-flex justify-content-center">
-        <XYPlot onMouseLeave={() => { setValue(null); }} height={500} width={500} xType="ordinal">
+        <XYPlot onMouseLeave={() => { setValue(null); }} height={500} width={1000} xType="ordinal">
           <XAxis tickValues={xAxisTickValues} />
           <LineMarkSeries
             onNearestX={rememberValue}

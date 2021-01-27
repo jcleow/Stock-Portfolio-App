@@ -1,30 +1,88 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import StockDisplay from './components/StockDisplay.jsx';
+import { Search } from 'react-bootstrap-icons';
+import PriceChart from './components/PriceChart.jsx';
+
+function SearchCompanyInput({ searchProps }) {
+  const { setCoyInfo, setSymbol } = searchProps;
+  const [symbolInput, setSymbolInput] = useState('');
+
+  const handleSearch = () => {
+    axios.get(`/${symbolInput}/company`)
+      .then((result) => {
+        setSymbol(symbolInput);
+        setSymbolInput('');
+        setCoyInfo(result.data);
+      })
+      .catch((error) => { console.log(error); });
+  };
+  const handleInput = (event) => {
+    setSymbolInput(event.target.value);
+  };
+
+  return (
+    <div>
+      <label htmlFor="coy-lookup">Company Lookup</label>
+      <input id="coy-lookup" value={symbolInput} onChange={handleInput} />
+      <button type="submit" onClick={handleSearch}><Search /></button>
+    </div>
+  );
+}
+
+function CoyInfo({ coyInfo }) {
+  const {
+    companyName, latestPrice, change, changePercent, isUSMarketOpen,
+  } = coyInfo;
+  console.log(coyInfo);
+  return (
+    <div>
+      <h1>{companyName}</h1>
+      <h2>{latestPrice}</h2>
+      <h5>
+        {change > 0 ? '+' : '-'}
+        {change}
+      </h5>
+      <h5>
+        {changePercent > 0 ? '+' : '-'}
+        {changePercent}
+        %
+      </h5>
+      <h6>{isUSMarketOpen ? 'Open' : 'Closed'}</h6>
+    </div>
+  );
+}
 
 export default function App() {
+  // Track the price quote data for the price chart
   const [quoteData, setQuoteData] = useState([]);
   const [duration, setDuration] = useState('');
+  // Track the coyInfoData
+  const [coyInfo, setCoyInfo] = useState([]);
+  // Track the currently selected symbol
+  const [symbol, setSymbol] = useState('');
 
-  function handleGetQuote(duration) {
-    axios.get(`/quote/${duration}`)
+  // All props to be sent into the various components
+  const searchProps = { setCoyInfo, setSymbol };
+  const priceChartProps = { quoteData, duration };
+
+  function handleGetChart(timeDuration) {
+    axios.get(`/${symbol}/chart/${timeDuration}`)
       .then((result) => {
-        console.log(result, 'result');
         setQuoteData(result.data.coordinates);
         setDuration(result.data.duration);
       });
   }
 
-  function Get1MQuoteButton() {
+  function ToggleMonthPriceButton() {
     return (
-      <div className="container d-flex justify-content-end">
-        <button type="submit" onClick={() => { handleGetQuote('1m'); }}>
+      <div>
+        <button type="submit" onClick={() => { handleGetChart('1m'); }}>
           1M
         </button>
-        <button type="submit" onClick={() => { handleGetQuote('3m'); }}>
+        <button type="submit" onClick={() => { handleGetChart('3m'); }}>
           3M
         </button>
-        <button type="submit" onClick={() => { handleGetQuote('6m'); }}>
+        <button type="submit" onClick={() => { handleGetChart('6m'); }}>
           6M
         </button>
       </div>
@@ -33,8 +91,16 @@ export default function App() {
 
   return (
     <div>
-      <Get1MQuoteButton />
-      <StockDisplay quoteData={quoteData} duration={duration} />
+      <div className="container">
+        <div className="row">
+          <div className="col d-flex justify-content-between">
+            <SearchCompanyInput searchProps={searchProps} />
+            <ToggleMonthPriceButton />
+          </div>
+        </div>
+      </div>
+      <CoyInfo coyInfo={coyInfo} />
+      <PriceChart priceChartProps={priceChartProps} />
     </div>
   );
 }
