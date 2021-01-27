@@ -9,5 +9,5 @@ export default function routes(app) {
   });
 
   const StocksController = stocks(db);
-  app.get('/quote', StocksController.getQuote);
+  app.get('/quote/:duration', StocksController.getQuote);
 }
