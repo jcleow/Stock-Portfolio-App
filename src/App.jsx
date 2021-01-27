@@ -4,55 +4,7 @@ import axios from 'axios';
 import PriceChart from './components/PriceChart.jsx';
 import CoyInfo from './components/CoyInfo.jsx';
 import SearchCompanyInput from './components/SearchCompanyInput.jsx';
-
-// function SearchCompanyInput({ searchProps }) {
-//   const { setCoyInfo, setSymbol } = searchProps;
-//   const [symbolInput, setSymbolInput] = useState('');
-
-//   const handleSearch = () => {
-//     axios.get(`/${symbolInput}/company`)
-//       .then((result) => {
-//         setSymbol(symbolInput);
-//         setSymbolInput('');
-//         setCoyInfo(result.data);
-//       })
-//       .catch((error) => { console.log(error); });
-//   };
-//   const handleInput = (event) => {
-//     setSymbolInput(event.target.value);
-//   };
-
-//   return (
-//     <div>
-//       <label htmlFor="coy-lookup">Symbol Lookup</label>
-//       <input id="coy-lookup" value={symbolInput} onChange={handleInput} />
-//       <button type="submit" onClick={handleSearch}><Search /></button>
-//     </div>
-//   );
-// }
-
-// function CoyInfo({ coyInfo }) {
-//   const {
-//     companyName, latestPrice, change, changePercent, isUSMarketOpen,
-//   } = coyInfo;
-//   console.log(coyInfo);
-//   return (
-//     <div className="container">
-//       <h1>{companyName}</h1>
-//       <h2>{latestPrice}</h2>
-//       <h5>
-//         {change > 0 && '+' }
-//         {change}
-//       </h5>
-//       <h5>
-//         {changePercent > 0 && '+'}
-//         {changePercent}
-//         %
-//       </h5>
-//       <h6>{isUSMarketOpen ? 'Open' : 'Closed'}</h6>
-//     </div>
-//   );
-// }
+import StockKeyStats from './components/StockKeyStats.jsx';
 
 export default function App() {
   // Track the price quote data for the price chart
@@ -62,17 +14,27 @@ export default function App() {
   const [coyInfo, setCoyInfo] = useState([]);
   // Track the currently selected symbol
   const [symbol, setSymbol] = useState('');
+  // Track the keystats of currently selected symbol
+  const [keyStats, setKeyStats] = useState(null);
 
   // All props to be sent into the various components
-  const searchProps = { setCoyInfo, setSymbol };
+  const searchProps = { setCoyInfo, setSymbol, setKeyStats };
   const priceChartProps = { quoteData, duration };
+
+  console.log(keyStats, 'keyStats');
 
   function handleGetChart(timeDuration) {
     axios.get(`/${symbol}/chart/${timeDuration}`)
       .then((result) => {
         setQuoteData(result.data.coordinates);
         setDuration(result.data.duration);
-      });
+        return axios.get(`/${symbol}/stats/`);
+      })
+      .then((statsResults) => {
+        console.log(statsResults, 'statsResults');
+        setKeyStats(statsResults.data);
+      })
+      .catch((error) => console.log(error));
   }
 
   function ToggleMonthPriceButton() {
@@ -105,6 +67,8 @@ export default function App() {
         ? <CoyInfo coyInfo={coyInfo} />
         : null}
       <PriceChart priceChartProps={priceChartProps} />
+      {keyStats
+      && <StockKeyStats keyStats={keyStats} />}
     </div>
   );
 }

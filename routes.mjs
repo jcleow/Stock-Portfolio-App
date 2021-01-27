@@ -10,5 +10,6 @@ export default function routes(app) {
 
   const StocksController = stocks(db);
   app.get('/:symbol/chart/:duration', StocksController.getQuote);
-  app.get('/:symbol/company', StocksController.getSymbol);
+  app.get('/:symbol', StocksController.getSymbol);
+  app.get('/:symbol/stats', StocksController.getStats);
 }

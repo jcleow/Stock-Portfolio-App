@@ -21,8 +21,18 @@ export default function stocks(db) {
       .catch((error) => console.log(error));
   };
 
+  const getStats = (req, res) => {
+    const { symbol } = req.params;
+    axios.get(`${GENERICURL}/${symbol}/stats?token=${SANDBOXTOKEN}`)
+      .then((result) => {
+        res.send(result.data);
+      })
+      .catch((error) => console.log(error));
+  };
+
   return {
     getQuote,
     getSymbol,
+    getStats,
   };
 }

@@ -3,11 +3,11 @@ import axios from 'axios';
 import { Search } from 'react-bootstrap-icons';
 
 export default function SearchCompanyInput({ searchProps }) {
-  const { setCoyInfo, setSymbol } = searchProps;
+  const { setCoyInfo, setSymbol, setKeyStats } = searchProps;
   const [symbolInput, setSymbolInput] = useState('');
 
   const handleSearch = () => {
-    axios.get(`/${symbolInput}/company`)
+    axios.get(`/${symbolInput}`)
       .then((result) => {
         setSymbol(symbolInput);
         setSymbolInput('');
