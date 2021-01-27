@@ -10,34 +10,53 @@ import {
   VerticalGridLines,
   LineSeries,
   LineMarkSeries,
-  LineSeriesCanvas,
-  Crosshair,
   Hint,
 } from 'react-vis';
 
 function StockDisplay({ quoteData }) {
-  const dataPoints = quoteData.map((data, index) => {
-    const dataPoint = { x: data.date, y: Number(data.close) };
-    return dataPoint;
-  });
+  // Set the state for the hint value
   const [value, setValue] = useState(null);
-  // setting for the lowest point in the y axis
-  const YLOW = 45;
 
+  // Helper that retrieves the lowest price for the display of the hint
+  const getLowestPrice = (dataset) => {
+    // looping through data points to get the lowest price
+    const arrayOfPrices = dataset.map((datapoint) => datapoint.y);
+    return Math.min(...arrayOfPrices);
+  };
+  // Handler for hovering away from curr data point
   const forgetValue = () => {
     setValue(null);
   };
+  // Handler for hovering into another data point
   const rememberValue = (val) => {
     setValue(val);
   };
 
+  // Get all the co-ordinates of the relevant date and prices
+  const dataPoints = quoteData.map((data, index) => {
+    const mmdd = data.date.substring(data.date.length - 5, data.date.length);
+    const dataPoint = { x: mmdd, y: Number(data.close) };
+    return dataPoint;
+  });
+
+  const xAxisTickValues = [];
+  dataPoints.forEach((datapoint, index) => {
+    if (index % 3 === 0) {
+      const mmdd = datapoint.x;
+      xAxisTickValues.push(mmdd);
+    }
+  });
+
+  // setting for the lowest point in the y axis
+  const YLOW = getLowestPrice(dataPoints);
+
   return (
     <div className="container">
       <div>
-        <XYPlot height={500} width={500} xType="ordinal">
+        <XYPlot onMouseLeave={() => { setValue(null); }} height={500} width={500} xType="ordinal">
           <HorizontalGridLines />
           <VerticalGridLines />
-          {/* <XAxis /> */}
+          <XAxis tickValues={xAxisTickValues} />
           <YAxis />
           <LineMarkSeries
             onNearestX={rememberValue}
