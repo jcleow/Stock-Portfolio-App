@@ -3,7 +3,7 @@ import axios from 'axios';
 import { Search } from 'react-bootstrap-icons';
 
 export default function SearchCompanyInput({ searchProps }) {
-  const { setCoyInfo, setSymbol, setKeyStats } = searchProps;
+  const { setCoyInfo, setSymbol } = searchProps;
   const [symbolInput, setSymbolInput] = useState('');
 
   const handleSearch = () => {
@@ -21,8 +21,7 @@ export default function SearchCompanyInput({ searchProps }) {
 
   return (
     <div>
-      <label htmlFor="coy-lookup">Symbol Lookup</label>
-      <input id="coy-lookup" value={symbolInput} onChange={handleInput} />
+      <input id="coy-lookup" placeholder="Symbol Lookup e.g KO" value={symbolInput} onChange={handleInput} />
       <button type="submit" onClick={handleSearch}><Search /></button>
     </div>
   );

@@ -3,7 +3,7 @@ import axios from 'axios';
 
 import PriceChart from './components/PriceChart.jsx';
 import CoyInfo from './components/CoyInfo.jsx';
-import SearchCompanyInput from './components/SearchCompanyInput.jsx';
+import SymbolLookup from './components/SymbolLookup.jsx';
 import StockKeyStats from './components/StockKeyStats.jsx';
 
 export default function App() {
@@ -21,8 +21,6 @@ export default function App() {
   const searchProps = { setCoyInfo, setSymbol, setKeyStats };
   const priceChartProps = { quoteData, duration };
 
-  console.log(keyStats, 'keyStats');
-
   function handleGetChart(timeDuration) {
     axios.get(`/${symbol}/chart/${timeDuration}`)
       .then((result) => {
@@ -31,7 +29,6 @@ export default function App() {
         return axios.get(`/${symbol}/stats/`);
       })
       .then((statsResults) => {
-        console.log(statsResults, 'statsResults');
         setKeyStats(statsResults.data);
       })
       .catch((error) => console.log(error));
@@ -58,7 +55,7 @@ export default function App() {
       <div className="container mt-5">
         <div className="row">
           <div className="col d-flex justify-content-between">
-            <SearchCompanyInput searchProps={searchProps} />
+            <SymbolLookup searchProps={searchProps} />
             <ToggleMonthPriceButton />
           </div>
         </div>

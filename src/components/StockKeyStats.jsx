@@ -11,17 +11,20 @@ export default function StockKeyStats({ keyStats }) {
     peRatio,
     beta,
   } = keyStats;
+
   const marketCapDisplay = new Intl.NumberFormat()
     .format(Number((marketcap / (10 ** 6)).toFixed(0)));
 
   const sharesOutstandingDisplay = new Intl.NumberFormat()
     .format(Number((sharesOutstanding / (10 ** 6)).toFixed(0)));
 
+  const dividendYieldDisplay = (dividendYield * 100).toFixed(2);
+
   const arrayOfStats = [
     [{ 'Market Cap ($M)': marketCapDisplay }, { Beta: beta.toFixed(2) }],
     [{ '52 Week High': week52high }, { '52 Week Low': week52low }],
     [{ 'Shares Outstanding (M)': sharesOutstandingDisplay }, { 'EPS (TTM)': ttmEPS }],
-    [{ 'Dividend Yield': dividendYield }, { 'PE Ratio': peRatio.toFixed(2) }],
+    [{ 'Dividend Yield': dividendYieldDisplay }, { 'PE Ratio': peRatio.toFixed(2) }],
   ];
 
   const keyStatsDisplay = arrayOfStats.map((row) => {

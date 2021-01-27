@@ -4,7 +4,6 @@ export default function CoyInfo({ coyInfo }) {
   const {
     companyName, latestPrice, change, changePercent, isUSMarketOpen,
   } = coyInfo;
-  console.log(coyInfo);
   return (
     <div className="container">
       <h1>{companyName}</h1>
