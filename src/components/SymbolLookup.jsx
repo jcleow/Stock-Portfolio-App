@@ -7,7 +7,7 @@ export default function SearchCompanyInput({ searchProps }) {
   const [symbolInput, setSymbolInput] = useState('');
 
   const handleSearch = () => {
-    axios.get(`/${symbolInput}`)
+    axios.get(`/${symbolInput}/headlineInfo`)
       .then((result) => {
         setSymbol(symbolInput);
         setSymbolInput('');

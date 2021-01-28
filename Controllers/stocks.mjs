@@ -7,6 +7,7 @@ export default function stocks(db) {
     const { symbol, duration } = req.params;
     axios.get(`${GENERICURL}/${symbol}/chart/${duration}?token=${SANDBOXTOKEN}`)
       .then((result) => {
+        console.log(result, 'results');
         res.send({ coordinates: result.data, duration: req.params.duration });
       })
       .catch((error) => console.log(error));
@@ -16,7 +17,6 @@ export default function stocks(db) {
     const { symbol } = req.params;
     axios.get(`${GENERICURL}/${symbol}/quote?token=${SANDBOXTOKEN}`)
       .then((result) => {
-        console.log(result, 'result');
         res.send(result.data);
       })
       .catch((error) => console.log(error));
