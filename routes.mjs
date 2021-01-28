@@ -1,7 +1,8 @@
 import { resolve } from 'path';
 import db from './models/index.mjs';
 import convertUserIdToHash from './helper.mjs';
-import stocks from './Controllers/stocks.mjs';
+import stocks from './controllers/stocks.mjs';
+import users from './controllers/user.mjs';
 
 export default function routes(app) {
   app.use(async (req, res, next) => {
@@ -38,6 +39,10 @@ export default function routes(app) {
   app.get('/', (req, res) => {
     res.sendFile(resolve('dist', 'main.html'));
   });
+
+  const UsersController = users(db);
+  app.get('/checkLoggedIn', UsersController.checkLoggedIn);
+  app.post('/signin', UsersController.signin);
 
   const StocksController = stocks(db);
   app.get('/:symbol/chart/:duration', StocksController.getChart);

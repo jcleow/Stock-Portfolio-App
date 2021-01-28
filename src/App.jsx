@@ -1,71 +1,115 @@
-import React, { useState } from 'react';
 import axios from 'axios';
+import React, { useState } from 'react';
+import { GraphUp } from 'react-bootstrap-icons';
+import { Button } from 'react-bootstrap';
+import MainDisplay from './components/MainDisplay.jsx';
 
-import PriceChart from './components/PriceChart.jsx';
-import CoyInfo from './components/CoyInfo.jsx';
-import SymbolLookup from './components/SymbolLookup.jsx';
-import StockKeyStats from './components/StockKeyStats.jsx';
+function SideBar({ sideBarProps }) {
+  const { loggedIn, username } = sideBarProps;
+  return (
+    <div className="side-bar">
+      <div className="d-flex justify-content-center logo">
+        <GraphUp />
+      </div>
+      <div className="container d-flex flex-column align-items-center">
+        <div>
+          {loggedIn
+            ? (
+              <div className="row mt-5">
+                <div className="col">
+                  <img className="profile-pic" src="./defaultprofilepic.jpg" />
+                </div>
+                <div className="col d-flex align-items-center">
+                  {username}
+                </div>
+              </div>
+            )
+            : null}
+        </div>
+        <div className="mt-5">
+          <Button variant="primary">My Portfolios</Button>
+        </div>
+        <div className="mt-5">
+          <Button variant="primary">Saved Items</Button>
+        </div>
+      </div>
+    </div>
+  );
+}
 
-export default function App() {
-  // Track the price quote data for the price chart
-  const [quoteData, setQuoteData] = useState([]);
-  const [duration, setDuration] = useState('');
-  // Track the coyInfoData
-  const [coyInfo, setCoyInfo] = useState([]);
-  // Track the currently selected symbol
-  const [symbol, setSymbol] = useState('');
-  // Track the keystats of currently selected symbol
-  const [keyStats, setKeyStats] = useState(null);
+function LoginForm({ setLoggedIn }) {
+  const [usernameInput, setUsernameInput] = useState('');
+  const [passwordInput, setPasswordInput] = useState('');
+  const [display, setDisplay] = useState('');
 
-  // All props to be sent into the various components
-  const searchProps = { setCoyInfo, setSymbol, setKeyStats };
-  const priceChartProps = { quoteData, duration };
+  function handleUsernameInput(event) {
+    setUsernameInput(event.target.value);
+  }
 
-  function handleGetChart(timeDuration) {
-    axios.get(`/${symbol}/chart/${timeDuration}`)
+  function handlePasswordInput(event) {
+    setPasswordInput(event.target.value);
+  }
+
+  function handleSignIn() {
+    const signInData = { usernameInput, passwordInput };
+    axios.post('/signin', signInData)
       .then((result) => {
-        setQuoteData(result.data.coordinates);
-        setDuration(result.data.duration);
-        return axios.get(`/${symbol}/stats/`);
-      })
-      .then((statsResults) => {
-        setKeyStats(statsResults.data);
+        setUsernameInput('');
+        setPasswordInput('');
+
+        if (result.data.auth) {
+          setLoggedIn(true);
+        }
       })
       .catch((error) => console.log(error));
   }
-
-  function ToggleMonthPriceButton() {
-    return (
-      <div>
-        <button type="submit" onClick={() => { handleGetChart('1m'); }}>
-          1M
-        </button>
-        <button type="submit" onClick={() => { handleGetChart('3m'); }}>
-          3M
-        </button>
-        <button type="submit" onClick={() => { handleGetChart('6m'); }}>
-          6M
-        </button>
-      </div>
-    );
+  function handleRegistration() {
+    setDisplay('registration');
   }
-
   return (
-    <div>
-      <div className="container mt-5">
-        <div className="row">
-          <div className="col d-flex justify-content-between">
-            <SymbolLookup searchProps={searchProps} />
-            <ToggleMonthPriceButton />
+    <div className="login-form">
+      <div className="container d-flex flex-row justify-content-center">
+        <div className="row d-flex flex-column justify-content-center">
+          <div className="col d-flex justify-content-center">
+            <input placeholder="Username" value={usernameInput} onChange={handleUsernameInput} />
+          </div>
+          <div className="col d-flex justify-content-center">
+            <input placeholder="Password" value={passwordInput} onChange={handlePasswordInput} />
+          </div>
+          <div className="col d-flex justify-content-center">
+            Don't have an account?
+            <button className="bg-transparent border-0 text-primary" onClick={handleRegistration}>Register</button>
+          </div>
+          <div className="col d-flex justify-content-center">
+            <button type="submit" onClick={handleSignIn}> Sign in</button>
           </div>
         </div>
       </div>
-      {symbol
-        ? <CoyInfo coyInfo={coyInfo} />
-        : null}
-      <PriceChart priceChartProps={priceChartProps} />
-      {keyStats
-      && <StockKeyStats keyStats={keyStats} />}
+    </div>
+  );
+}
+
+export default function App() {
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [username, setUsername] = useState('');
+  const sideBarProps = { loggedIn, username };
+  // Helper function to check which user is logged in
+  function checkLoggedIn() {
+    axios.get('/checkLoggedIn')
+      .then((result) => {
+        if (result.data.auth) {
+          setLoggedIn(true);
+          setUsername(result.data.username);
+        }
+      })
+      .catch((error) => console.log(error));
+  }
+  checkLoggedIn();
+  return (
+    <div>
+      <SideBar sideBarProps={sideBarProps} />
+      <LoginForm setLoggedIn={setLoggedIn} />
+      <MainDisplay />
     </div>
   );
 }

@@ -1,4 +1,37 @@
 /** @format */
+html {
+  height: 100%;
+}
+body {
+  margin: 0;
+  height: 100%;
+}
+.side-bar {
+  background: lightgray;
+  display: inline-block;
+  position: absolute;
+  min-height: 100%;
+  overflow: auto;
+  width: 20%;
+}
+.main-display {
+  margin-left: 20%;
+}
+.login-form {
+  margin-left: 20%;
+}
+.logo {
+  font-size: 50px;
+  margin-top: 50px;
+}
+
+.profile-pic {
+  height: 50px;
+  width: 50px;
+  border-radius: 50%;
+}
+
+// React-vis scss
 .react-vis-magic-css-import-rule {
   display: inherit;
 }
