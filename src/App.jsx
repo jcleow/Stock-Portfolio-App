@@ -1,43 +1,11 @@
 import axios from 'axios';
 import React, { useState } from 'react';
 import { GraphUp } from 'react-bootstrap-icons';
-import { Button } from 'react-bootstrap';
+import { Button, Modal } from 'react-bootstrap';
 import MainDisplay from './components/MainDisplay.jsx';
 
-function SideBar({ sideBarProps }) {
-  const { loggedIn, username } = sideBarProps;
-  return (
-    <div className="side-bar">
-      <div className="d-flex justify-content-center logo">
-        <GraphUp />
-      </div>
-      <div className="container d-flex flex-column align-items-center">
-        <div>
-          {loggedIn
-            ? (
-              <div className="row mt-5">
-                <div className="col">
-                  <img className="profile-pic" src="./defaultprofilepic.jpg" />
-                </div>
-                <div className="col d-flex align-items-center">
-                  {username}
-                </div>
-              </div>
-            )
-            : null}
-        </div>
-        <div className="mt-5">
-          <Button variant="primary">My Portfolios</Button>
-        </div>
-        <div className="mt-5">
-          <Button variant="primary">Saved Items</Button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function LoginForm({ setLoggedIn }) {
+function SignInForm({ signInFormProps }) {
+  const { setLoggedIn, handleClose } = signInFormProps;
   const [usernameInput, setUsernameInput] = useState('');
   const [passwordInput, setPasswordInput] = useState('');
   const [display, setDisplay] = useState('');
@@ -81,8 +49,69 @@ function LoginForm({ setLoggedIn }) {
             <button className="bg-transparent border-0 text-primary" onClick={handleRegistration}>Register</button>
           </div>
           <div className="col d-flex justify-content-center">
-            <button type="submit" onClick={handleSignIn}> Sign in</button>
+            <Button variant="secondary" onClick={handleSignIn}>
+              Sign in
+            </Button>
           </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Sign-in sign up button
+function SignInButton({ setLoggedIn }) {
+  const [show, setShow] = useState(false);
+
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+  const signInFormProps = { setLoggedIn, handleClose };
+  return (
+    <div>
+      <Button variant="primary" onClick={handleShow}>
+        Sign In
+      </Button>
+      <Modal show={show} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <div className="d-flex justify-content-center">
+            <Modal.Title>
+              Welcome To Portfolio App
+            </Modal.Title>
+          </div>
+        </Modal.Header>
+        <Modal.Body><SignInForm signInFormProps={signInFormProps} /></Modal.Body>
+      </Modal>
+    </div>
+  );
+}
+
+function SideBar({ sideBarProps }) {
+  const { loggedIn, username, setLoggedIn } = sideBarProps;
+  return (
+    <div className="side-bar">
+      <div className="d-flex justify-content-center logo">
+        <GraphUp />
+      </div>
+      <div className="container d-flex flex-column align-items-center">
+        <div>
+          {loggedIn
+            ? (
+              <div className="row mt-5">
+                <div className="col">
+                  <img className="profile-pic" src="./defaultprofilepic.jpg" />
+                </div>
+                <div className="col d-flex align-items-center">
+                  {username}
+                </div>
+              </div>
+            )
+            : <SignInButton setLoggedIn={setLoggedIn} />}
+        </div>
+        <div className="mt-5">
+          <Button variant="primary">My Portfolios</Button>
+        </div>
+        <div className="mt-5">
+          <Button variant="primary">Saved Items</Button>
         </div>
       </div>
     </div>
@@ -92,7 +121,7 @@ function LoginForm({ setLoggedIn }) {
 export default function App() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [username, setUsername] = useState('');
-  const sideBarProps = { loggedIn, username };
+  const sideBarProps = { username, loggedIn, setLoggedIn };
   // Helper function to check which user is logged in
   function checkLoggedIn() {
     axios.get('/checkLoggedIn')
@@ -105,10 +134,10 @@ export default function App() {
       .catch((error) => console.log(error));
   }
   checkLoggedIn();
+  console.log('test-1');
   return (
     <div>
       <SideBar sideBarProps={sideBarProps} />
-      <LoginForm setLoggedIn={setLoggedIn} />
       <MainDisplay />
     </div>
   );

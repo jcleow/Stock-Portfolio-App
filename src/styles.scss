@@ -1,4 +1,5 @@
 /** @format */
+@import "~bootstrap/scss/bootstrap";
 html {
   height: 100%;
 }
@@ -15,9 +16,6 @@ body {
   width: 20%;
 }
 .main-display {
-  margin-left: 20%;
-}
-.login-form {
   margin-left: 20%;
 }
 .logo {
