@@ -1,6 +1,12 @@
 import { Sequelize } from 'sequelize';
 import url from 'url';
 import allConfig from '../config/config.js';
+import initUserModel from './user.mjs';
+import initPortfolioModel from './portfolio.mjs';
+import initStockModel from './stock.mjs';
+import initPortfolioStockModel from './portfolioStock.mjs';
+import initTradeModel from './trade.mjs';
+import initNoteModel from './note.mjs';
 
 const env = process.env.NODE_ENV || 'development';
 
@@ -32,5 +38,24 @@ if (env === 'production') {
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
+
+// Define all instances of the model
+db.Portfolio = initPortfolioModel(sequelize, Sequelize.DataTypes);
+db.User = initUserModel(sequelize, Sequelize.DataTypes);
+db.Stock = initStockModel(sequelize, Sequelize.DataTypes);
+db.PortfolioStock = initPortfolioStockModel(sequelize, Sequelize.DataTypes);
+db.Trade = initTradeModel(sequelize, Sequelize.DataTypes);
+db.Note = initNoteModel(sequelize, Sequelize.DataTypes);
+
+// 1-M association between user and portfolios
+db.User.hasMany(db.Portfolio);
+db.Portfolio.belongsTo(db.User);
+
+db.PortfolioStock.hasMany(db.Trade);
+db.Trade.hasMany(db.Note);
+
+// M:N association between portfolio and stock
+db.Portfolio.belongsToMany(db.Stock, { through: db.PortfolioStock });
+db.Stock.belongsToMany(db.Portfolio, { through: db.PortfolioStock });
 
 export default db;

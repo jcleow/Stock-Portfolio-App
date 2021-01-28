@@ -3,7 +3,7 @@ import axios from 'axios';
 const SANDBOXTOKEN = 'Tsk_c0d79534cc3f4d8fa07478c311b898d2';
 const GENERICURL = 'https://sandbox.iexapis.com/stable/stock';
 export default function stocks(db) {
-  const getQuote = (req, res) => {
+  const getChart = (req, res) => {
     const { symbol, duration } = req.params;
     axios.get(`${GENERICURL}/${symbol}/chart/${duration}?token=${SANDBOXTOKEN}`)
       .then((result) => {
@@ -16,6 +16,7 @@ export default function stocks(db) {
     const { symbol } = req.params;
     axios.get(`${GENERICURL}/${symbol}/quote?token=${SANDBOXTOKEN}`)
       .then((result) => {
+        console.log(result, 'result');
         res.send(result.data);
       })
       .catch((error) => console.log(error));
@@ -31,7 +32,7 @@ export default function stocks(db) {
   };
 
   return {
-    getQuote,
+    getChart,
     getSymbol,
     getStats,
   };
