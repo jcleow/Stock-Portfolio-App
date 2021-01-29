@@ -54,4 +54,5 @@ export default function routes(app) {
 
   const PortfoliosController = portfolios(db);
   app.get('/portfolios', PortfoliosController.index);
+  app.get('/portfolios/:portfolioId', PortfoliosController.view);
 }

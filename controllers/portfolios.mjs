@@ -10,7 +10,20 @@ export default function portfolios(db) {
     }
     res.send({ message: 'not logged in' });
   };
+  const view = async (req, res) => {
+    const { portfolioId } = req.params;
+    try {
+      const selectedPortfolioStocks = await db.Portfolio.findByPk(portfolioId, {
+        include: db.Stock,
+      });
+      res.send({ portfolioStocks: selectedPortfolioStocks });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return ({
     index,
+    view,
   });
 }

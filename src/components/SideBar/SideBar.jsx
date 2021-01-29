@@ -6,20 +6,19 @@ import SignInButton from './SignInButton.jsx';
 
 export default function SideBar({ sideBarProps }) {
   const {
-    loggedIn, username, setLoggedIn, setDisplay,
+    loggedIn, username, setLoggedIn, setDisplay, setPortfolioList,
   } = sideBarProps;
 
-  const getAllPortfolios = () => {
+  const handleDisplayPortfolio = () => {
     axios.get('/portfolios')
       .then((result) => {
-        console.log(result);
+        if (result.data.message === 'success') {
+          console.log(result.data.portfolios, 'result.data.portfolios');
+          setPortfolioList(result.data.portfolios);
+          setDisplay('portfolio');
+        }
       })
       .catch((error) => console.log(error));
-  };
-
-  const handleDisplayPortfolio = () => {
-    setDisplay('portfolio');
-    getAllPortfolios();
   };
 
   return (
