@@ -3,10 +3,21 @@ import React, { useState } from 'react';
 import SideBar from './components/SideBar/SideBar.jsx';
 import MainDisplay from './components/MainDisplay.jsx';
 
+function PortfolioDisplay() {
+  return (
+    <div className="offset-display">
+      Hello
+    </div>
+  );
+}
+
 export default function App() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [username, setUsername] = useState('');
-  const sideBarProps = { username, loggedIn, setLoggedIn };
+  const [display, setDisplay] = useState('main');
+  const sideBarProps = {
+    username, loggedIn, setLoggedIn, setDisplay,
+  };
   // Helper function to check which user is logged in
   function checkLoggedIn() {
     axios.get('/checkLoggedIn')
@@ -34,7 +45,10 @@ export default function App() {
   return (
     <div>
       <SideBar sideBarProps={sideBarProps} />
-      <MainDisplay />
+      {display === 'main'
+      && <MainDisplay />}
+      {display === 'portfolio'
+      && <PortfolioDisplay />}
     </div>
   );
 }

@@ -6,10 +6,10 @@ export default function initPortfolioModel(sequelize, DataTypes) {
       primaryKey: true,
       type: DataTypes.INTEGER,
     },
-    ownerId: {
+    userId: {
       type: DataTypes.INTEGER,
       references: {
-        model: 'users',
+        model: 'user',
         key: 'id',
       },
     },

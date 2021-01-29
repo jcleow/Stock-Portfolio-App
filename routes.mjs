@@ -3,6 +3,7 @@ import db from './models/index.mjs';
 import convertUserIdToHash from './helper.mjs';
 import stocks from './controllers/stocks.mjs';
 import users from './controllers/user.mjs';
+import portfolios from './controllers/portfolios.mjs';
 
 export default function routes(app) {
   app.use(async (req, res, next) => {
@@ -28,7 +29,8 @@ export default function routes(app) {
       req.middlewareLoggedIn = true;
       req.loggedInUserId = Number(req.cookies.loggedInUserId);
       req.loggedInUsername = chosenUser.username;
-      console.log(req.loggedInUsername, 'app-use-username');
+      console.log(req.middlewareLoggedIn, 'middleware');
+      console.log(req.loggedInUsername, 'loggedInUsername');
       next();
       return;
     }
@@ -49,4 +51,7 @@ export default function routes(app) {
   app.get('/:symbol/chart/:duration', StocksController.getChart);
   app.get('/:symbol/headlineInfo', StocksController.getSymbol);
   app.get('/:symbol/stats', StocksController.getStats);
+
+  const PortfoliosController = portfolios(db);
+  app.get('/portfolios', PortfoliosController.index);
 }

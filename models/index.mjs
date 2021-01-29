@@ -36,9 +36,6 @@ if (env === 'production') {
   sequelize = new Sequelize(config.database, config.username, config.password, config);
 }
 
-db.sequelize = sequelize;
-db.Sequelize = Sequelize;
-
 // Define all instances of the model
 db.Portfolio = initPortfolioModel(sequelize, Sequelize.DataTypes);
 db.User = initUserModel(sequelize, Sequelize.DataTypes);
@@ -48,8 +45,8 @@ db.Trade = initTradeModel(sequelize, Sequelize.DataTypes);
 db.Note = initNoteModel(sequelize, Sequelize.DataTypes);
 
 // 1-M association between user and portfolios
-db.User.hasMany(db.Portfolio);
 db.Portfolio.belongsTo(db.User);
+db.User.hasMany(db.Portfolio);
 
 db.PortfolioStock.hasMany(db.Trade);
 db.Trade.hasMany(db.Note);
@@ -58,4 +55,6 @@ db.Trade.hasMany(db.Note);
 db.Portfolio.belongsToMany(db.Stock, { through: db.PortfolioStock });
 db.Stock.belongsToMany(db.Portfolio, { through: db.PortfolioStock });
 
+db.sequelize = sequelize;
+db.Sequelize = Sequelize;
 export default db;

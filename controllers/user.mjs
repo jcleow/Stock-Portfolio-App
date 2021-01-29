@@ -1,7 +1,6 @@
 import convertUserIdToHash, { hashPassword } from '../helper.mjs';
-import db from '../models/index.mjs';
 
-export default function users() {
+export default function users(db) {
   const checkLoggedIn = (req, res) => {
     const { loggedInUserId, loggedInUsername } = req.cookies;
     if (loggedInUserId) {

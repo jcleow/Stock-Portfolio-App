@@ -51,8 +51,8 @@ export default function MainDisplay() {
   }
 
   return (
-    <div className="main-display">
-      <div className="container mt-5">
+    <div className="offset-display">
+      <div className="container">
         <div className="row">
           <div className="col d-flex justify-content-between">
             <SymbolLookup searchProps={searchProps} />
