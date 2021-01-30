@@ -11,7 +11,7 @@ function PortfolioButtonList({ portfolioButtonsProps }) {
     axios.get(`/portfolios/${portfolioId}`)
       .then((result) => {
         console.log(result, 'result');
-        setPortfolioStocks(result.data.portfolioStocks.stocks);
+        setPortfolioStocks(result.data.portfolioStocks);
       })
       .catch((error) => console.log(error));
   };
@@ -28,13 +28,31 @@ function PortfolioButtonList({ portfolioButtonsProps }) {
 }
 
 function PortfolioDisplay({ portfolioStocks }) {
-  const rowsOfStockData = portfolioStocks.map((stock) => (
-    <tr>
-      <td>{stock.id}</td>
-      <td>{stock.stockSymbol}</td>
-      <td>{stock.stockName}</td>
-    </tr>
-  ));
+  const rowsOfStockData = portfolioStocks.map((stock, index) => {
+    const avgTotalVolumeDisplay = new Intl.NumberFormat()
+      .format(Number((stock.avgTotalVolume / (10 ** 6)).toFixed(0)));
+
+    const marketCapDisplay = new Intl.NumberFormat()
+      .format(Number((stock.marketCap / (10 ** 6)).toFixed(0)));
+    return (
+      <tr>
+        <td>{index + 1}</td>
+        <td>{stock.symbol}</td>
+        <td>{stock.companyName}</td>
+        <td>{stock.latestPrice}</td>
+        <td>{stock.change}</td>
+        <td>{stock.changePercent}</td>
+        <td>
+          {avgTotalVolumeDisplay}
+          M
+        </td>
+        <td>
+          {marketCapDisplay}
+          M
+        </td>
+      </tr>
+    );
+  });
   return (
     <div className="offset-display">
       <Table striped bordered hover>
