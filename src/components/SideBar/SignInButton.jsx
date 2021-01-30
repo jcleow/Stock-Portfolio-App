@@ -2,12 +2,13 @@ import React, { useState } from 'react';
 import { Button, Modal } from 'react-bootstrap';
 import SignInForm from './SignInForm.jsx';
 
-export default function SignInButton({ setLoggedIn }) {
+export default function SignInButton({ signInButtonProps }) {
+  const { setLoggedIn, setUsername } = signInButtonProps;
   const [show, setShow] = useState(false);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-  const signInFormProps = { setLoggedIn, handleClose };
+  const signInFormProps = { setLoggedIn, handleClose, setUsername };
   return (
     <div>
       <Button variant="primary" onClick={handleShow}>

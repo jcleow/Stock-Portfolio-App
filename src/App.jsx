@@ -66,33 +66,25 @@ export default function App() {
   const [display, setDisplay] = useState('main');
   const [portfolioList, setPortfolioList] = useState([]);
   const [portfolioStocks, setPortfolioStocks] = useState([]);
-  console.log(portfolioList, 'portfolioList');
 
   const sideBarProps = {
-    username, loggedIn, setLoggedIn, setDisplay, setPortfolioList,
+    username, loggedIn, setLoggedIn, setDisplay, setPortfolioList, setUsername,
   };
 
   const portfolioButtonsProps = {
     portfolioList, setPortfolioStocks,
   };
-  // Helper function to check which user is logged in
-  function checkLoggedIn() {
-    axios.get('/checkLoggedIn')
-      .then((result) => {
-        if (result.data.auth) {
-          setLoggedIn(true);
-          setUsername(result.data.username);
-        }
-      })
-      .catch((error) => console.log(error));
-  }
-  checkLoggedIn();
 
   // Buggy where a randomized string of char and number appears briefly before username is displayed
   useEffect(() => {
     if (document.cookie) {
       setLoggedIn(true);
-      setUsername(document.cookie);
+
+      const splitCookieVal = document.cookie.split(' ');
+      const startPos = splitCookieVal[0].indexOf('=') + 1;
+      const endPos = splitCookieVal[0].indexOf(';');
+      const loggedInUsername = splitCookieVal[0].substring(startPos, endPos);
+      setUsername(loggedInUsername);
     }
   }, []);
   return (

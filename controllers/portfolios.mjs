@@ -13,10 +13,12 @@ export default function portfolios(db) {
   const view = async (req, res) => {
     const { portfolioId } = req.params;
     try {
-      const selectedPortfolioStocks = await db.Portfolio.findByPk(portfolioId, {
+      const selectedStocks = await db.Portfolio.findByPk(portfolioId, {
         include: db.Stock,
       });
-      res.send({ portfolioStocks: selectedPortfolioStocks });
+      console.log(selectedStocks, 'selectedStocks');
+      // const selectedStocksDelayedData
+      res.send({ portfolioStocks: selectedStocks });
     } catch (error) {
       console.log(error);
     }

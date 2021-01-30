@@ -6,8 +6,10 @@ import SignInButton from './SignInButton.jsx';
 
 export default function SideBar({ sideBarProps }) {
   const {
-    loggedIn, username, setLoggedIn, setDisplay, setPortfolioList,
+    loggedIn, username, setLoggedIn, setDisplay, setPortfolioList, setUsername,
   } = sideBarProps;
+
+  const signInButtonProps = { setLoggedIn, setUsername };
 
   const handleDisplayPortfolio = () => {
     axios.get('/portfolios')
@@ -39,7 +41,7 @@ export default function SideBar({ sideBarProps }) {
                 </div>
               </div>
             )
-            : <SignInButton setLoggedIn={setLoggedIn} />}
+            : <SignInButton signInButtonProps={signInButtonProps} />}
         </div>
         <div className="mt-5">
           <Button variant="primary" onClick={handleDisplayPortfolio}>My Portfolios</Button>
