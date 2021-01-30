@@ -1,28 +1,42 @@
 import axios from 'axios';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, Table } from 'react-bootstrap';
 import SideBar from './components/SideBar/SideBar.jsx';
 import MainDisplay from './components/MainDisplay.jsx';
 
-function PortfolioDisplay({ portfolioList }) {
-  const [portfolioStocksDisplay, setPortfolioStocksDisplay] = useState([]);
+function PortfolioButtonList({ portfolioButtonsProps }) {
+  const { portfolioList, setPortfolioStocks } = portfolioButtonsProps;
   const handleSelectPortfolio = (event) => {
     const portfolioId = event.target.value;
     axios.get(`/portfolios/${portfolioId}`)
       .then((result) => {
         console.log(result, 'result');
-        setPortfolioStocksDisplay(result.data.portfolioStocks);
+        setPortfolioStocks(result.data.portfolioStocks.stocks);
       })
       .catch((error) => console.log(error));
   };
+
   const portfolioButtonList = portfolioList.map((portfolio) => {
     const portfolioId = portfolio.id;
     return (<Button variant="primary" value={portfolioId} onClick={handleSelectPortfolio}>{portfolio.name}</Button>);
   });
-
   return (
     <div className="offset-display">
       {portfolioButtonList}
+    </div>
+  );
+}
+
+function PortfolioDisplay({ portfolioStocks }) {
+  const rowsOfStockData = portfolioStocks.map((stock) => (
+    <tr>
+      <td>{stock.id}</td>
+      <td>{stock.stockSymbol}</td>
+      <td>{stock.stockName}</td>
+    </tr>
+  ));
+  return (
+    <div className="offset-display">
       <Table striped bordered hover>
         <thead>
           <tr>
@@ -39,13 +53,7 @@ function PortfolioDisplay({ portfolioList }) {
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>1</td>
-            <td>Mark</td>
-            <td>Otto</td>
-            <td>@mdo</td>
-          </tr>
-
+          {rowsOfStockData}
         </tbody>
       </Table>
     </div>
@@ -57,10 +65,15 @@ export default function App() {
   const [username, setUsername] = useState('');
   const [display, setDisplay] = useState('main');
   const [portfolioList, setPortfolioList] = useState([]);
+  const [portfolioStocks, setPortfolioStocks] = useState([]);
   console.log(portfolioList, 'portfolioList');
 
   const sideBarProps = {
     username, loggedIn, setLoggedIn, setDisplay, setPortfolioList,
+  };
+
+  const portfolioButtonsProps = {
+    portfolioList, setPortfolioStocks,
   };
   // Helper function to check which user is logged in
   function checkLoggedIn() {
@@ -75,24 +88,25 @@ export default function App() {
   }
   checkLoggedIn();
 
-  // function getUsername() {
-  //   console.log('num times getUsername is run');
-  //   if (document.cookie) {
-  //     setLoggedIn(true);
-  //     setUsername(document.cookie);
-  //   }
-  // }
-
-  // getUsername();
-  // console.log(document.cookie, 'document.cookie');
-  console.log('test-1');
+  // Buggy where a randomized string of char and number appears briefly before username is displayed
+  useEffect(() => {
+    if (document.cookie) {
+      setLoggedIn(true);
+      setUsername(document.cookie);
+    }
+  }, []);
   return (
     <div>
       <SideBar sideBarProps={sideBarProps} />
       {display === 'main'
       && <MainDisplay />}
       {display === 'portfolio'
-      && <PortfolioDisplay portfolioList={portfolioList} />}
+      && (
+      <div>
+        <PortfolioButtonList portfolioButtonsProps={portfolioButtonsProps} />
+        <PortfolioDisplay portfolioStocks={portfolioStocks} />
+      </div>
+      )}
     </div>
   );
 }

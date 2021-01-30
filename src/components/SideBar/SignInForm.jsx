@@ -40,7 +40,7 @@ export default function SignInForm({ signInFormProps }) {
             <input placeholder="Username" value={usernameInput} onChange={handleUsernameInput} />
           </div>
           <div className="col d-flex justify-content-center">
-            <input placeholder="Password" value={passwordInput} onChange={handlePasswordInput} />
+            <input placeholder="Password" type="password" value={passwordInput} onChange={handlePasswordInput} />
           </div>
           <div className="col d-flex justify-content-center">
             Don't have an account?
