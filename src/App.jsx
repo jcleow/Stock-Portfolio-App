@@ -1,8 +1,119 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
-import { Button, Table } from 'react-bootstrap';
+import {
+  Button, Table, Modal, Dropdown, DropdownButton,
+} from 'react-bootstrap';
 import SideBar from './components/SideBar/SideBar.jsx';
 import MainDisplay from './components/MainDisplay.jsx';
+
+function Trade() {
+  // Track trade date
+  const [tradeDate, setTradeDate] = useState();
+  const [sharesTraded, setSharesTraded] = useState();
+  const [costBasis, setCostBasis] = useState();
+  const [totalCost, setTotalCost] = useState(0);
+  const [selectedPosition, setSelectedPosition] = useState('');
+
+  const handleTradeDate = (event) => setTradeDate(event.target.value);
+  const handleSharesTraded = (event) => setSharesTraded(event.target.value);
+  const handleCostBasis = (event) => setCostBasis(event.target.value);
+  const handleSelectedPosition = (event) => {
+    setSelectedPosition(event.target.value);
+  };
+
+  // Render the total cost everytime component is re-rendered
+  useEffect(() => {
+    if (sharesTraded >= 0 && costBasis >= 0) {
+      setTotalCost(sharesTraded * costBasis);
+    }
+  }, [sharesTraded, costBasis]);
+  return (
+    <tr>
+      <td>
+        <DropdownButton id="dropdown-basic-button" title={selectedPosition}>
+          <Dropdown.Item as="button" type="submit" value="BUY" onClick={handleSelectedPosition}>
+            BUY
+          </Dropdown.Item>
+          <Dropdown.Item as="button" type="submit" value="SELL" onClick={handleSelectedPosition}>
+            SELL
+          </Dropdown.Item>
+        </DropdownButton>
+      </td>
+      <td>
+        <input value={tradeDate} onChange={handleTradeDate} type="date" />
+      </td>
+      <td>
+        <input value={sharesTraded} onChange={handleSharesTraded} type="number" placeholder="No. of shares" />
+      </td>
+      <td>
+        <input value={costBasis} onChange={handleCostBasis} type="number" placeholder="Cost price" />
+      </td>
+      <td>{totalCost}</td>
+    </tr>
+  );
+}
+
+function EditSharesModal() {
+  const [show, setShow] = useState(false);
+
+  // Track the total shares for a stock
+  const [totalShares, setTotalShares] = useState();
+
+  // Close the modal and do not save the edited trade transactions
+  const handleCancel = () => {
+    setShow(false);
+  };
+  const handleShow = () => setShow(true);
+  const handleSaveTransactions = () => {};
+  const handleAddNewTrade = () => {
+
+  };
+
+  return (
+    <>
+      <Button variant="primary" onClick={handleShow}>
+        {totalShares}
+      </Button>
+
+      <Modal
+        show={show}
+        onHide={handleCancel}
+        dialogClassName="modal-trade"
+        backdrop="static"
+        keyboard={false}
+      >
+        <Modal.Header closeButton>
+          <Modal.Title>Trade History</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="container">
+            <Table striped bordered hover>
+              <thead>
+                <tr>
+                  <th>Position</th>
+                  <th>Date of Trade</th>
+                  <th>Shares Traded</th>
+                  <th>Cost Basis $</th>
+                  <th>Total Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                <Trade />
+              </tbody>
+            </Table>
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleAddNewTrade}>Add a new trade</Button>
+          <Button variant="primary" onClick={handleSaveTransactions}>Save</Button>
+          <Button variant="danger" onClick={handleCancel}>
+            Cancel
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    </>
+  );
+}
 
 function PortfolioButtonList({ portfolioButtonsProps }) {
   const { portfolioList, setPortfolioStocks } = portfolioButtonsProps;
@@ -10,7 +121,6 @@ function PortfolioButtonList({ portfolioButtonsProps }) {
     const portfolioId = event.target.value;
     axios.get(`/portfolios/${portfolioId}`)
       .then((result) => {
-        console.log(result, 'result');
         setPortfolioStocks(result.data.portfolioStocks);
       })
       .catch((error) => console.log(error));
@@ -29,11 +139,18 @@ function PortfolioButtonList({ portfolioButtonsProps }) {
 
 function PortfolioDisplay({ portfolioStocks }) {
   const rowsOfStockData = portfolioStocks.map((stock, index) => {
+    // Maintain the display of the number (of shares) delimited by commas
+    const [inputVal, setInputVal] = useState('0');
+    // Maintain the numbers of shares
+    const [sharesInput, setSharesInput] = useState(0);
     const avgTotalVolumeDisplay = new Intl.NumberFormat()
       .format(Number((stock.avgTotalVolume / (10 ** 6)).toFixed(0)));
 
     const marketCapDisplay = new Intl.NumberFormat()
       .format(Number((stock.marketCap / (10 ** 6)).toFixed(0)));
+
+    const fairValueDisplay = new Intl.NumberFormat()
+      .format(Number(sharesInput * stock.latestPrice).toFixed(2));
     return (
       <tr>
         <td>{index + 1}</td>
@@ -44,11 +161,15 @@ function PortfolioDisplay({ portfolioStocks }) {
         <td>{stock.changePercent}</td>
         <td>
           {avgTotalVolumeDisplay}
-          M
         </td>
         <td>
           {marketCapDisplay}
-          M
+        </td>
+        <td>
+          <EditSharesModal />
+        </td>
+        <td>
+          {fairValueDisplay}
         </td>
       </tr>
     );
@@ -61,13 +182,13 @@ function PortfolioDisplay({ portfolioStocks }) {
             <th>#</th>
             <th>Symbol</th>
             <th>Name</th>
-            <th>Price</th>
+            <th>Price $</th>
             <th>Change</th>
             <th>% Change</th>
-            <th>Volume</th>
-            <th>Market Cap</th>
+            <th>Volume $(M)</th>
+            <th>Market Cap $(M)</th>
             <th>Shares</th>
-            <th>Fair Value</th>
+            <th>Fair Value ($)</th>
           </tr>
         </thead>
         <tbody>
@@ -93,7 +214,6 @@ export default function App() {
     portfolioList, setPortfolioStocks,
   };
 
-  // Buggy where a randomized string of char and number appears briefly before username is displayed
   useEffect(() => {
     if (document.cookie) {
       setLoggedIn(true);

@@ -29,6 +29,11 @@ body {
   border-radius: 50%;
 }
 
+.modal-trade {
+  width: 70%;
+  max-width: none !important;
+}
+
 // React-vis scss
 .react-vis-magic-css-import-rule {
   display: inherit;
