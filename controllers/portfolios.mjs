@@ -49,8 +49,6 @@ export default function portfolios(db) {
               avgTotalVolume,
               marketCap,
             };
-
-            console.log(stockInfoObj, 'stockInfoObj');
             return stockInfoObj;
           });
 
@@ -62,12 +60,13 @@ export default function portfolios(db) {
     }
   };
   const update = async (req, res) => {
-    const { portfolioStockId } = req.body;
-    const newTrade = await db.Trade.create({
-      where: {
-        portfolioStockId,
-      },
-    });
+    const { tradesData } = req.body;
+    console.log(tradesData, 'tradesData');
+    // const newTrade = await db.Trade.create({
+    //   where: {
+    //     portfolioStockId,
+    //   },
+    // });
     res.send({ message: 'newTradeCreated' });
   };
 

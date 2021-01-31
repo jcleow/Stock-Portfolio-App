@@ -6,7 +6,9 @@ import {
 import SideBar from './components/SideBar/SideBar.jsx';
 import MainDisplay from './components/MainDisplay.jsx';
 
-function Trade({ tradeId }) {
+function Trade({ tradeDataProps, tempId }) {
+  const { newTradesData, setTradesData } = tradeDataProps;
+  console.log(newTradesData, 'tradesData');
   // Track trade date
   const [tradeDate, setTradeDate] = useState();
   const [sharesTraded, setSharesTraded] = useState();
@@ -14,11 +16,35 @@ function Trade({ tradeId }) {
   const [totalCost, setTotalCost] = useState(0);
   const [selectedPosition, setSelectedPosition] = useState('');
 
-  const handleTradeDate = (event) => setTradeDate(event.target.value);
-  const handleSharesTraded = (event) => setSharesTraded(event.target.value);
-  const handleCostBasis = (event) => setCostBasis(event.target.value);
+  // Helper that alters the array of tradesData
+  const updateTradesData = (event, dataProp) => {
+    const allTradesDataCopy = [...newTradesData];
+    // Loop through shallow copy to alter the right trade data
+    allTradesDataCopy.forEach((tradeData) => {
+      if (tradeData.tempId === tempId) {
+        tradeData[dataProp] = event.target.value;
+        console.log(tradeData[dataProp], 'data-prop');
+        console.log(tradeData.tempId, 'alter trade data');
+      }
+    });
+    // Update the tradesData state
+    setTradesData(allTradesDataCopy);
+  };
+  const handleTradeDate = (event) => {
+    setTradeDate(event.target.value);
+    updateTradesData(event, 'tradeDate');
+  };
+  const handleSharesTraded = (event) => {
+    setSharesTraded(event.target.value);
+    updateTradesData(event, 'shares');
+  };
+  const handleCostBasis = (event) => {
+    setCostBasis(event.target.value);
+    updateTradesData(event, 'costPrice');
+  };
   const handleSelectedPosition = (event) => {
     setSelectedPosition(event.target.value);
+    updateTradesData(event, 'position');
   };
 
   // Render the total cost everytime component is re-rendered
@@ -29,9 +55,7 @@ function Trade({ tradeId }) {
   }, [sharesTraded, costBasis]);
   return (
     <tr>
-      <td>
-        {tradeId}
-      </td>
+      <td />
       <td>
         <DropdownButton id="dropdown-basic-button" title={selectedPosition}>
           <Dropdown.Item as="button" type="submit" value="BUY" onClick={handleSelectedPosition}>
@@ -56,19 +80,22 @@ function Trade({ tradeId }) {
   );
 }
 
-function EditSharesModal() {
+function EditSharesModal({ portfolioStockId }) {
   const [show, setShow] = useState(false);
   const singleTradeData = {
+    tradeId: null,
+    tempId: 1,
     portfolioStockId,
-    position,
-    costPrice,
-    shares,
-    tradeDate,
+    position: null,
+    costPrice: null,
+    shares: null,
+    tradeDate: null,
   };
-  const [newTradesData, setNewTradesData] = useState([singleTradeData]);
 
-  const tradeDataProps = { newTradesData, setNewTradesData };
-  const [newTrades, setNewTrades] = useState([<Trade />]);
+  const [tradesData, setTradesData] = useState([]);
+
+  // const tradeDataProps = { newTradesData, setNewTradesData };
+  const [newTradeDisplay, setNewTradeDisplay] = useState([]);
 
   // Track the total shares for a stock
   const [totalShares, setTotalShares] = useState();
@@ -79,16 +106,27 @@ function EditSharesModal() {
   };
   const handleShow = () => setShow(true);
   const handleSaveTransactions = () => {
-    axios.put('/portfolio/${portfolioId}/stock/${portfolioStockId}/update', { data })
+    axios.put('/portfolio/${portfolioId}/stock/${portfolioStockId}/update', { tradesData })
       .then((result) => {
         console.log(result);
       })
       .catch((err) => console.log(err));
   };
   const handleAddNewTrade = () => {
-    setNewTrades([...newTrades, <Trade tradeDataProps={tradeDataProps} />]);
+    let newTradesData;
+    let tempId;
+    if (tradesData.length > 1) {
+      tempId = tradesData[tradesData.length - 1].tempId + 1;
+      newTradesData = [...tradesData, { ...singleTradeData, tempId }];
+    } else {
+      tempId = 1;
+      newTradesData = [singleTradeData];
+    }
+    console.log(newTradesData, 'newTradesData');
+    const tradeDataProps = { newTradesData, setTradesData };
+    setNewTradeDisplay([...newTradeDisplay, <Trade tradeDataProps={tradeDataProps} tempId={tempId} />]);
+    setTradesData(newTradesData);
   };
-
   return (
     <>
       <Button variant="primary" onClick={handleShow}>
@@ -119,7 +157,7 @@ function EditSharesModal() {
                 </tr>
               </thead>
               <tbody>
-                {newTrades}
+                {newTradeDisplay}
               </tbody>
             </Table>
           </div>
@@ -192,7 +230,7 @@ function PortfolioDisplay({ portfolioStocks }) {
           {marketCapDisplay}
         </td>
         <td>
-          <EditSharesModal />
+          <EditSharesModal portfolioStockId={stock.portfolioStockId} />
         </td>
         <td>
           {fairValueDisplay}
