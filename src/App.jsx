@@ -6,7 +6,7 @@ import {
 import SideBar from './components/SideBar/SideBar.jsx';
 import MainDisplay from './components/MainDisplay.jsx';
 
-function Trade() {
+function Trade({ tradeId }) {
   // Track trade date
   const [tradeDate, setTradeDate] = useState();
   const [sharesTraded, setSharesTraded] = useState();
@@ -29,6 +29,9 @@ function Trade() {
   }, [sharesTraded, costBasis]);
   return (
     <tr>
+      <td>
+        {tradeId}
+      </td>
       <td>
         <DropdownButton id="dropdown-basic-button" title={selectedPosition}>
           <Dropdown.Item as="button" type="submit" value="BUY" onClick={handleSelectedPosition}>
@@ -55,6 +58,17 @@ function Trade() {
 
 function EditSharesModal() {
   const [show, setShow] = useState(false);
+  const singleTradeData = {
+    portfolioStockId,
+    position,
+    costPrice,
+    shares,
+    tradeDate,
+  };
+  const [newTradesData, setNewTradesData] = useState([singleTradeData]);
+
+  const tradeDataProps = { newTradesData, setNewTradesData };
+  const [newTrades, setNewTrades] = useState([<Trade />]);
 
   // Track the total shares for a stock
   const [totalShares, setTotalShares] = useState();
@@ -64,9 +78,15 @@ function EditSharesModal() {
     setShow(false);
   };
   const handleShow = () => setShow(true);
-  const handleSaveTransactions = () => {};
+  const handleSaveTransactions = () => {
+    axios.put('/portfolio/${portfolioId}/stock/${portfolioStockId}/update', { data })
+      .then((result) => {
+        console.log(result);
+      })
+      .catch((err) => console.log(err));
+  };
   const handleAddNewTrade = () => {
-
+    setNewTrades([...newTrades, <Trade tradeDataProps={tradeDataProps} />]);
   };
 
   return (
@@ -90,25 +110,30 @@ function EditSharesModal() {
             <Table striped bordered hover>
               <thead>
                 <tr>
+                  <th>Trade Id</th>
                   <th>Position</th>
                   <th>Date of Trade</th>
                   <th>Shares Traded</th>
                   <th>Cost Basis $</th>
-                  <th>Total Value</th>
+                  <th>Total Cost</th>
                 </tr>
               </thead>
               <tbody>
-                <Trade />
+                {newTrades}
               </tbody>
             </Table>
           </div>
         </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleAddNewTrade}>Add a new trade</Button>
-          <Button variant="primary" onClick={handleSaveTransactions}>Save</Button>
-          <Button variant="danger" onClick={handleCancel}>
-            Cancel
-          </Button>
+        <Modal.Footer className="d-flex justify-content-between">
+          <div>
+            <Button variant="secondary" onClick={handleAddNewTrade}>Add a new trade</Button>
+          </div>
+          <div>
+            <Button variant="primary" className="mr-2" onClick={handleSaveTransactions}>Save</Button>
+            <Button variant="danger" onClick={handleCancel}>
+              Cancel
+            </Button>
+          </div>
         </Modal.Footer>
       </Modal>
     </>
@@ -138,6 +163,7 @@ function PortfolioButtonList({ portfolioButtonsProps }) {
 }
 
 function PortfolioDisplay({ portfolioStocks }) {
+  console.log(portfolioStocks, 'portfolioStocks');
   const rowsOfStockData = portfolioStocks.map((stock, index) => {
     // Maintain the display of the number (of shares) delimited by commas
     const [inputVal, setInputVal] = useState('0');

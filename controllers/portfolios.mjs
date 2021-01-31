@@ -21,21 +21,26 @@ export default function portfolios(db) {
       const selectedPortfolio = await db.Portfolio.findByPk(portfolioId, {
         include: db.Stock,
       });
-
       const selectedStockNames = selectedPortfolio.stocks.map((stock) => stock.stockSymbol);
       const selectedStockNamesString = selectedStockNames.join(',');
+
+      const selectedStockIds = selectedPortfolio.stocks.map((stock) => ({ id: stock.id, symbol: stock.stockSymbol }));
+      console.log(selectedStockIds, 'selectedStockIds');
 
       // get stock data in batch
       axios.get(`${GENERICURL}/market/batch?symbols=${selectedStockNamesString}&types=quote&token=${SANDBOXTOKEN}`)
         .then((batchResults) => {
           const batchQuotes = Object.values(batchResults.data);
-
+          // Destructure the information from API call
           const essentialQuoteInfo = batchQuotes.map((stock) => {
             const {
               symbol, companyName, latestPrice, change, changePercent, avgTotalVolume, marketCap,
             } = stock.quote;
+            // Search for the appropriate portfolio_stock_id to append to stockInfoObj
+            const selectedPortfolioStock = selectedStockIds.find((stock) => stock.symbol === symbol.toLowerCase());
 
             const stockInfoObj = {
+              portfolioStockId: selectedPortfolioStock.id,
               symbol,
               companyName,
               latestPrice,
@@ -44,9 +49,11 @@ export default function portfolios(db) {
               avgTotalVolume,
               marketCap,
             };
+
             console.log(stockInfoObj, 'stockInfoObj');
             return stockInfoObj;
           });
+
           res.send({ portfolioStocks: essentialQuoteInfo });
         })
         .catch((error) => console.log(error));
@@ -54,9 +61,19 @@ export default function portfolios(db) {
       console.log(error);
     }
   };
+  const update = async (req, res) => {
+    const { portfolioStockId } = req.body;
+    const newTrade = await db.Trade.create({
+      where: {
+        portfolioStockId,
+      },
+    });
+    res.send({ message: 'newTradeCreated' });
+  };
 
   return ({
     index,
     view,
+    update,
   });
 }
