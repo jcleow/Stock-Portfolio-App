@@ -15,7 +15,7 @@ export default function PortfolioDisplay({ portfolioStocks }) {
       .format(Number((stock.marketCap / (10 ** 6)).toFixed(0)));
 
     const fairValueDisplay = new Intl.NumberFormat()
-      .format(Number(sharesInput * stock.latestPrice).toFixed(2));
+      .format(Number(stock.totalSharesOwned * stock.latestPrice).toFixed(2));
     const historicalTrades = stock.trades;
     return (
       <tr>
