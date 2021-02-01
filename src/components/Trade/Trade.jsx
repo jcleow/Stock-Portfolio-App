@@ -5,27 +5,33 @@ import {
 } from 'react-bootstrap';
 
 export default function Trade({
-  newTradesData, setTradesData, tempId, histTradeData,
+  newTradesData, setTradesData, tempId, histTradesData, tradeId, dataIndex,
 }) {
   // If historical trade data exists, populate the row with data
   let histPosition = '';
   let histTradeDate;
   let histShares;
   let histCostPrice;
-
-  if (histTradeData) {
+  if (histTradesData) {
     const {
       position,
       tradeDate,
       shares,
       costPrice,
-    } = histTradeData;
+    } = histTradesData[dataIndex];
+    histPosition = position;
+    histTradeDate = moment(tradeDate).format('YYYY-MM-DD');
+    histShares = shares;
+    histCostPrice = costPrice;
+  } else {
+    const {
+      position, tradeDate, shares, costPrice,
+    } = newTradesData;
     histPosition = position;
     histTradeDate = moment(tradeDate).format('YYYY-MM-DD');
     histShares = shares;
     histCostPrice = costPrice;
   }
-  console.log(histTradeData, 'histTradeData');
   // Manage input states
   const [selectedPosition, setSelectedPosition] = useState(histPosition);
   const [tradeDate, setTradeDate] = useState(histTradeDate);
@@ -33,43 +39,52 @@ export default function Trade({
   const [costBasis, setCostBasis] = useState(histCostPrice);
   const [totalCost, setTotalCost] = useState(0);
 
+  let initTradeData;
+  if (histTradesData) {
+    initTradeData = [...histTradesData];
+  } else {
+    initTradeData = [...newTradesData];
+  }
+
+  const [currTradeData, setCurrTradeData] = useState(initTradeData);
+
   // Helper that alters the array of tradesData
   const updateTradesData = (event, dataProp) => {
-    let allTradesDataCopy;
-    if (histTradeData) {
-      allTradesDataCopy = [{ ...histTradeData }];
-    } else if (newTradesData) {
-      allTradesDataCopy = [...newTradesData];
-    }
-
     // Loop through shallow copy to alter the right trade data
-    allTradesDataCopy.forEach((tradeData) => {
-      console.log(allTradesDataCopy, 'allTradesDataCopy');
+    const allTradesDataCopy = currTradeData.map((tradeData) => {
       if (tradeData.tempId) {
         if (tradeData.tempId === tempId) {
-          tradeData[dataProp] = event.target.value;
+          const newData = { ...tradeData, [dataProp]: event.target.value };
+          console.log(newData, 'newData');
+          return newData;
         }
+      } else if (tradeData.id === tradeId) {
+        const newData = { ...tradeData, [dataProp]: event.target.value };
+        return newData;
       }
-    });
 
+      return tradeData;
+    });
     // Update the tradesData state
-    setTradesData(allTradesDataCopy);
+    console.log(allTradesDataCopy, 'allTradesDataCopy');
+    setCurrTradeData(allTradesDataCopy);
+    setTradesData([...allTradesDataCopy]);
   };
   const handleTradeDate = (event) => {
-    setTradeDate(event.target.value);
     updateTradesData(event, 'tradeDate');
+    setTradeDate(event.target.value);
   };
   const handleSharesTraded = (event) => {
-    setSharesTraded(event.target.value);
     updateTradesData(event, 'shares');
+    setSharesTraded(event.target.value);
   };
   const handleCostBasis = (event) => {
-    setCostBasis(event.target.value);
     updateTradesData(event, 'costPrice');
+    setCostBasis(event.target.value);
   };
   const handleSelectedPosition = (event) => {
-    setSelectedPosition(event.target.value);
     updateTradesData(event, 'position');
+    setSelectedPosition(event.target.value);
   };
 
   // Render the total cost everytime component is re-rendered
@@ -81,7 +96,7 @@ export default function Trade({
   return (
     <tr>
       <td>
-        {histTradeData && histTradeData.id}
+        {histTradesData && histTradesData[dataIndex].id}
       </td>
       <td>
         <DropdownButton id="dropdown-basic-button" title={selectedPosition}>

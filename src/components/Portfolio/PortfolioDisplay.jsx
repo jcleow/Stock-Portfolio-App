@@ -3,7 +3,6 @@ import { Table } from 'react-bootstrap';
 import EditTradesModal from '../Trade/EditTradesModal.jsx';
 
 export default function PortfolioDisplay({ portfolioStocks }) {
-  console.log(portfolioStocks, 'portfolioStocks');
   const rowsOfStockData = portfolioStocks.map((stock, index) => {
     // Maintain the display of the number (of shares) delimited by commas
     const [inputVal, setInputVal] = useState('0');

@@ -8,7 +8,6 @@ import Trade from './Trade.jsx';
 export default function EditTradesModal({ portfolioStockId, portfolioId, historicalTrades }) {
   const [show, setShow] = useState(false);
   const singleTradeData = {
-    tradeId: null,
     tempId: 1,
     portfolioStockId,
     position: null,
@@ -18,7 +17,18 @@ export default function EditTradesModal({ portfolioStockId, portfolioId, histori
   };
 
   const [tradesData, setTradesData] = useState([]);
-  const historicalTradeDisplay = historicalTrades.map((histTradeData) => <Trade histTradeData={histTradeData} setTradesData={setTradesData} />);
+  const historicalTradeDisplay = historicalTrades.map((histTradeData, index) =>
+  // const tradeDataProps = { histTradesData: historicalTrades, setTradesData, dataIndex: index };
+  { console.log(historicalTrades, 'historicalTrades');
+    return (
+      <Trade
+        histTradesData={historicalTrades}
+        setTradesData={setTradesData}
+        dataIndex={index}
+        tradeId={histTradeData.id}
+      />
+    );
+  });
   const [tradeDisplay, setTradeDisplay] = useState([...historicalTradeDisplay]);
 
   // Track the total shares for a stock
@@ -30,23 +40,26 @@ export default function EditTradesModal({ portfolioStockId, portfolioId, histori
   };
   const handleShow = () => setShow(true);
   const handleSaveTransactions = () => {
+    console.log(tradesData, 'tradesData-modal');
     axios.put(`/portfolios/${portfolioId}/stocks/${portfolioStockId}/update`, { tradesData })
       .then((result) => {
         console.log(result);
+        setShow(false);
       })
       .catch((err) => console.log(err));
   };
   const handleAddNewTrade = () => {
-    let newTradesData;
     // Temp id is an identifier for a trade in case no existing trade ID exists
     let tempId;
     if (tradesData.length > 0) {
-      tempId = tradesData[tradesData.length - 1].tempId + 1;
-      newTradesData = [...tradesData, { ...singleTradeData, tempId }];
+      if (tradesData[tradesData.length - 1].tempId) {
+        tempId = tradesData[tradesData.length - 1].tempId + 1;
+      }
     } else {
       tempId = 1;
-      newTradesData = [singleTradeData];
     }
+    const newTradesData = [...tradesData, { ...singleTradeData, tempId }];
+
     setTradeDisplay([...tradeDisplay, <Trade newTradesData={newTradesData} setTradesData={setTradesData} tempId={tempId} />]);
     setTradesData(newTradesData);
   };

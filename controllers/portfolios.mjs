@@ -76,18 +76,39 @@ export default function portfolios(db) {
   const update = async (req, res) => {
     const { tradesData } = req.body;
     console.log(tradesData, 'tradesData');
-    tradesData.map(async (trade) => {
-      if (!trade.tradeId) {
-        const {
-          portfolioStockId, position, costPrice, tradeDate, shares,
-        } = trade;
-        await db.Trade.create({
+    const updatedTradeData = tradesData.map(async (trade) => {
+      const {
+        portfolioStockId, position, costPrice, tradeDate, shares,
+      } = trade;
+
+      let newTrade;
+
+      if (!trade.id) {
+        newTrade = await db.Trade.create({
           portfolioStockId, position, costPrice, tradeDate, shares,
         });
+      } else {
+        newTrade = await db.Trade.update({
+          portfolioStockId,
+          position,
+          costPrice,
+          tradeDate,
+          shares,
+        }, {
+          where: {
+            id: trade.id,
+            portfolioStockId,
+          },
+        });
       }
+      return newTrade;
     });
-
-    res.send({ message: 'newTradeCreated' });
+    Promise.all(updatedTradeData)
+      .then((result) => {
+        console.log(result, 'result');
+        res.send({ message: 'newTradeCreated' });
+      })
+      .catch((err) => console.log(err));
   };
 
   return ({
