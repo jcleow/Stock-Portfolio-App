@@ -40,6 +40,7 @@ export default function portfolios(db) {
             const selectedPortfolioStock = selectedStockIds.find((stock) => stock.symbol === symbol.toLowerCase());
 
             const stockInfoObj = {
+              portfolioId,
               portfolioStockId: selectedPortfolioStock.id,
               symbol,
               companyName,
@@ -62,11 +63,17 @@ export default function portfolios(db) {
   const update = async (req, res) => {
     const { tradesData } = req.body;
     console.log(tradesData, 'tradesData');
-    // const newTrade = await db.Trade.create({
-    //   where: {
-    //     portfolioStockId,
-    //   },
-    // });
+    tradesData.map(async (trade) => {
+      if (!trade.tradeId) {
+        const {
+          portfolioStockId, position, costPrice, tradeDate, shares,
+        } = trade;
+        await db.Trade.create({
+          portfolioStockId, position, costPrice, tradeDate, shares,
+        });
+      }
+    });
+
     res.send({ message: 'newTradeCreated' });
   };
 

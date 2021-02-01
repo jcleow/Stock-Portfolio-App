@@ -6,7 +6,7 @@ export default function initTradeModel(sequelize, DataTypes) {
       primaryKey: true,
       type: DataTypes.INTEGER,
     },
-    portfolioId: {
+    portfolioStockId: {
       type: DataTypes.INTEGER,
       references: {
         model: 'portfolios',
@@ -14,7 +14,10 @@ export default function initTradeModel(sequelize, DataTypes) {
       },
     },
     position: {
-      type: DataTypes.ENUM('buy', 'sell'),
+      type: DataTypes.ENUM('BUY', 'SELL'),
+    },
+    costPrice: {
+      type: DataTypes.INTEGER,
     },
     shares: {
       type: DataTypes.INTEGER,

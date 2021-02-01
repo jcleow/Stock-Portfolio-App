@@ -113,15 +113,18 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      portfolio_id: {
+      portfolio_stock_id: {
         type: Sequelize.INTEGER,
         references: {
-          model: 'portfolios',
+          model: 'portfolio_stocks',
           key: 'id',
         },
       },
       position: {
-        type: Sequelize.ENUM('buy', 'sell'),
+        type: Sequelize.ENUM('BUY', 'SELL'),
+      },
+      cost_price: {
+        type: Sequelize.INTEGER,
       },
       shares: {
         type: Sequelize.INTEGER,
@@ -133,7 +136,7 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE,
       },
-      updatedAt: {
+      updated_at: {
         allowNull: false,
         type: Sequelize.DATE,
       },
@@ -159,7 +162,7 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE,
       },
-      updatedAt: {
+      updated_at: {
         allowNull: false,
         type: Sequelize.DATE,
       },

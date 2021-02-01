@@ -24,7 +24,7 @@ function Trade({ tradeDataProps, tempId }) {
       if (tradeData.tempId === tempId) {
         tradeData[dataProp] = event.target.value;
         console.log(tradeData[dataProp], 'data-prop');
-        console.log(tradeData.tempId, 'alter trade data');
+        console.log(tradeData, 'all tradeData');
       }
     });
     // Update the tradesData state
@@ -80,7 +80,8 @@ function Trade({ tradeDataProps, tempId }) {
   );
 }
 
-function EditSharesModal({ portfolioStockId }) {
+function EditTradesModal({ portfolioStockId, portfolioId }) {
+  console.log(portfolioId, 'portfolioId');
   const [show, setShow] = useState(false);
   const singleTradeData = {
     tradeId: null,
@@ -106,7 +107,7 @@ function EditSharesModal({ portfolioStockId }) {
   };
   const handleShow = () => setShow(true);
   const handleSaveTransactions = () => {
-    axios.put('/portfolio/${portfolioId}/stock/${portfolioStockId}/update', { tradesData })
+    axios.put(`/portfolios/${portfolioId}/stocks/${portfolioStockId}/update`, { tradesData })
       .then((result) => {
         console.log(result);
       })
@@ -115,7 +116,7 @@ function EditSharesModal({ portfolioStockId }) {
   const handleAddNewTrade = () => {
     let newTradesData;
     let tempId;
-    if (tradesData.length > 1) {
+    if (tradesData.length > 0) {
       tempId = tradesData[tradesData.length - 1].tempId + 1;
       newTradesData = [...tradesData, { ...singleTradeData, tempId }];
     } else {
@@ -230,7 +231,7 @@ function PortfolioDisplay({ portfolioStocks }) {
           {marketCapDisplay}
         </td>
         <td>
-          <EditSharesModal portfolioStockId={stock.portfolioStockId} />
+          <EditTradesModal portfolioStockId={stock.portfolioStockId} portfolioId={stock.portfolioId} />
         </td>
         <td>
           {fairValueDisplay}
