@@ -5,7 +5,9 @@ import {
 } from 'react-bootstrap';
 import Trade from './Trade.jsx';
 
-export default function EditTradesModal({ portfolioStockId, portfolioId, historicalTrades }) {
+export default function EditTradesModal({
+  portfolioStockId, portfolioId, historicalTrades, sharesOwned,
+}) {
   const [show, setShow] = useState(false);
   const singleTradeData = {
     tempId: 1,
@@ -17,18 +19,14 @@ export default function EditTradesModal({ portfolioStockId, portfolioId, histori
   };
 
   const [tradesData, setTradesData] = useState([]);
-  const historicalTradeDisplay = historicalTrades.map((histTradeData, index) =>
-  // const tradeDataProps = { histTradesData: historicalTrades, setTradesData, dataIndex: index };
-  { console.log(historicalTrades, 'historicalTrades');
-    return (
-      <Trade
-        histTradesData={historicalTrades}
-        setTradesData={setTradesData}
-        dataIndex={index}
-        tradeId={histTradeData.id}
-      />
-    );
-  });
+  const historicalTradeDisplay = historicalTrades.map((histTradeData, index) => (
+    <Trade
+      histTradesData={historicalTrades}
+      setTradesData={setTradesData}
+      dataIndex={index}
+      tradeId={histTradeData.id}
+    />
+  ));
   const [tradeDisplay, setTradeDisplay] = useState([...historicalTradeDisplay]);
 
   // Track the total shares for a stock
@@ -66,7 +64,7 @@ export default function EditTradesModal({ portfolioStockId, portfolioId, histori
   return (
     <>
       <Button variant="primary" onClick={handleShow}>
-        {totalShares}
+        {sharesOwned}
       </Button>
 
       <Modal

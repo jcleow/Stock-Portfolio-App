@@ -31,11 +31,25 @@ export default function portfolios(db) {
         const stockTrades = await stock.getTrades();
         return stockTrades;
       });
+      // Retrieve individual stock trades and cumulative share holdings
       let arrayOfStockTrades;
+      let arrayOfSharesOwned;
       Promise.all(allTradesPromises)
         .then((result) => {
           arrayOfStockTrades = result;
           console.log(result[0], 'result0');
+
+          // Retrieve total shares owned in each stock
+          arrayOfSharesOwned = arrayOfStockTrades.map((trade) => {
+            const sharesPerStock = trade.reduce((acc, currTrade) => {
+              if (currTrade.position === 'SELL') {
+                return acc - currTrade.shares;
+              }
+              return acc + currTrade.shares;
+            }, 0);
+            return sharesPerStock;
+          });
+          console.log(arrayOfSharesOwned, 'arrayofSharesOwned');
         })
         .catch((err) => console.log(err));
 
@@ -62,6 +76,7 @@ export default function portfolios(db) {
               avgTotalVolume,
               marketCap,
               trades: arrayOfStockTrades[stockIndex],
+              totalSharesOwned: arrayOfSharesOwned[stockIndex],
             };
             return stockInfoObj;
           });

@@ -36,6 +36,7 @@ export default function PortfolioDisplay({ portfolioStocks }) {
             portfolioStockId={stock.portfolioStockId}
             portfolioId={stock.portfolioId}
             historicalTrades={historicalTrades}
+            sharesOwned={stock.totalSharesOwned}
           />
         </td>
         <td>
