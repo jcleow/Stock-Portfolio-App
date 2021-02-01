@@ -3,6 +3,7 @@ import PortfolioButtonList from './components/Portfolio/PortfolioButtonList.jsx'
 import PortfolioDisplay from './components/Portfolio/PortfolioDisplay.jsx';
 import SideBar from './components/SideBar/SideBar.jsx';
 import MainDisplay from './components/MainDisplay.jsx';
+import EquityChart from './components/Portfolio/EquityChart.jsx';
 
 export default function App() {
   const [loggedIn, setLoggedIn] = useState(false);
@@ -10,6 +11,11 @@ export default function App() {
   const [display, setDisplay] = useState('main');
   const [portfolioList, setPortfolioList] = useState([]);
   const [portfolioStocks, setPortfolioStocks] = useState([]);
+
+  const [quoteData, setQuoteData] = useState([]);
+  const [duration, setDuration] = useState('');
+  const priceChartProps = { quoteData, duration };
+  // const equityChartProps = { quoteData, timeFrame, };
 
   const sideBarProps = {
     username, loggedIn, setLoggedIn, setDisplay, setPortfolioList, setUsername,
@@ -38,6 +44,7 @@ export default function App() {
       {display === 'portfolio'
       && (
       <div>
+        {/* <EquityChart equityChartProps={equityChartProps} /> */}
         <PortfolioButtonList portfolioButtonsProps={portfolioButtonsProps} />
         <PortfolioDisplay portfolioStocks={portfolioStocks} />
       </div>

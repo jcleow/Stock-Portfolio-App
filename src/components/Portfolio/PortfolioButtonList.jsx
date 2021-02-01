@@ -10,6 +10,9 @@ export default function PortfolioButtonList({ portfolioButtonsProps }) {
       .then((result) => {
         setPortfolioStocks(result.data.portfolioStocks);
       })
+      .then(() => {
+
+      })
       .catch((error) => console.log(error));
   };
 

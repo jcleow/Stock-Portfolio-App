@@ -1,4 +1,5 @@
 import axios from 'axios';
+import moment from 'moment';
 
 const SANDBOXTOKEN = 'Tsk_c0d79534cc3f4d8fa07478c311b898d2';
 const GENERICURL = 'https://sandbox.iexapis.com/stable/stock';
@@ -14,6 +15,7 @@ export default function portfolios(db) {
     }
     res.send({ message: 'not logged in' });
   };
+
   const view = async (req, res) => {
     const { portfolioId } = req.params;
     try {
@@ -53,8 +55,8 @@ export default function portfolios(db) {
         })
         .catch((err) => console.log(err));
 
-      // get stock data in batch
-      axios.get(`${GENERICURL}/market/batch?symbols=${selectedStockNamesString}&types=quote&token=${SANDBOXTOKEN}`)
+      // get current snapshot of stock data in batch
+      axios.get(`${GENERICURL}/market/batch?symbols=${selectedStockNamesString}&types=quote,chart&range=1m&token=${SANDBOXTOKEN}`)
         .then((batchResults) => {
           const batchQuotes = Object.values(batchResults.data);
           // Destructure the information from API call
@@ -81,6 +83,82 @@ export default function portfolios(db) {
             return stockInfoObj;
           });
 
+          // Calculate the total equity over the course of 1 month
+          // For 1 stock
+          // 1. collect all the prices over the course of 1 month (per day) (for all stocks)
+          // 2. collect all dates of trades in this timeframe and relevant shares
+          const arrayOfPricePoints = batchQuotes.map((quote) => {
+            const dailyPrices = quote.chart.map((dailyQuote) => ({
+              date: dailyQuote.date,
+              price: dailyQuote.close,
+            }));
+            return {
+              symbol: quote.quote.symbol,
+              priceDates: dailyPrices,
+            };
+          });
+          console.log(arrayOfPricePoints, 'arrayOfDailyPrices');
+          // Merge price histories and dates into an object
+
+          // 2a.if shares exist before the date of trade, accumulate them
+
+          // 2b.if trades happen during the month, perform calculation on cumulative shares owned
+          // and insert into the same index as the date of the month
+
+          // Meld the portfolioStockId, symbol, tradeDate and tradedShares together in one obj for easy comparison
+          // against the data provided by IEX
+          const arrayOfDateStockTraded = arrayOfStockTrades.map((stockTraded) => {
+            const dateStockTraded = stockTraded.map((trx) => {
+              const dateString = moment(trx.tradeDate).format('YYYY-MM-DD');
+
+              // if a position is sell, then we make the shares negative (for summation later)
+              let tradedShares = trx.shares;
+              if (trx.position === 'SELL') {
+                tradedShares = trx.shares * -1;
+              }
+              const selectedArray = selectedStockIds.filter((stock) => stock.id === trx.portfolioStockId);
+              const selected = selectedArray[0];
+              return {
+                portfolioStockId: selected.id,
+                symbol: selected.symbol.toUpperCase(),
+                tradeDate: dateString,
+                tradedShares,
+              };
+            });
+            return dateStockTraded;
+          });
+          console.log(arrayOfDateStockTraded, 'arrayOfDateStockTraded');
+
+          arrayOfPricePoints.forEach((stkPriceDate) => {
+            arrayOfDateStockTraded.forEach((stkTxns) => {
+              stkTxns.forEach((txn) => {
+                if (stkPriceDate.symbol === txn.symbol) {
+                  console.log('matched');
+                  console.log(txn, 'stock transactions');
+                  console.log(stkPriceDate, 'stock price point to be mutated');
+                  const dateIndex = stkPriceDate.priceDates.findIndex((entry) => entry.date === txn.tradeDate);
+                  console.log(dateIndex, 'dateIndex');
+
+                  stkPriceDate.priceDates[dateIndex] = {
+                    ...stkPriceDate.priceDates[dateIndex],
+                    tradedShares: txn.tradedShares,
+                    tradedValue: txn.tradedShares * stkPriceDate.priceDates[dateIndex].price,
+                  };
+                  console.log(stkPriceDate.priceDates[dateIndex], 'stkPriceDate');
+                  console.log(stkPriceDate.priceDates, 'altered');
+                }
+              });
+            });
+          });
+
+          // 3. propagate the number of shares forward to the next index if it is not empty (as each data pt required)
+
+          // 4. Multiply the day's price and the shares owned at that day to get the value for that day
+
+          // 5. Do this for all the stocks
+
+          // 6. Combine each day's price into a value (data) point and output it
+
           res.send({ portfolioStocks: essentialQuoteInfo });
         })
         .catch((error) => console.log(error));
@@ -88,6 +166,11 @@ export default function portfolios(db) {
       console.log(error);
     }
   };
+
+  const calculateEquity = () => {
+
+  };
+
   const update = async (req, res) => {
     const { tradesData } = req.body;
     console.log(tradesData, 'tradesData');
@@ -126,9 +209,14 @@ export default function portfolios(db) {
       .catch((err) => console.log(err));
   };
 
+  const equity = async (req, res) => {
+    // First get all of the
+  };
+
   return ({
     index,
     view,
     update,
+    equity,
   });
 }
