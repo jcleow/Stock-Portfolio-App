@@ -1,32 +1,59 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
+import moment from 'moment';
 import {
   Button, Table, Modal, Dropdown, DropdownButton,
 } from 'react-bootstrap';
 import SideBar from './components/SideBar/SideBar.jsx';
 import MainDisplay from './components/MainDisplay.jsx';
 
-function Trade({ tradeDataProps, tempId }) {
-  const { newTradesData, setTradesData } = tradeDataProps;
-  console.log(newTradesData, 'tradesData');
-  // Track trade date
-  const [tradeDate, setTradeDate] = useState();
-  const [sharesTraded, setSharesTraded] = useState();
-  const [costBasis, setCostBasis] = useState();
+function Trade({
+  newTradesData, setTradesData, tempId, histTradeData,
+}) {
+  // If historical trade data exists, populate the row with data
+  let histPosition = '';
+  let histTradeDate;
+  let histShares;
+  let histCostPrice;
+
+  if (histTradeData) {
+    const {
+      position,
+      tradeDate,
+      shares,
+      costPrice,
+    } = histTradeData;
+    histPosition = position;
+    histTradeDate = moment(tradeDate).format('YYYY-MM-DD');
+    histShares = shares;
+    histCostPrice = costPrice;
+    console.log(histTradeData, 'histTrade');
+    console.log(histTradeDate, 'histTradeDate');
+  }
+
+  // Manage input states
+  const [selectedPosition, setSelectedPosition] = useState(histPosition);
+  const [tradeDate, setTradeDate] = useState(histTradeDate);
+  const [sharesTraded, setSharesTraded] = useState(histShares);
+  const [costBasis, setCostBasis] = useState(histCostPrice);
   const [totalCost, setTotalCost] = useState(0);
-  const [selectedPosition, setSelectedPosition] = useState('');
 
   // Helper that alters the array of tradesData
   const updateTradesData = (event, dataProp) => {
-    const allTradesDataCopy = [...newTradesData];
+    let allTradesDataCopy;
+    if (histTradeData) {
+      allTradesDataCopy = [...histTradeData];
+    } else if (newTradesData) {
+      allTradesDataCopy = [...newTradesData];
+    }
+
     // Loop through shallow copy to alter the right trade data
     allTradesDataCopy.forEach((tradeData) => {
       if (tradeData.tempId === tempId) {
         tradeData[dataProp] = event.target.value;
-        console.log(tradeData[dataProp], 'data-prop');
-        console.log(tradeData, 'all tradeData');
       }
     });
+
     // Update the tradesData state
     setTradesData(allTradesDataCopy);
   };
@@ -80,8 +107,7 @@ function Trade({ tradeDataProps, tempId }) {
   );
 }
 
-function EditTradesModal({ portfolioStockId, portfolioId }) {
-  console.log(portfolioId, 'portfolioId');
+function EditTradesModal({ portfolioStockId, portfolioId, historicalTrades }) {
   const [show, setShow] = useState(false);
   const singleTradeData = {
     tradeId: null,
@@ -93,10 +119,10 @@ function EditTradesModal({ portfolioStockId, portfolioId }) {
     tradeDate: null,
   };
 
-  const [tradesData, setTradesData] = useState([]);
+  const historicalTradeDisplay = historicalTrades.map((histTradeData) => <Trade histTradeData={histTradeData} tradeDataProps={setTradesData} />);
 
-  // const tradeDataProps = { newTradesData, setNewTradesData };
-  const [newTradeDisplay, setNewTradeDisplay] = useState([]);
+  const [tradesData, setTradesData] = useState([]);
+  const [tradeDisplay, setTradeDisplay] = useState([...historicalTradeDisplay]);
 
   // Track the total shares for a stock
   const [totalShares, setTotalShares] = useState();
@@ -115,6 +141,7 @@ function EditTradesModal({ portfolioStockId, portfolioId }) {
   };
   const handleAddNewTrade = () => {
     let newTradesData;
+    // Temp id is an identifier for a trade in case no existing trade ID exists
     let tempId;
     if (tradesData.length > 0) {
       tempId = tradesData[tradesData.length - 1].tempId + 1;
@@ -125,7 +152,7 @@ function EditTradesModal({ portfolioStockId, portfolioId }) {
     }
     console.log(newTradesData, 'newTradesData');
     const tradeDataProps = { newTradesData, setTradesData };
-    setNewTradeDisplay([...newTradeDisplay, <Trade tradeDataProps={tradeDataProps} tempId={tempId} />]);
+    setTradeDisplay([...tradeDisplay, <Trade newTradesData={newTradesData} setTradesData={setTradesData} tempId={tempId} />]);
     setTradesData(newTradesData);
   };
   return (
@@ -158,7 +185,7 @@ function EditTradesModal({ portfolioStockId, portfolioId }) {
                 </tr>
               </thead>
               <tbody>
-                {newTradeDisplay}
+                {tradeDisplay}
               </tbody>
             </Table>
           </div>
@@ -216,6 +243,7 @@ function PortfolioDisplay({ portfolioStocks }) {
 
     const fairValueDisplay = new Intl.NumberFormat()
       .format(Number(sharesInput * stock.latestPrice).toFixed(2));
+    const historicalTrades = stock.trades;
     return (
       <tr>
         <td>{index + 1}</td>
@@ -231,7 +259,11 @@ function PortfolioDisplay({ portfolioStocks }) {
           {marketCapDisplay}
         </td>
         <td>
-          <EditTradesModal portfolioStockId={stock.portfolioStockId} portfolioId={stock.portfolioId} />
+          <EditTradesModal
+            portfolioStockId={stock.portfolioStockId}
+            portfolioId={stock.portfolioId}
+            historicalTrades={historicalTrades}
+          />
         </td>
         <td>
           {fairValueDisplay}

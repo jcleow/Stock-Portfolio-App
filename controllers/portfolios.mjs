@@ -5,7 +5,6 @@ const GENERICURL = 'https://sandbox.iexapis.com/stable/stock';
 
 export default function portfolios(db) {
   const index = async (req, res) => {
-    console.log(req.cookies.loggedInUserId, 'loggedInUserId');
     if (req.middlewareLoggedIn) {
       const { loggedInUserId } = req.cookies;
       const loggedInUser = await db.User.findByPk(loggedInUserId);
@@ -21,18 +20,31 @@ export default function portfolios(db) {
       const selectedPortfolio = await db.Portfolio.findByPk(portfolioId, {
         include: db.Stock,
       });
+      // Retrieve individual stock symbols
       const selectedStockNames = selectedPortfolio.stocks.map((stock) => stock.stockSymbol);
       const selectedStockNamesString = selectedStockNames.join(',');
-
       const selectedStockIds = selectedPortfolio.stocks.map((stock) => ({ id: stock.id, symbol: stock.stockSymbol }));
-      console.log(selectedStockIds, 'selectedStockIds');
+
+      // Retrieve individual stock trades
+      const selectedPortfolioStocks = await db.PortfolioStock.findAll({ where: { portfolioId } });
+      const allTradesPromises = selectedPortfolioStocks.map(async (stock) => {
+        const stockTrades = await stock.getTrades();
+        return stockTrades;
+      });
+      let arrayOfStockTrades;
+      Promise.all(allTradesPromises)
+        .then((result) => {
+          arrayOfStockTrades = result;
+          console.log(result[0], 'result0');
+        })
+        .catch((err) => console.log(err));
 
       // get stock data in batch
       axios.get(`${GENERICURL}/market/batch?symbols=${selectedStockNamesString}&types=quote&token=${SANDBOXTOKEN}`)
         .then((batchResults) => {
           const batchQuotes = Object.values(batchResults.data);
           // Destructure the information from API call
-          const essentialQuoteInfo = batchQuotes.map((stock) => {
+          const essentialQuoteInfo = batchQuotes.map((stock, stockIndex) => {
             const {
               symbol, companyName, latestPrice, change, changePercent, avgTotalVolume, marketCap,
             } = stock.quote;
@@ -49,6 +61,7 @@ export default function portfolios(db) {
               changePercent,
               avgTotalVolume,
               marketCap,
+              trades: arrayOfStockTrades[stockIndex],
             };
             return stockInfoObj;
           });
