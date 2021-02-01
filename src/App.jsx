@@ -27,10 +27,8 @@ function Trade({
     histTradeDate = moment(tradeDate).format('YYYY-MM-DD');
     histShares = shares;
     histCostPrice = costPrice;
-    console.log(histTradeData, 'histTrade');
-    console.log(histTradeDate, 'histTradeDate');
   }
-
+  console.log(histTradeData, 'histTradeData');
   // Manage input states
   const [selectedPosition, setSelectedPosition] = useState(histPosition);
   const [tradeDate, setTradeDate] = useState(histTradeDate);
@@ -42,15 +40,18 @@ function Trade({
   const updateTradesData = (event, dataProp) => {
     let allTradesDataCopy;
     if (histTradeData) {
-      allTradesDataCopy = [...histTradeData];
+      allTradesDataCopy = [{ ...histTradeData }];
     } else if (newTradesData) {
       allTradesDataCopy = [...newTradesData];
     }
 
     // Loop through shallow copy to alter the right trade data
     allTradesDataCopy.forEach((tradeData) => {
-      if (tradeData.tempId === tempId) {
-        tradeData[dataProp] = event.target.value;
+      console.log(allTradesDataCopy, 'allTradesDataCopy');
+      if (tradeData.tempId) {
+        if (tradeData.tempId === tempId) {
+          tradeData[dataProp] = event.target.value;
+        }
       }
     });
 
@@ -82,7 +83,9 @@ function Trade({
   }, [sharesTraded, costBasis]);
   return (
     <tr>
-      <td />
+      <td>
+        {histTradeData && histTradeData.id}
+      </td>
       <td>
         <DropdownButton id="dropdown-basic-button" title={selectedPosition}>
           <Dropdown.Item as="button" type="submit" value="BUY" onClick={handleSelectedPosition}>
@@ -119,9 +122,8 @@ function EditTradesModal({ portfolioStockId, portfolioId, historicalTrades }) {
     tradeDate: null,
   };
 
-  const historicalTradeDisplay = historicalTrades.map((histTradeData) => <Trade histTradeData={histTradeData} tradeDataProps={setTradesData} />);
-
   const [tradesData, setTradesData] = useState([]);
+  const historicalTradeDisplay = historicalTrades.map((histTradeData) => <Trade histTradeData={histTradeData} setTradesData={setTradesData} />);
   const [tradeDisplay, setTradeDisplay] = useState([...historicalTradeDisplay]);
 
   // Track the total shares for a stock
@@ -150,8 +152,6 @@ function EditTradesModal({ portfolioStockId, portfolioId, historicalTrades }) {
       tempId = 1;
       newTradesData = [singleTradeData];
     }
-    console.log(newTradesData, 'newTradesData');
-    const tradeDataProps = { newTradesData, setTradesData };
     setTradeDisplay([...tradeDisplay, <Trade newTradesData={newTradesData} setTradesData={setTradesData} tempId={tempId} />]);
     setTradesData(newTradesData);
   };
