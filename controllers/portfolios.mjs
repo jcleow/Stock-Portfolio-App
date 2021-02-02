@@ -235,6 +235,7 @@ export default function portfolios(db) {
       }
       return newTrade;
     });
+
     Promise.all(updatedTradeData)
       .then((result) => {
         console.log(result, 'result');

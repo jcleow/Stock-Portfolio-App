@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import moment from 'moment';
 import axios from 'axios';
 import {
   Button, Table, Modal,
@@ -9,25 +10,70 @@ import Trade from './Trade.jsx';
 export default function EditTradesModal({
   portfolioStockId, portfolioId, historicalTrades, refreshPortfolioView,
 }) {
+  console.log('editTradesModal re-rendered');
   const [show, setShow] = useState(false);
-  const singleTradeData = {
-    tempId: 1,
-    portfolioStockId,
-    position: null,
-    costPrice: null,
-    shares: null,
-    tradeDate: null,
-  };
 
-  const [tradesData, setTradesData] = useState([]);
-  const historicalTradeDisplay = historicalTrades.map((histTradeData, index) => (
-    <Trade
-      histTradesData={historicalTrades}
-      setTradesData={setTradesData}
-      dataIndex={index}
-      tradeId={histTradeData.id}
-    />
-  ));
+  const selectedPositionArray = [];
+  const tradeDateArray = [];
+  const sharesTradedArray = [];
+  const costBasisArray = [];
+  const totalCostArray = [];
+  console.log(historicalTrades, 'historicalTrades');
+  if (historicalTrades.length > 0) {
+    historicalTrades.forEach((trade) => {
+      Object.entries(trade).forEach(([key, value]) => {
+        if (key === 'position') {
+          selectedPositionArray.push(value);
+        } else if (key === 'tradeDate') {
+          tradeDateArray.push(moment(value).format('YYYY-MM-DD'));
+        } else if (key === 'shares') {
+          sharesTradedArray.push(value);
+        } else if (key === 'costPrice') {
+          costBasisArray.push(value);
+        }
+      });
+      totalCostArray.push('0');
+    });
+  }
+
+  // Manage input states for all trades in the modal
+  const [selectedPosition, setSelectedPosition] = useState([...selectedPositionArray]);
+  const [tradeDate, setTradeDate] = useState([...tradeDateArray]);
+  const [sharesTraded, setSharesTraded] = useState([...sharesTradedArray]);
+  const [costBasis, setCostBasis] = useState([...costBasisArray]);
+  const [totalCost, setTotalCost] = useState([...totalCostArray]);
+
+  // This tradesData is passed to the ajax request to update the trade
+  const [tradesData, setTradesData] = useState([...historicalTrades]);
+  // Create the existing Trade entries
+  const historicalTradeDisplay = historicalTrades.map((histTradeData, index) => {
+    // DataIndex is the index of its relevant data in the states' arrays
+    const dataIndex = index;
+
+    // States to be passed into trade component
+    const tradeStates = {
+      selectedPosition,
+      tradeDate,
+      sharesTraded,
+      costBasis,
+      totalCost,
+      tradesData,
+      setSelectedPosition,
+      setTradeDate,
+      setSharesTraded,
+      setCostBasis,
+      setTotalCost,
+      setTradesData,
+    };
+    return (
+      <Trade
+        histTradesData={historicalTrades}
+        dataIndex={dataIndex}
+        tradeId={histTradeData.id}
+        tradeStates={tradeStates}
+      />
+    );
+  });
   const [tradeDisplay, setTradeDisplay] = useState([...historicalTradeDisplay]);
 
   // Close the modal and do not save the edited trade transactions
@@ -37,26 +83,56 @@ export default function EditTradesModal({
   const handleShow = () => setShow(true);
   const handleSaveTransactions = (event) => {
     axios.put(`/portfolios/${portfolioId}/stocks/${portfolioStockId}/update`, { tradesData })
+      .then((result) => {
+        console.log(result, 'result-1');
+        return refreshPortfolioView(event, portfolioId);
+      })
       .then(() => {
-        refreshPortfolioView(event, portfolioId);
         setShow(false);
       })
       .catch((err) => console.log(err));
   };
   const handleAddNewTrade = () => {
-    // Temp id is an identifier for a trade in case no existing trade ID exists
-    let tempId;
-    if (tradesData.length > 0) {
-      if (tradesData[tradesData.length - 1].tempId) {
-        tempId = tradesData[tradesData.length - 1].tempId + 1;
-      }
-    } else {
-      tempId = 1;
-    }
-    const newTradesData = [...tradesData, { ...singleTradeData, tempId }];
+    // Manage input states
+    setSelectedPosition([...selectedPosition, '']);
+    setTradeDate([...tradeDate, null]);
+    setSharesTraded([...sharesTraded, null]);
+    setCostBasis([...costBasis, null]);
+    setTotalCost([...totalCost, '0']);
 
-    setTradeDisplay([...tradeDisplay, <Trade newTradesData={newTradesData} setTradesData={setTradesData} tempId={tempId} />]);
-    setTradesData(newTradesData);
+    const tradeStates = {
+      selectedPosition,
+      tradeDate,
+      sharesTraded,
+      costBasis,
+      totalCost,
+      tradesData,
+      setSelectedPosition,
+      setTradeDate,
+      setSharesTraded,
+      setCostBasis,
+      setTotalCost,
+      setTradesData,
+    };
+
+    // DataIndex is the index of its relevant data in the states' arrays
+    const dataIndex = selectedPosition.length - 1;
+
+    setTradeDisplay([...tradeDisplay,
+      <Trade
+        dataIndex={dataIndex}
+        tradeStates={tradeStates}
+      />]);
+
+    // initialize trades data for new entry
+    setTradesData([...tradesData, {
+      portfolioStockId,
+      position: '',
+      costPrice: null,
+      shares: null,
+      tradeDate: '',
+    },
+    ]);
   };
   return (
     <>

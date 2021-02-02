@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import PortfolioButtonList from './components/Portfolio/PortfolioButtonList.jsx';
-import PortfolioDisplay from './components/Portfolio/PortfolioDisplay.jsx';
+import PortfolioTable from './components/Portfolio/PortfolioTable.jsx';
 import SideBar from './components/SideBar/SideBar.jsx';
 import MainDisplay from './components/MainDisplay.jsx';
 import EquityChart from './components/Portfolio/EquityChart.jsx';
@@ -13,7 +13,7 @@ export default function App() {
   const [portfolioList, setPortfolioList] = useState([]);
   const [portfolioStocks, setPortfolioStocks] = useState([]);
   const [equityChartData, setEquityChartData] = useState([]);
-
+  console.log(portfolioStocks, 'portfolioStocks');
   // For purposes of charting equity curve
   const timeFrame = '1m';
   const equityChartProps = { equityChartData, timeFrame };
@@ -33,9 +33,9 @@ export default function App() {
     } else {
       portfolioId = targetPortfolioId;
     }
-    console.log(portfolioId, 'portfolioId');
-    axios.get(`/portfolios/${portfolioId}`)
+    return axios.get(`/portfolios/${portfolioId}`)
       .then((result) => {
+        console.log(result, 'result-0');
         setPortfolioStocks(result.data.essentialQuoteInfo);
         setEquityChartData(result.data.portfolioValueTimeSeries);
       })
@@ -67,7 +67,7 @@ export default function App() {
           portfolioButtonsProps={portfolioButtonsProps}
           refreshPortfolioView={refreshPortfolioView}
         />
-        <PortfolioDisplay
+        <PortfolioTable
           portfolioStocks={portfolioStocks}
           refreshPortfolioView={refreshPortfolioView}
         />

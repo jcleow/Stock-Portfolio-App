@@ -1,9 +1,10 @@
-import React, { useEffect } from 'react';
+import React, { useState } from 'react';
 import { Table } from 'react-bootstrap';
 import EditTradesModal from '../Trade/EditTradesModal.jsx';
 
-export default function PortfolioDisplay({ portfolioStocks, refreshPortfolioView }) {
-  console.log(portfolioStocks, 'portfolioStocks');
+export default function PortfolioTable({ portfolioStocks, refreshPortfolioView }) {
+  console.log('re-rendered');
+  console.log(portfolioStocks, 'portfolio rerendered');
   const rowsOfStockData = portfolioStocks.map((stock, index) => {
     const avgTotalVolumeDisplay = new Intl.NumberFormat()
       .format(Number((stock.avgTotalVolume / (10 ** 6)).toFixed(0)));
@@ -14,6 +15,7 @@ export default function PortfolioDisplay({ portfolioStocks, refreshPortfolioView
     const fairValueDisplay = new Intl.NumberFormat()
       .format(Number(stock.totalSharesOwned * stock.close).toFixed(2));
     const historicalTrades = stock.trades;
+    console.log(historicalTrades, 'historicalTrades');
 
     return (
       <tr>
