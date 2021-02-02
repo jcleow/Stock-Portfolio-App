@@ -15,14 +15,14 @@ export default function PortfolioDisplay({ portfolioStocks }) {
       .format(Number((stock.marketCap / (10 ** 6)).toFixed(0)));
 
     const fairValueDisplay = new Intl.NumberFormat()
-      .format(Number(stock.totalSharesOwned * stock.latestPrice).toFixed(2));
+      .format(Number(stock.totalSharesOwned * stock.close).toFixed(2));
     const historicalTrades = stock.trades;
     return (
       <tr>
         <td>{index + 1}</td>
         <td>{stock.symbol}</td>
         <td>{stock.companyName}</td>
-        <td>{stock.latestPrice}</td>
+        <td>{stock.close}</td>
         <td>{stock.change}</td>
         <td>{stock.changePercent}</td>
         <td>

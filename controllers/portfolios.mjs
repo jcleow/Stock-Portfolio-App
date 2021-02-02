@@ -61,8 +61,10 @@ export default function portfolios(db) {
           const batchQuotes = Object.values(batchResults.data);
           // Destructure the information from API call
           const essentialQuoteInfo = batchQuotes.map((stock, stockIndex) => {
+            // Must get the last closing price in the batch quotes as the other 'close' attr does not tie
+            const { close } = batchQuotes[stockIndex].chart[batchQuotes[stockIndex].chart.length - 1];
             const {
-              symbol, companyName, latestPrice, change, changePercent, avgTotalVolume, marketCap,
+              symbol, companyName, change, changePercent, avgTotalVolume, marketCap,
             } = stock.quote;
             // Search for the appropriate portfolio_stock_id to append to stockInfoObj
             const selectedPortfolioStock = selectedStockIds.find((stock) => stock.symbol === symbol.toLowerCase());
@@ -72,7 +74,7 @@ export default function portfolios(db) {
               portfolioStockId: selectedPortfolioStock.id,
               symbol,
               companyName,
-              latestPrice,
+              close,
               change,
               changePercent,
               avgTotalVolume,
@@ -167,35 +169,24 @@ export default function portfolios(db) {
               });
             });
           });
-          console.log(arrayOfDatesStockTraded, 'altered');
-          console.log(arrayOfStkSpotPrices, 'arrayOfPricesPoints');
-          console.log(arrayOfStkSpotPrices[0], 'AMD');
-          console.log(arrayOfStkSpotPrices[1], 'AAPL');
-          console.log(arrayOfStkSpotPrices[2], 'MSFT');
-          console.log(arrayOfStkSpotPrices[3], 'TSLA');
 
           // 3. Combine each day's price into a value (data) point and send it to client
           // 3a. create a template for portfolio value
           const portfolioValueTimeSeries = arrayOfStkSpotPrices[0].priceDates.map((entry) => ({ date: entry.date, portfolioValue: 0 }));
-          console.log(portfolioValueTimeSeries, 'arrayOfPortfolioValues');
 
-          arrayOfStkSpotPrices.forEach((stkSpotPrice) => {
+          arrayOfStkSpotPrices.forEach((stkSpotPrice, index) => {
+            // console.log(stkSpotPrice, `stkSpotPrice-${index}`);
             stkSpotPrice.priceDates.forEach((priceDate, priceDateIndex) => {
               portfolioValueTimeSeries[priceDateIndex].portfolioValue += priceDate.cumValue;
             });
           });
 
-          console.log(portfolioValueTimeSeries, 'cumulative values');
           res.send({ portfolioStocks: essentialQuoteInfo, portfolioValueTimeSeries });
         })
         .catch((error) => console.log(error));
     } catch (error) {
       console.log(error);
     }
-  };
-
-  const calculateEquity = () => {
-
   };
 
   const update = async (req, res) => {
