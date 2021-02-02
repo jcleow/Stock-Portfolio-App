@@ -9,7 +9,7 @@ import {
 } from 'react-vis';
 
 export default function EquityChart({ equityChartProps }) {
-  const { quoteData, duration } = priceChartProps;
+  const { equityChartData, timeFrame } = equityChartProps;
   // Set the state for the hint value
   const [value, setValue] = useState(null);
 
@@ -30,20 +30,20 @@ export default function EquityChart({ equityChartProps }) {
 
   const dateDisplayFactor = () => {
     let factor = 0;
-    if (duration === '1m') {
+    if (timeFrame === '1m') {
       factor = 3;
-    } else if (duration === '3m') {
+    } else if (timeFrame === '3m') {
       factor = 6;
-    } else if (duration === '6m') {
+    } else if (timeFrame === '6m') {
       factor = 15;
     }
     return factor;
   };
 
   // Get all the co-ordinates of the relevant date and prices for 1 month
-  const dataPoints = quoteData.map((data, index) => {
+  const dataPoints = equityChartData.map((data) => {
     const mmdd = data.date.substring(data.date.length - 5, data.date.length);
-    const dataPoint = { x: mmdd, y: Number(data.close) };
+    const dataPoint = { x: mmdd, y: Number(data.portfolioValue) };
     return dataPoint;
   });
 
@@ -85,7 +85,7 @@ export default function EquityChart({ equityChartProps }) {
                 {value.x}
               </p>
               <p>
-                Price:$
+                Cumulative Value:$
                 {value.y}
               </p>
             </div>

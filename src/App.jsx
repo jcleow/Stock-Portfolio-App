@@ -15,7 +15,11 @@ export default function App() {
   const [quoteData, setQuoteData] = useState([]);
   const [duration, setDuration] = useState('');
   const priceChartProps = { quoteData, duration };
-  // const equityChartProps = { quoteData, timeFrame, };
+  const [equityChartData, setEquityChartData] = useState([]);
+  console.log(equityChartData, 'equityChartData');
+  // For purposes of charting equity curve
+  const timeFrame = '1m';
+  const equityChartProps = { equityChartData, timeFrame };
 
   const sideBarProps = {
     username, loggedIn, setLoggedIn, setDisplay, setPortfolioList, setUsername,
@@ -44,8 +48,8 @@ export default function App() {
       {display === 'portfolio'
       && (
       <div>
-        {/* <EquityChart equityChartProps={equityChartProps} /> */}
-        <PortfolioButtonList portfolioButtonsProps={portfolioButtonsProps} />
+        <EquityChart equityChartProps={equityChartProps} />
+        <PortfolioButtonList portfolioButtonsProps={portfolioButtonsProps} setEquityChartData={setEquityChartData} />
         <PortfolioDisplay portfolioStocks={portfolioStocks} />
       </div>
       )}
