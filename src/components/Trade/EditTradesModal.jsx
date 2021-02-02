@@ -3,10 +3,11 @@ import axios from 'axios';
 import {
   Button, Table, Modal,
 } from 'react-bootstrap';
+import { ThreeDotsVertical } from 'react-bootstrap-icons';
 import Trade from './Trade.jsx';
 
 export default function EditTradesModal({
-  portfolioStockId, portfolioId, historicalTrades, sharesOwned,
+  portfolioStockId, portfolioId, historicalTrades, refreshPortfolioView,
 }) {
   const [show, setShow] = useState(false);
   const singleTradeData = {
@@ -29,19 +30,15 @@ export default function EditTradesModal({
   ));
   const [tradeDisplay, setTradeDisplay] = useState([...historicalTradeDisplay]);
 
-  // Track the total shares for a stock
-  const [totalShares, setTotalShares] = useState();
-
   // Close the modal and do not save the edited trade transactions
   const handleCancel = () => {
     setShow(false);
   };
   const handleShow = () => setShow(true);
-  const handleSaveTransactions = () => {
-    console.log(tradesData, 'tradesData-modal');
+  const handleSaveTransactions = (event) => {
     axios.put(`/portfolios/${portfolioId}/stocks/${portfolioStockId}/update`, { tradesData })
-      .then((result) => {
-        console.log(result);
+      .then(() => {
+        refreshPortfolioView(event, portfolioId);
         setShow(false);
       })
       .catch((err) => console.log(err));
@@ -63,8 +60,8 @@ export default function EditTradesModal({
   };
   return (
     <>
-      <Button variant="primary" onClick={handleShow}>
-        {sharesOwned}
+      <Button variant="outline-dark" className="options" onClick={handleShow}>
+        <ThreeDotsVertical />
       </Button>
 
       <Modal

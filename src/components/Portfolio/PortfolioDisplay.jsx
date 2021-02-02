@@ -1,13 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import { Table } from 'react-bootstrap';
 import EditTradesModal from '../Trade/EditTradesModal.jsx';
 
-export default function PortfolioDisplay({ portfolioStocks }) {
+export default function PortfolioDisplay({ portfolioStocks, refreshPortfolioView }) {
+  console.log(portfolioStocks, 'portfolioStocks');
   const rowsOfStockData = portfolioStocks.map((stock, index) => {
-    // Maintain the display of the number (of shares) delimited by commas
-    const [inputVal, setInputVal] = useState('0');
-    // Maintain the numbers of shares
-    const [sharesInput, setSharesInput] = useState(0);
     const avgTotalVolumeDisplay = new Intl.NumberFormat()
       .format(Number((stock.avgTotalVolume / (10 ** 6)).toFixed(0)));
 
@@ -17,9 +14,20 @@ export default function PortfolioDisplay({ portfolioStocks }) {
     const fairValueDisplay = new Intl.NumberFormat()
       .format(Number(stock.totalSharesOwned * stock.close).toFixed(2));
     const historicalTrades = stock.trades;
+
     return (
       <tr>
-        <td>{index + 1}</td>
+        <td>
+          <EditTradesModal
+            portfolioStockId={stock.portfolioStockId}
+            portfolioId={stock.portfolioId}
+            historicalTrades={historicalTrades}
+            refreshPortfolioView={refreshPortfolioView}
+          />
+        </td>
+        <td>
+          {index + 1}
+        </td>
         <td>{stock.symbol}</td>
         <td>{stock.companyName}</td>
         <td>{stock.close}</td>
@@ -32,12 +40,7 @@ export default function PortfolioDisplay({ portfolioStocks }) {
           {marketCapDisplay}
         </td>
         <td>
-          <EditTradesModal
-            portfolioStockId={stock.portfolioStockId}
-            portfolioId={stock.portfolioId}
-            historicalTrades={historicalTrades}
-            sharesOwned={stock.totalSharesOwned}
-          />
+          {stock.totalSharesOwned}
         </td>
         <td>
           {fairValueDisplay}
@@ -50,6 +53,7 @@ export default function PortfolioDisplay({ portfolioStocks }) {
       <Table striped bordered hover>
         <thead>
           <tr>
+            <th />
             <th>#</th>
             <th>Symbol</th>
             <th>Name</th>

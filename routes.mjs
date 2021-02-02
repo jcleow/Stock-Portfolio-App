@@ -56,5 +56,4 @@ export default function routes(app) {
   app.get('/portfolios', PortfoliosController.index);
   app.get('/portfolios/:portfolioId', PortfoliosController.view);
   app.put('/portfolios/:portfolioId/stocks/:portfolioStockId/update', PortfoliosController.update);
-  app.get('/portfolios/:portfolioId/equity/timeFrame/1m', PortfoliosController.equity);
 }

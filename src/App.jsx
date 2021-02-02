@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import PortfolioButtonList from './components/Portfolio/PortfolioButtonList.jsx';
 import PortfolioDisplay from './components/Portfolio/PortfolioDisplay.jsx';
 import SideBar from './components/SideBar/SideBar.jsx';
@@ -11,12 +12,8 @@ export default function App() {
   const [display, setDisplay] = useState('main');
   const [portfolioList, setPortfolioList] = useState([]);
   const [portfolioStocks, setPortfolioStocks] = useState([]);
-
-  const [quoteData, setQuoteData] = useState([]);
-  const [duration, setDuration] = useState('');
-  const priceChartProps = { quoteData, duration };
   const [equityChartData, setEquityChartData] = useState([]);
-  console.log(equityChartData, 'equityChartData');
+
   // For purposes of charting equity curve
   const timeFrame = '1m';
   const equityChartProps = { equityChartData, timeFrame };
@@ -29,10 +26,26 @@ export default function App() {
     portfolioList, setPortfolioStocks,
   };
 
+  const refreshPortfolioView = (event, targetPortfolioId) => {
+    let portfolioId;
+    if (!targetPortfolioId) {
+      portfolioId = event.target.value;
+    } else {
+      portfolioId = targetPortfolioId;
+    }
+    console.log(portfolioId, 'portfolioId');
+    axios.get(`/portfolios/${portfolioId}`)
+      .then((result) => {
+        setPortfolioStocks(result.data.essentialQuoteInfo);
+        setEquityChartData(result.data.portfolioValueTimeSeries);
+      })
+      .catch((error) => console.log(error));
+  };
+
+  // To make sure username is shown
   useEffect(() => {
     if (document.cookie) {
       setLoggedIn(true);
-
       const splitCookieVal = document.cookie.split(' ');
       const startPos = splitCookieVal[0].indexOf('=') + 1;
       const endPos = splitCookieVal[0].indexOf(';');
@@ -40,6 +53,7 @@ export default function App() {
       setUsername(loggedInUsername);
     }
   }, []);
+
   return (
     <div>
       <SideBar sideBarProps={sideBarProps} />
@@ -49,8 +63,14 @@ export default function App() {
       && (
       <div>
         <EquityChart equityChartProps={equityChartProps} />
-        <PortfolioButtonList portfolioButtonsProps={portfolioButtonsProps} setEquityChartData={setEquityChartData} />
-        <PortfolioDisplay portfolioStocks={portfolioStocks} />
+        <PortfolioButtonList
+          portfolioButtonsProps={portfolioButtonsProps}
+          refreshPortfolioView={refreshPortfolioView}
+        />
+        <PortfolioDisplay
+          portfolioStocks={portfolioStocks}
+          refreshPortfolioView={refreshPortfolioView}
+        />
       </div>
       )}
     </div>
