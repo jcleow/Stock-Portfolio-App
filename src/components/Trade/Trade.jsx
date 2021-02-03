@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import DatePicker from 'react-datepicker';
-import { addDays } from 'date-fns';
+import { addDays, subDays } from 'date-fns';
 import 'react-datepicker/dist/react-datepicker.css';
 import moment from 'moment';
 import {
@@ -80,10 +80,9 @@ export default function Trade({
         <DatePicker
           selected={startDate}
           onChange={handleTradeDate}
+          minDate={subDays(new Date(), 30)}
           maxDate={addDays(new Date(), 0)}
-
         />
-
       </td>
       <td>
         <input value={shares} onChange={handleSharesTraded} type="number" placeholder="No. of shares" />
