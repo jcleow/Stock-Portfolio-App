@@ -74,8 +74,11 @@ body {
 }
 .rv-xy-plot__inner {
   display: block;
+  //Custom CSS
+  margin-left: 20%;
 }
 .rv-xy-plot__axis__line {
+  //Custom CSS
   // fill: none;
   // stroke-width: 2px;
   // stroke: #e6e6e9;
