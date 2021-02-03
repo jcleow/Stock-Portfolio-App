@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import DatePicker from 'react-datepicker';
+import { addDays } from 'date-fns';
+import 'react-datepicker/dist/react-datepicker.css';
 import moment from 'moment';
 import {
   Dropdown, DropdownButton,
@@ -21,6 +24,7 @@ export default function Trade({
   } = tradesData[dataIndex];
 
   const [currTradeData, setCurrTradeData] = useState(tradesData[dataIndex]);
+  const [startDate, setStartDate] = useState(new Date(tradeDate));
 
   // Helper that alters the array of tradesData
   const updateTradesData = (event, dataProp) => {
@@ -28,7 +32,7 @@ export default function Trade({
     if (dataProp === 'costPrice' || dataProp === 'shares') {
       updatedValue = Number(event.target.value);
     } else if (dataProp === 'tradeDate') {
-      updatedValue = new Date(event.target.value);
+      updatedValue = new Date(event);
     } else {
       updatedValue = event.target.value;
     }
@@ -41,6 +45,8 @@ export default function Trade({
     setTradesData(allTradesDataCopy);
   };
   const handleTradeDate = (event) => {
+    setStartDate(event);
+    console.log(event, 'event');
     updateTradesData(event, 'tradeDate');
   };
   const handleSharesTraded = (event) => {
@@ -71,7 +77,13 @@ export default function Trade({
         </DropdownButton>
       </td>
       <td>
-        <input value={moment(tradeDate).format('YYYY-MM-DD')} onChange={handleTradeDate} type="date" />
+        <DatePicker
+          selected={startDate}
+          onChange={handleTradeDate}
+          maxDate={addDays(new Date(), 0)}
+
+        />
+
       </td>
       <td>
         <input value={shares} onChange={handleSharesTraded} type="number" placeholder="No. of shares" />
