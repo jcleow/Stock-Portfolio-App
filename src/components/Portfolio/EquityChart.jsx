@@ -10,6 +10,11 @@ import {
 
 export default function EquityChart({ equityChartProps }) {
   const { equityChartData, timeFrame } = equityChartProps;
+
+  // To replace with error boundary?
+  if (!equityChartData) {
+    return (<XYPlot onMouseLeave={() => { setValue(null); }} height={500} width={1000} xType="ordinal" />);
+  }
   // Set the state for the hint value
   const [value, setValue] = useState(null);
 

@@ -164,6 +164,11 @@ export default function portfolios(db) {
       });
       // Retrieve individual stock symbols
       const selectedStockNames = selectedPortfolio.stocks.map((stock) => stock.stockSymbol);
+      // if stocks list is zero, exit the function
+      if (selectedStockNames.length === 0) {
+        res.send({ message: 'no stocks added' });
+        return;
+      }
       const selectedStockNamesString = selectedStockNames.join(',');
 
       let selectedStockIds = {};
@@ -248,9 +253,52 @@ export default function portfolios(db) {
       .catch((err) => console.log(err));
   };
 
+  const create = async (req, res) => {
+    const { portfolioName } = req.body;
+    console.log(req.body, 'req-body');
+    await db.Portfolio.create({
+      userId: req.loggedInUserId,
+      name: portfolioName,
+    });
+    res.send({ message: 'completed' });
+  };
+
+  const add = async (req, res) => {
+    const { newSymbol } = req.body;
+    const { portfolioId } = req.params;
+    console.log(req.body, 'req-body');
+
+    // first find if this stock exists, if not create a new one
+    let stockToBeAdded = await db.Stock.findOne({
+      where:
+    {
+      stockSymbol: newSymbol,
+    },
+    });
+
+    if (!stockToBeAdded) {
+      stockToBeAdded = await db.Stock.create({
+        stockName: 'some name',
+        stockSymbol: newSymbol,
+      });
+    }
+
+    // create a new portfolio stock
+    const newPortfolioStock = await db.PortfolioStock.create({
+      where: {
+        portfolioId,
+        stockId: stockToBeAdded.id,
+      },
+    });
+
+    res.send({ message: 'completed', newPortfolioStock });
+  };
+
   return ({
     index,
     view,
     update,
+    create,
+    add,
   });
 }

@@ -51,7 +51,7 @@ export default function MainDisplay() {
   }
 
   return (
-    <div className="offset-display">
+    <div>
       <div className="container">
         <div className="row">
           <div className="col d-flex justify-content-between">
@@ -64,8 +64,10 @@ export default function MainDisplay() {
         ? <CoyInfo coyInfo={coyInfo} />
         : null}
       <PriceChart priceChartProps={priceChartProps} />
-      {keyStats
+      <div className="offset-display">
+        {keyStats
       && <StockKeyStats keyStats={keyStats} />}
+      </div>
     </div>
   );
 }

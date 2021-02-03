@@ -5,6 +5,7 @@ import PortfolioTable from './components/Portfolio/PortfolioTable.jsx';
 import SideBar from './components/SideBar/SideBar.jsx';
 import MainDisplay from './components/MainDisplay.jsx';
 import EquityChart from './components/Portfolio/EquityChart.jsx';
+import EquityChartHeader from './components/Portfolio/EquityChartHeader.jsx';
 
 export default function App() {
   const [loggedIn, setLoggedIn] = useState(false);
@@ -32,6 +33,7 @@ export default function App() {
     } else {
       portfolioId = targetPortfolioId;
     }
+    console.log('test-3');
     axios.get(`/portfolios/${portfolioId}`)
       .then((result) => {
         console.log(result, 'result-0');
@@ -61,6 +63,7 @@ export default function App() {
       {display === 'portfolio'
       && (
       <div>
+        <EquityChartHeader />
         <EquityChart equityChartProps={equityChartProps} />
         <PortfolioButtonList
           portfolioButtonsProps={portfolioButtonsProps}

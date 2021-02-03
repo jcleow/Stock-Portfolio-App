@@ -56,4 +56,6 @@ export default function routes(app) {
   app.get('/portfolios', PortfoliosController.index);
   app.get('/portfolios/:portfolioId', PortfoliosController.view);
   app.put('/portfolios/:portfolioId/stocks/:portfolioStockId/update', PortfoliosController.update);
+  app.post('/portfolios/create', PortfoliosController.create);
+  app.post('/portfolios/:portfolioId/addSymbol', PortfoliosController.add);
 }

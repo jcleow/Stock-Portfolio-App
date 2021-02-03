@@ -1,54 +1,92 @@
 import React, { useState } from 'react';
-import { Table } from 'react-bootstrap';
+import axios from 'axios';
+import { Table, Button } from 'react-bootstrap';
 import EditTradesModal from '../Trade/EditTradesModal.jsx';
+
+function AddStockToPortfolioBtn() {
+  const [newSymbol, setNewSymbol] = useState();
+  const handleNewSymbol = (event) => {
+    setNewSymbol(event.target.value);
+  };
+
+  const handleAddSymbol = () => {
+    axios.post('/portfolios/:portfolioId/addSymbol', { newSymbol })
+      .then((result) => {
+        console.log(result, 'result');
+      })
+      .catch((err) => console.log(err));
+  };
+  return (
+    <tr>
+      <td />
+      <td />
+      <td>
+        <input placeholder="input symbol" value={newSymbol} onChange={handleNewSymbol} />
+        <Button variant="outline-primary" className="options" onClick={handleAddSymbol}>+</Button>
+      </td>
+      <td />
+      <td />
+      <td />
+      <td />
+      <td />
+      <td />
+      <td />
+      <td />
+    </tr>
+  );
+}
 
 export default function PortfolioTable({ portfolioStocks, refreshPortfolioView }) {
   console.log('re-rendered');
   console.log(portfolioStocks, 'portfolio rerendered');
-  const rowsOfStockData = portfolioStocks.map((stock, index) => {
-    const avgTotalVolumeDisplay = new Intl.NumberFormat()
-      .format(Number((stock.avgTotalVolume / (10 ** 6)).toFixed(0)));
+  let rowsOfStockData;
+  // Replace the following if condition with errorboundary?
+  if (portfolioStocks) {
+    rowsOfStockData = portfolioStocks.map((stock, index) => {
+      const avgTotalVolumeDisplay = new Intl.NumberFormat()
+        .format(Number((stock.avgTotalVolume / (10 ** 6)).toFixed(0)));
 
-    const marketCapDisplay = new Intl.NumberFormat()
-      .format(Number((stock.marketCap / (10 ** 6)).toFixed(0)));
+      const marketCapDisplay = new Intl.NumberFormat()
+        .format(Number((stock.marketCap / (10 ** 6)).toFixed(0)));
 
-    const fairValueDisplay = new Intl.NumberFormat()
-      .format(Number(stock.totalSharesOwned * stock.close).toFixed(2));
-    const historicalTrades = stock.trades;
+      const fairValueDisplay = new Intl.NumberFormat()
+        .format(Number(stock.totalSharesOwned * stock.close).toFixed(2));
+      const historicalTrades = stock.trades;
 
-    return (
-      <tr>
-        <td>
-          <EditTradesModal
-            portfolioStockId={stock.portfolioStockId}
-            portfolioId={stock.portfolioId}
-            historicalTrades={historicalTrades}
-            refreshPortfolioView={refreshPortfolioView}
-          />
-        </td>
-        <td>
-          {index + 1}
-        </td>
-        <td>{stock.symbol}</td>
-        <td>{stock.companyName}</td>
-        <td>{stock.close}</td>
-        <td>{stock.change}</td>
-        <td>{stock.changePercent}</td>
-        <td>
-          {avgTotalVolumeDisplay}
-        </td>
-        <td>
-          {marketCapDisplay}
-        </td>
-        <td>
-          {stock.totalSharesOwned}
-        </td>
-        <td>
-          {fairValueDisplay}
-        </td>
-      </tr>
-    );
-  });
+      return (
+        <tr>
+          <td>
+            <EditTradesModal
+              portfolioStockId={stock.portfolioStockId}
+              portfolioId={stock.portfolioId}
+              historicalTrades={historicalTrades}
+              refreshPortfolioView={refreshPortfolioView}
+            />
+          </td>
+          <td>
+            {index + 1}
+          </td>
+          <td>{stock.symbol}</td>
+          <td>{stock.companyName}</td>
+          <td>{stock.close}</td>
+          <td>{stock.change}</td>
+          <td>{stock.changePercent}</td>
+          <td>
+            {avgTotalVolumeDisplay}
+          </td>
+          <td>
+            {marketCapDisplay}
+          </td>
+          <td>
+            {stock.totalSharesOwned}
+          </td>
+          <td>
+            {fairValueDisplay}
+          </td>
+        </tr>
+      );
+    });
+  }
   return (
     <div className="offset-display">
       <Table striped bordered hover>
@@ -69,8 +107,10 @@ export default function PortfolioTable({ portfolioStocks, refreshPortfolioView }
         </thead>
         <tbody>
           {rowsOfStockData}
+          <AddStockToPortfolioBtn />
         </tbody>
       </Table>
+
     </div>
   );
 }
