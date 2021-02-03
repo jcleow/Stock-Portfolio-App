@@ -40,13 +40,6 @@ export default function EquityChart({ equityChartProps }) {
     return factor;
   };
 
-  // // Get all the co-ordinates of the relevant date and prices for 1 month
-  // const dataPoints = equityChartData.map((data) => {
-  //   const mmdd = data.date.substring(data.date.length - 5, data.date.length);
-  //   const dataPoint = { x: mmdd, y: Number(data.portfolioValue) };
-  //   return dataPoint;
-  // });
-
   const allDates = Object.keys(equityChartData);
   const dataPoints = allDates.map((date) => {
     const mmdd = date.substring(date.length - 5, date.length);
