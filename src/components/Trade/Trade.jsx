@@ -5,7 +5,7 @@ import {
 } from 'react-bootstrap';
 
 export default function Trade({
-  tradeId, histTradesData, dataIndex, tradeStates,
+  histTradesData, dataIndex, tradeStates,
 }) {
   const {
     selectedPosition,
@@ -22,13 +22,22 @@ export default function Trade({
     setTradesData,
   } = tradeStates;
   const [currTradeData, setCurrTradeData] = useState(tradesData[dataIndex]);
+  console.log(sharesTraded, 'sharesTraded');
 
   // Helper that alters the array of tradesData
   const updateTradesData = (event, dataProp) => {
-    const currTradeDataCopy = { ...currTradeData, [dataProp]: event.target.value };
+    let updatedValue;
+    if (dataProp === 'costPrice' || dataProp === 'shares') {
+      updatedValue = Number(event.target.value);
+    } else if (dataProp === 'tradeDate') {
+      updatedValue = new Date(event.target.value);
+    }
+
+    const currTradeDataCopy = { ...currTradeData, [dataProp]: updatedValue };
     const allTradesDataCopy = [...tradesData];
     allTradesDataCopy[dataIndex] = currTradeDataCopy;
-
+    console.log(currTradeDataCopy, 'currTradeDataCopy');
+    console.log(allTradesDataCopy, 'allTradesDataCopy');
     // Update the tradesData state
     setCurrTradeData(currTradeDataCopy);
     setTradesData(allTradesDataCopy);
@@ -38,13 +47,14 @@ export default function Trade({
     const newTradeDateArray = [...tradeDate];
     newTradeDateArray[dataIndex] = newTradeDate;
     setTradeDate(newTradeDateArray);
-    updateTradesData(event, 'tradeDate');
+    // updateTradesData(event, 'tradeDate');
   };
   const handleSharesTraded = (event) => {
     const newSharesTraded = event.target.value;
     const newSharesTradedArray = [...sharesTraded];
-    newSharesTradedArray[dataIndex] = newSharesTraded;
+    newSharesTradedArray[dataIndex] = Number(newSharesTraded);
     setSharesTraded(newSharesTradedArray);
+    console.log(newSharesTradedArray, 'newSharesTradedArray');
     updateTradesData(event, 'shares');
   };
   const handleCostBasis = (event) => {
@@ -52,20 +62,20 @@ export default function Trade({
     const newCostBasisArray = [...costBasis];
     newCostBasisArray[dataIndex] = newCostBasis;
     setCostBasis(newCostBasisArray);
-    updateTradesData(event, 'costPrice');
+    // updateTradesData(event, 'costPrice');
   };
   const handleSelectedPosition = (event) => {
     const newSelectedPosition = event.target.value;
     const newSelectedPositionArray = [...selectedPosition];
     newSelectedPositionArray[dataIndex] = newSelectedPosition;
     setSelectedPosition(newSelectedPositionArray);
-    updateTradesData(event, 'position');
+    // updateTradesData(event, 'position');
   };
 
   // Render the total cost everytime component is re-rendered
   useEffect(() => {
     if (sharesTraded >= 0 && costBasis >= 0) {
-      setTotalCost(sharesTraded * costBasis);
+      setTotalCost(sharesTraded[dataIndex] * costBasis[dataIndex]);
     }
   }, [sharesTraded, costBasis]);
   return (

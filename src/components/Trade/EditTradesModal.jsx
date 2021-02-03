@@ -18,7 +18,6 @@ export default function EditTradesModal({
   const sharesTradedArray = [];
   const costBasisArray = [];
   const totalCostArray = [];
-  console.log(historicalTrades, 'historicalTrades');
   if (historicalTrades.length > 0) {
     historicalTrades.forEach((trade) => {
       Object.entries(trade).forEach(([key, value]) => {
@@ -45,6 +44,9 @@ export default function EditTradesModal({
 
   // This tradesData is passed to the ajax request to update the trade
   const [tradesData, setTradesData] = useState([...historicalTrades]);
+  console.log(tradesData, 'tradesData');
+  let allTradeDisplay = [];
+
   // Create the existing Trade entries
   const historicalTradeDisplay = historicalTrades.map((histTradeData, index) => {
     // DataIndex is the index of its relevant data in the states' arrays
@@ -65,6 +67,7 @@ export default function EditTradesModal({
       setTotalCost,
       setTradesData,
     };
+    console.log(sharesTraded, 'sharesTraded-editsharesModal');
     return (
       <Trade
         histTradesData={historicalTrades}
@@ -74,7 +77,8 @@ export default function EditTradesModal({
       />
     );
   });
-  const [tradeDisplay, setTradeDisplay] = useState([...historicalTradeDisplay]);
+  allTradeDisplay = [...historicalTradeDisplay];
+  const [allTradeDisplayLength, setAllTradeDisplayLength] = useState(allTradeDisplay.length);
 
   // Close the modal and do not save the edited trade transactions
   const handleCancel = () => {
@@ -83,10 +87,7 @@ export default function EditTradesModal({
   const handleShow = () => setShow(true);
   const handleSaveTransactions = (event) => {
     axios.put(`/portfolios/${portfolioId}/stocks/${portfolioStockId}/update`, { tradesData })
-      .then((result) => {
-        console.log(result, 'result-1');
-        return refreshPortfolioView(event, portfolioId);
-      })
+      .then((result) => refreshPortfolioView(event, portfolioId))
       .then(() => {
         setShow(false);
       })
@@ -118,11 +119,11 @@ export default function EditTradesModal({
     // DataIndex is the index of its relevant data in the states' arrays
     const dataIndex = selectedPosition.length - 1;
 
-    setTradeDisplay([...tradeDisplay,
-      <Trade
-        dataIndex={dataIndex}
-        tradeStates={tradeStates}
-      />]);
+    allTradeDisplay = [...allTradeDisplay, <Trade
+      dataIndex={dataIndex}
+      tradeStates={tradeStates}
+    />];
+    setAllTradeDisplayLength(allTradeDisplayLength + 1);
 
     // initialize trades data for new entry
     setTradesData([...tradesData, {
@@ -148,7 +149,11 @@ export default function EditTradesModal({
         keyboard={false}
       >
         <Modal.Header closeButton>
-          <Modal.Title>Trade History</Modal.Title>
+          <Modal.Title>
+            Trade History -
+            {allTradeDisplayLength}
+            Trades
+          </Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <div className="container">
@@ -164,7 +169,7 @@ export default function EditTradesModal({
                 </tr>
               </thead>
               <tbody>
-                {tradeDisplay}
+                {allTradeDisplay}
               </tbody>
             </Table>
           </div>
