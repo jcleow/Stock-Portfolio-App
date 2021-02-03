@@ -12,8 +12,6 @@ export default function Trade({
     setTradesData,
   } = tradeStates;
 
-  console.log(tradesData[dataIndex], 'test-2');
-
   const {
     id,
     position,
@@ -38,8 +36,6 @@ export default function Trade({
     const currTradeDataCopy = { ...currTradeData, [dataProp]: updatedValue };
     const allTradesDataCopy = [...tradesData];
     allTradesDataCopy[dataIndex] = currTradeDataCopy;
-    console.log(currTradeDataCopy, 'currTradeDataCopy');
-    console.log(allTradesDataCopy, 'allTradesDataCopy');
     // Update the tradesData state
     setCurrTradeData(currTradeDataCopy);
     setTradesData(allTradesDataCopy);

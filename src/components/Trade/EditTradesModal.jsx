@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import moment from 'moment';
 import axios from 'axios';
 import {
   Button, Table, Modal,
@@ -10,12 +9,10 @@ import Trade from './Trade.jsx';
 export default function EditTradesModal({
   portfolioStockId, portfolioId, historicalTrades, refreshPortfolioView,
 }) {
-  console.log('editTradesModal re-rendered');
   const [show, setShow] = useState(false);
 
   // This tradesData is passed to the ajax request to update the trade
   const [tradesData, setTradesData] = useState([...historicalTrades]);
-  console.log(tradesData, 'tradesData');
   // Create the existing Trade entries
   const historicalTradeDisplay = tradesData.map((tradeData, index) => {
     // DataIndex is the index of its relevant data in the states' arrays
@@ -42,7 +39,7 @@ export default function EditTradesModal({
   const handleShow = () => setShow(true);
   const handleSaveTransactions = (event) => {
     axios.put(`/portfolios/${portfolioId}/stocks/${portfolioStockId}/update`, { tradesData })
-      .then((result) => refreshPortfolioView(event, portfolioId))
+      .then(() => refreshPortfolioView(event, portfolioId))
       .then(() => {
         setShow(false);
       })
@@ -52,7 +49,6 @@ export default function EditTradesModal({
     const newTradesData = [...tradesData, {
       id: null, portfolioStockId, position: '', tradeDate: null, costPrice: null,
     }];
-    console.log('going to set trades data');
     setTradesData(newTradesData);
   };
   return (

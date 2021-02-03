@@ -13,7 +13,6 @@ export default function App() {
   const [portfolioList, setPortfolioList] = useState([]);
   const [portfolioStocks, setPortfolioStocks] = useState([]);
   const [equityChartData, setEquityChartData] = useState([]);
-  console.log(portfolioStocks, 'portfolioStocks');
   // For purposes of charting equity curve
   const timeFrame = '1m';
   const equityChartProps = { equityChartData, timeFrame };
@@ -33,7 +32,7 @@ export default function App() {
     } else {
       portfolioId = targetPortfolioId;
     }
-    return axios.get(`/portfolios/${portfolioId}`)
+    axios.get(`/portfolios/${portfolioId}`)
       .then((result) => {
         console.log(result, 'result-0');
         setPortfolioStocks(result.data.essentialQuoteInfo);

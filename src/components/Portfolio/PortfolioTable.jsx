@@ -15,7 +15,6 @@ export default function PortfolioTable({ portfolioStocks, refreshPortfolioView }
     const fairValueDisplay = new Intl.NumberFormat()
       .format(Number(stock.totalSharesOwned * stock.close).toFixed(2));
     const historicalTrades = stock.trades;
-    console.log(historicalTrades, 'historicalTrades');
 
     return (
       <tr>
