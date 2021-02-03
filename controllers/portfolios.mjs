@@ -215,7 +215,7 @@ export default function portfolios(db) {
 
       let newTrade;
 
-      if (!trade.id) {
+      if (trade.id === null) {
         newTrade = await db.Trade.create({
           portfolioStockId, position, costPrice, tradeDate, shares,
         });
