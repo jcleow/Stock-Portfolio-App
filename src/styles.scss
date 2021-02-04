@@ -41,6 +41,8 @@ body {
 }
 
 .sidebar {
+  position: sticky;
+  top: 0;
   height: 100vh;
 }
 
@@ -50,8 +52,17 @@ body {
 .sidebar-flex {
   flex-grow: 0;
 }
-.maindispaly-flex {
+.main-display-flex {
   flex-grow: 0;
+}
+.portfolio-btn {
+  border: none;
+  background-color: transparent;
+  outline: none;
+  color: #adadad;
+}
+.portfolio-btn:focus {
+  border: none;
 }
 
 // React-vis scss
@@ -91,7 +102,7 @@ body {
 .rv-xy-plot__inner {
   display: block;
   //Custom CSS
-  margin-left: 20%;
+  // margin-left: 20%;
 }
 .rv-xy-plot__axis__line {
   //Custom CSS

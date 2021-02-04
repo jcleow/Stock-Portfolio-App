@@ -61,7 +61,15 @@ export default function App() {
   }, []);
 
   const sideBarProps = {
-    username, loggedIn, setLoggedIn, setDisplay, setPortfolioList, setUsername, handleDisplayPortfolio,
+    username,
+    loggedIn,
+    setLoggedIn,
+    setDisplay,
+    setPortfolioList,
+    setUsername,
+    handleDisplayPortfolio,
+    refreshPortfolioView,
+    portfolioList,
   };
   const portfolioButtonsProps = {
     portfolioList,
@@ -82,10 +90,6 @@ export default function App() {
           handleDisplayPortfolio={handleDisplayPortfolio}
         />
         <EquityChart equityChartProps={equityChartProps} />
-        <PortfolioButtonList
-          portfolioButtonsProps={portfolioButtonsProps}
-          refreshPortfolioView={refreshPortfolioView}
-        />
         <PortfolioTable
           currPortfolioId={currPortfolioId}
           portfolioStocks={portfolioStocks}
