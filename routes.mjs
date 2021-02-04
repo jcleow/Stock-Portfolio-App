@@ -45,7 +45,8 @@ export default function routes(app) {
 
   const UsersController = users(db);
   app.get('/checkLoggedIn', UsersController.checkLoggedIn);
-  app.post('/signin', UsersController.signin);
+  app.put('/signIn', UsersController.signIn);
+  app.put('/signOut', UsersController.signOut);
 
   const StocksController = stocks(db);
   app.get('/:symbol/chart/:duration', StocksController.getChart);

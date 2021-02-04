@@ -10,7 +10,7 @@ export default function users(db) {
     res.send({ auth: false });
   };
 
-  const signin = async (req, res) => {
+  const signIn = async (req, res) => {
     const { usernameInput, passwordInput } = req.body;
 
     // Perform hashing of password
@@ -37,8 +37,21 @@ export default function users(db) {
     }
   };
 
+  const signOut = async (req, res) => {
+    const { loggedInUserId } = req;
+    console.log(req.loggedInUserId, 'req');
+    const currUser = await db.User.findByPk(loggedInUserId);
+    currUser.loggedIn = false;
+    await currUser.save();
+    res.clearCookie('loggedInHash');
+    res.clearCookie('loggedInUserId');
+    res.clearCookie('loggedInUsername');
+    res.send({ message: 'signed out' });
+  };
+
   return {
-    signin,
+    signIn,
+    signOut,
     checkLoggedIn,
   };
 }

@@ -9,10 +9,10 @@ import {
 } from 'react-vis';
 
 export default function EquityChart({ equityChartProps }) {
-  const { equityChartData, timeFrame } = equityChartProps;
+  const { equityCurveData, accCostCurveData, timeFrame } = equityChartProps;
 
   // To replace with error boundary?
-  if (!equityChartData) {
+  if (!equityCurveData) {
     return (<XYPlot onMouseLeave={() => { setValue(null); }} height={500} width={1000} xType="ordinal" />);
   }
   // Set the state for the hint value
@@ -45,10 +45,10 @@ export default function EquityChart({ equityChartProps }) {
     return factor;
   };
 
-  const allDates = Object.keys(equityChartData);
+  const allDates = Object.keys(equityCurveData);
   const dataPoints = allDates.map((date) => {
     const mmdd = date.substring(date.length - 5, date.length);
-    const dataPoint = { x: mmdd, y: equityChartData[date] };
+    const dataPoint = { x: mmdd, y: equityCurveData[date] };
     return dataPoint;
   });
 

@@ -1,15 +1,24 @@
 import React, { useState } from 'react';
-import { FaHeart, FaGem, FaUserCircle } from 'react-icons/fa';
+import {
+  FaHeart, FaGem, FaUserCircle,
+} from 'react-icons/fa';
 import {
   ProSidebar, Menu, MenuItem, SubMenu,
 } from 'react-pro-sidebar';
 import SignInButton from './SignInButton.jsx';
-// import PortfolioButtonListCopy from './PortfolioButtonListCopy.jsx';
+import SignOutButton from './SignOutButton.jsx';
 
 export default function SideBar({ sideBarProps }) {
   const [collapsed, setCollapsed] = useState(true);
   const {
-    loggedIn, username, setLoggedIn, setUsername, handleDisplayPortfolio, portfolioList, refreshPortfolioView,
+    loggedIn,
+    username,
+    setLoggedIn,
+    setUsername,
+    setSelectedPortfolioName,
+    handleDisplayPortfolio,
+    portfolioList,
+    refreshPortfolioView,
   } = sideBarProps;
 
   const signInButtonProps = { setLoggedIn, setUsername };
@@ -26,7 +35,17 @@ export default function SideBar({ sideBarProps }) {
     const portfolioId = portfolio.id;
     return (
       <MenuItem>
-        <button className="portfolio-btn" value={portfolioId} onClick={refreshPortfolioView}>{portfolio.name}</button>
+        <button
+          type="submit"
+          className="portfolio-btn"
+          value={portfolioId}
+          onClick={(e) => {
+            refreshPortfolioView(e);
+            setSelectedPortfolioName(portfolio.name);
+          }}
+        >
+          {portfolio.name}
+        </button>
       </MenuItem>
     );
   });
@@ -36,11 +55,15 @@ export default function SideBar({ sideBarProps }) {
       <ProSidebar collapsed={collapsed} onMouseOver={handleMouseOver} onMouseLeave={handleMouseLeave}>
         <div className="text-center mt-5">S T O N K S</div>
         <Menu iconShape="square">
-          <MenuItem>{!loggedIn && <SignInButton signInButtonProps={signInButtonProps} />}</MenuItem>
-          <MenuItem icon={<FaUserCircle />}>{loggedIn && `Welcome ${username}`}</MenuItem>
+          <MenuItem>{loggedIn ? `Welcome ${username}` : null }</MenuItem>
           <MenuItem icon={<FaGem />}>Search for Stock</MenuItem>
           <SubMenu title="Portfolios" icon={<FaHeart />} onClick={handleDisplayPortfolio}>
             {portfolioButtonList}
+          </SubMenu>
+          <SubMenu icon={<FaUserCircle />} title="Account Management">
+            <MenuItem icon={<FaUserCircle />}>
+              {!loggedIn ? (<SignInButton signInButtonProps={signInButtonProps} />) : (<SignOutButton setLoggedIn={setLoggedIn} />) }
+            </MenuItem>
           </SubMenu>
         </Menu>
       </ProSidebar>

@@ -58,12 +58,62 @@ function CreatePortfolioModal({ handleDisplayPortfolio }) {
   );
 }
 
-export default function EquityChartHeader({ handleDisplayPortfolio }) {
+export default function EquityChartHeader({ equityChartHeaderProps }) {
+  const {
+    handleDisplayPortfolio,
+    selectedPortfolioName,
+    equityCurveData,
+    accCostCurveData,
+  } = equityChartHeaderProps;
+
+  const arrOfPortfolioValues = Object.values(equityCurveData).map((val) => val);
+  const arrOfAccCostValues = Object.values(accCostCurveData).map((cost) => cost);
+  const portfolioValue = arrOfAccCostValues.slice(-1)[0];
+  const portfolioCost = arrOfPortfolioValues.slice(-1)[0];
+
+  const profitLoss = portfolioValue - portfolioCost;
+  const profitLossPct = ((profitLoss / arrOfAccCostValues.slice(-1)[0]) * 100).toFixed(2);
+  const formattedPnL = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(profitLoss);
+
+  const formattedPV = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(portfolioValue);
+
   return (
     <div className="d-flex justify-content-between">
       <div className="offset-display mt-3">
-        Low Risk Portfolio
-        <div>P/L +/- 10%</div>
+        <h2>
+          {selectedPortfolioName}
+        </h2>
+        {isNaN(portfolioValue) ? null : (
+          <h1>
+            {formattedPV}
+          </h1>
+        )}
+        {isNaN(profitLoss)
+          ? null : (
+            <h5>
+              P/L:
+              {' '}
+              {formattedPnL}
+            </h5>
+          )}
+        {isNaN(profitLossPct) ? null : (
+          <h6>
+            P/L%:
+            {' '}
+            {profitLossPct}
+          </h6>
+        ) }
+
       </div>
       <div className="mt-3 mr-3">
         <CreatePortfolioModal handleDisplayPortfolio={handleDisplayPortfolio} />

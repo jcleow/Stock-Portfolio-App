@@ -5,7 +5,7 @@ const SANDBOXTOKEN = 'Tsk_c0d79534cc3f4d8fa07478c311b898d2';
 const GENERICURL = 'https://sandbox.iexapis.com/stable/stock';
 
 // Helper that calculates the total equity of a portfolio (1M view)
-const calculatePortfolioValue = (batchQuotes, arrayOfStockTrades, selectedStockIds, selectedPortfolioStockIds, selectedStockNamesString) => {
+const calcPortfolioValueAndCost = (batchQuotes, arrayOfStockTrades, selectedStockIds, selectedPortfolioStockIds, selectedStockNamesString) => {
   // First convert all the spot prices into an array of objects with
   // key: symbol and value: an object of dates as key and value as price
   const newArrayOfStkSpotPrices = batchQuotes.map((entry) => {
@@ -93,6 +93,7 @@ const calculatePortfolioValue = (batchQuotes, arrayOfStockTrades, selectedStockI
   // Create an object only portfolioValues template
   let portfolioValueTimeSeries = {};
   batchQuotes[0].chart.forEach((log) => (portfolioValueTimeSeries = { ...portfolioValueTimeSeries, [log.date]: 0 }));
+  const accumulatedCostTimeSeries = { ...portfolioValueTimeSeries };
 
   // Array of relevant dates
   const timeSeries = Object.keys(portfolioValueTimeSeries);
@@ -102,13 +103,15 @@ const calculatePortfolioValue = (batchQuotes, arrayOfStockTrades, selectedStockI
     timeSeries.forEach((date) => {
       if (consolStkTrades[symbol][date].hasOwnProperty('cumValue')) {
         portfolioValueTimeSeries[date] += consolStkTrades[symbol][date].cumValue;
+        accumulatedCostTimeSeries[date] += consolStkTrades[symbol][date].cumCost;
       } else {
         portfolioValueTimeSeries[date] += 0;
+        accumulatedCostTimeSeries[date] += 0;
       }
     });
   });
-
-  return portfolioValueTimeSeries;
+  console.log(accumulatedCostTimeSeries, 'accumulatedCostTimeSeries');
+  return { portfolioValueTimeSeries, accumulatedCostTimeSeries };
 };
 
 const getBatchQuotes = (portfolioId, selectedStockIds, selectedPortfolioStockIds, arrayOfSharesOwned, arrayOfStockTrades, selectedStockNamesString) => {
@@ -212,8 +215,8 @@ export default function portfolios(db) {
         .then((batchQuoteResults) => {
           // Calculate the portfolioValue over a time frame (fixed at 1M for now)
           const { essentialQuoteInfo, batchQuotes } = batchQuoteResults;
-          const portfolioValueTimeSeries = calculatePortfolioValue(batchQuotes, arrayOfStockTrades, selectedStockIds, selectedPortfolioStockIds, selectedStockNamesString);
-          res.send({ essentialQuoteInfo, portfolioValueTimeSeries });
+          const { portfolioValueTimeSeries, accumulatedCostTimeSeries } = calcPortfolioValueAndCost(batchQuotes, arrayOfStockTrades, selectedStockIds, selectedPortfolioStockIds, selectedStockNamesString);
+          res.send({ essentialQuoteInfo, portfolioValueTimeSeries, accumulatedCostTimeSeries });
         })
         .catch((err) => console.log(err));
     } catch (error) {

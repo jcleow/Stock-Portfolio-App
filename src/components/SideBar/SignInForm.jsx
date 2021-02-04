@@ -18,7 +18,7 @@ export default function SignInForm({ signInFormProps }) {
 
   function handleSignIn() {
     const signInData = { usernameInput, passwordInput };
-    axios.post('/signin', signInData)
+    axios.put('/signIn', signInData)
       .then((result) => {
         setUsernameInput('');
         setPasswordInput('');

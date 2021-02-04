@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import PortfolioButtonList from './components/Portfolio/PortfolioButtonList.jsx';
 import PortfolioTable from './components/Portfolio/PortfolioTable.jsx';
 import SideBar from './components/SideBar/SideBar.jsx';
 import MainDisplay from './components/MainDisplay.jsx';
@@ -14,10 +13,13 @@ export default function App() {
   const [portfolioList, setPortfolioList] = useState([]);
   const [portfolioStocks, setPortfolioStocks] = useState([]);
   const [currPortfolioId, setCurrPortfolioId] = useState();
-  const [equityChartData, setEquityChartData] = useState([]);
+  const [equityCurveData, setEquityCurveData] = useState([]);
+  const [accCostCurveData, setAccCostCurveData] = useState([]);
+  const [selectedPortfolioName, setSelectedPortfolioName] = useState();
+
   // For purposes of charting equity curve
   const timeFrame = '1m';
-  const equityChartProps = { equityChartData, timeFrame };
+  const equityChartProps = { equityCurveData, accCostCurveData, timeFrame };
 
   const refreshPortfolioView = (event, targetPortfolioId) => {
     let portfolioId;
@@ -30,8 +32,10 @@ export default function App() {
     console.log(portfolioId, 'portfolioId');
     axios.get(`/portfolios/${portfolioId}`)
       .then((result) => {
+        console.log(result, 'result');
         setPortfolioStocks(result.data.essentialQuoteInfo);
-        setEquityChartData(result.data.portfolioValueTimeSeries);
+        setEquityCurveData(result.data.portfolioValueTimeSeries);
+        setAccCostCurveData(result.data.accumulatedCostTimeSeries);
       })
       .catch((error) => console.log(error));
   };
@@ -67,13 +71,20 @@ export default function App() {
     setDisplay,
     setPortfolioList,
     setUsername,
+    setSelectedPortfolioName,
     handleDisplayPortfolio,
     refreshPortfolioView,
     portfolioList,
+
   };
-  const portfolioButtonsProps = {
-    portfolioList,
+
+  const equityChartHeaderProps = {
+    handleDisplayPortfolio,
+    selectedPortfolioName,
+    equityCurveData,
+    accCostCurveData,
   };
+
   return (
     <div className="flex-container">
       <div className="sidebar-flex">
@@ -87,7 +98,7 @@ export default function App() {
       <div>
         <EquityChartHeader
           portfolioId={currPortfolioId}
-          handleDisplayPortfolio={handleDisplayPortfolio}
+          equityChartHeaderProps={equityChartHeaderProps}
         />
         <EquityChart equityChartProps={equityChartProps} />
         <PortfolioTable
