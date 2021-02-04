@@ -26,24 +26,17 @@ const calculatePortfolioValue = (batchQuotes, arrayOfStockTrades, selectedStockI
   newArrayOfStkSpotPrices.forEach((entry) => {
     consolStkSpotPrice = { ...consolStkSpotPrice, ...entry };
   });
-  console.log(selectedStockIds, 'selectedStockIds');
-  console.log(selectedPortfolioStockIds, 'selectedPortfolioStockIds-1');
-  console.log(consolStkSpotPrice, 'consolStkSpotPrice');
+
   const collectionOfStocksTraded = Object.entries(selectedPortfolioStockIds).map(([key, value]) => (
+    // id here refers to portfolioStockId
     {
       id: value,
       [key]: consolStkSpotPrice[key],
     }));
 
-  console.log(collectionOfStocksTraded, 'collectionOfStocksTraded');
-  console.log(collectionOfStocksTraded[4], 'collectionOfStocksTraded-KO');
-  console.log(collectionOfStocksTraded[4].KO['2021-01-13'], 'collectionOfStocksTraded-KO-date');
-
   // Assigning all the stock trades into each key(stock)
   arrayOfStockTrades.forEach((stk) => {
-    console.log(stk, 'stk');
     stk.forEach((trade) => {
-      console.log(trade, 'trade');
       collectionOfStocksTraded.forEach((stock, index) => {
         const {
           tradeDate, portfolioStockId, position, costPrice, shares,
@@ -55,13 +48,12 @@ const calculatePortfolioValue = (batchQuotes, arrayOfStockTrades, selectedStockI
         } else {
           tradedShares = shares;
         }
-        console.log(stock, 'stock-2');
         const tradeDateStr = moment(tradeDate).format('YYYY-MM-DD');
-        // const stockObj = stock[selectedStockIds[stock.id.toString()]];
+        // stock.id here refers to portfolioStockId and we are trying to find the right portfolio stock through its value
+
         const symb = Object.keys(selectedPortfolioStockIds).filter((key) => selectedPortfolioStockIds[key] === stock.id);
         const stockObj = stock[symb];
         const currStockTrade = stockObj[tradeDateStr];
-        console.log(stock.id, 'stock.id-1');
         if (stock.id === portfolioStockId) {
           if (!currStockTrade.hasOwnProperty('tradedShares') && !currStockTrade.hasOwnProperty('totalCost')) {
             currStockTrade.tradedShares = tradedShares;
@@ -85,18 +77,11 @@ const calculatePortfolioValue = (batchQuotes, arrayOfStockTrades, selectedStockI
               stockObj[date].cumCost += tradedShares * costPrice;
             }
           });
-        } else {
-          console.log(stock, 'stock');
-          console.log(stock.id, 'stock.id');
-          console.log(stock.id, 'portfolioStockId');
         }
       });
     });
   });
 
-  console.log(collectionOfStocksTraded, 'collectionOfStocksTraded');
-  console.log(collectionOfStocksTraded[0].AMD, 'collectionOfStocksTraded-AMD');
-  console.log(collectionOfStocksTraded[4].KO, 'collectionOfStocksTraded-KO');
   // Create an object only consolidated stock trades
   let consolStkTrades = {};
   // First delete the id of each entry
@@ -108,12 +93,10 @@ const calculatePortfolioValue = (batchQuotes, arrayOfStockTrades, selectedStockI
   // Create an object only portfolioValues template
   let portfolioValueTimeSeries = {};
   batchQuotes[0].chart.forEach((log) => (portfolioValueTimeSeries = { ...portfolioValueTimeSeries, [log.date]: 0 }));
-  console.log(portfolioValueTimeSeries, 'portfolioValueTimeSeries');
+
   // Array of relevant dates
   const timeSeries = Object.keys(portfolioValueTimeSeries);
   const symbolsInPortfolio = Object.keys(consolStkTrades);
-
-  console.log(symbolsInPortfolio, 'symbolsInPortfolio');
 
   symbolsInPortfolio.forEach((symbol) => {
     timeSeries.forEach((date) => {
@@ -186,14 +169,13 @@ export default function portfolios(db) {
 
       // Retrieve individual stock symbols
       const selectedStockNames = selectedPortfolio.stocks.map((stock) => stock.stockSymbol);
-      console.log(selectedStockNames, 'selectedStockNames');
+
       // if stocks list is zero, exit the function
       if (selectedStockNames.length === 0) {
         res.send({ message: 'no stocks added' });
         return;
       }
       const selectedStockNamesString = selectedStockNames.join(',');
-      console.log(selectedStockNamesString, 'selectedStockNamesString');
       let selectedStockIds = {};
       let selectedPortfolioStockIds = {};
 
@@ -224,8 +206,6 @@ export default function portfolios(db) {
             }, 0);
             return sharesPerStock;
           });
-          console.log(arrayOfSharesOwned, 'arrayOfSharesOwned');
-          console.log(arrayOfStockTrades, 'arrayOfStockTrades');
           // getBatchQuotes is a promise
           return getBatchQuotes(portfolioId, selectedStockIds, selectedPortfolioStockIds, arrayOfSharesOwned, arrayOfStockTrades, selectedStockNamesString);
         })
@@ -243,12 +223,10 @@ export default function portfolios(db) {
 
   const update = async (req, res) => {
     const { tradesData } = req.body;
-    console.log(tradesData, 'tradesData');
     const updatedTradeData = tradesData.map(async (trade) => {
       const {
         id, portfolioStockId, position, costPrice, tradeDate, shares,
       } = trade;
-      console.log(trade, 'trade');
 
       let newTrade;
 
@@ -282,7 +260,6 @@ export default function portfolios(db) {
 
   const create = async (req, res) => {
     const { portfolioName } = req.body;
-    console.log(req.body, 'req-body');
     await db.Portfolio.create({
       userId: req.loggedInUserId,
       name: portfolioName,
@@ -290,6 +267,7 @@ export default function portfolios(db) {
     res.send({ message: 'completed' });
   };
 
+  // Add a symbol to a portfolio
   const add = async (req, res) => {
     const { newSymbol } = req.body;
     const { portfolioId } = req.params;
@@ -304,37 +282,21 @@ export default function portfolios(db) {
 
     if (!stockToBeAdded) {
       axios.get(`${GENERICURL}/${newSymbol}/quote?token=${SANDBOXTOKEN}`)
-        .then((result) => {
-          console.log(result, 'result');
-          return db.Stock.create({
-            stockName: result.data.companyName,
-            stockSymbol: newSymbol.toLowerCase(),
-          });
-        })
-        .then((stockCreated) => {
-          console.log(stockCreated, 'stockCreationResult');
-          console.log(stockCreated.id, 'stockCreationResult');
-          console.log(portfolioId, 'portfolioId');
-
-          return db.PortfolioStock.create({
-            portfolioId: Number(portfolioId),
-            stockId: stockCreated.id,
-          });
-        })
+        .then((result) => db.Stock.create({
+          stockName: result.data.companyName,
+          stockSymbol: newSymbol.toLowerCase(),
+        }))
+        .then((stockCreated) => db.PortfolioStock.create({
+          portfolioId: Number(portfolioId),
+          stockId: stockCreated.id,
+        }))
         .then((createNewPortfolioStockResult) => {
           console.log(createNewPortfolioStockResult, 'createNewPortfolioStockResult');
-          // res.send({ message: 'completed', newPortfolioStock });
+          // To pass the newly created symbol back
+          res.send({ message: 'completed' });
         })
         .catch((err) => console.log(err));
     }
-
-    // // create a new portfolio stock
-    // const newPortfolioStock = await db.PortfolioStock.create({
-    //   where: {
-    //     portfolioId,
-    //     stockId: stockToBeAdded.id,
-    //   },
-    // });
   };
 
   return ({
