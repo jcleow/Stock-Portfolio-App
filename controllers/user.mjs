@@ -1,3 +1,4 @@
+import jsSHA from 'jssha';
 import convertUserIdToHash, { hashPassword } from '../helper.mjs';
 
 export default function users(db) {
@@ -49,9 +50,35 @@ export default function users(db) {
     res.send({ message: 'signed out' });
   };
 
+  const register = async (req, res) => {
+    const { username, password } = req.body;
+
+    // First hash the password
+    const shaObj = new jsSHA('SHA-512', 'TEXT', { encoding: 'UTF8' });
+    shaObj.update(password);
+    const hashedPassword = shaObj.getHash('HEX');
+
+    // Next create a new user
+    const newUser = await db.User.create({
+      username,
+      password: hashedPassword,
+    });
+
+    // Save state that user has logged in
+    newUser.loggedIn = true;
+    newUser.save();
+
+    // Send cookies
+    res.cookie('loggedInUsername', newUser.username);
+    res.cookie('loggedInUserId', newUser.id);
+    res.cookie('loggedInHash', convertUserIdToHash(newUser.id));
+    res.send({ auth: true, user: newUser });
+  };
+
   return {
     signIn,
     signOut,
     checkLoggedIn,
+    register,
   };
 }

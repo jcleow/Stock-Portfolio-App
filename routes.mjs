@@ -29,8 +29,6 @@ export default function routes(app) {
       req.middlewareLoggedIn = true;
       req.loggedInUserId = Number(req.cookies.loggedInUserId);
       req.loggedInUsername = chosenUser.username;
-      console.log(req.middlewareLoggedIn, 'middleware');
-      console.log(req.loggedInUsername, 'loggedInUsername');
       next();
       return;
     }
@@ -47,6 +45,7 @@ export default function routes(app) {
   app.get('/checkLoggedIn', UsersController.checkLoggedIn);
   app.put('/signIn', UsersController.signIn);
   app.put('/signOut', UsersController.signOut);
+  app.post('/register', UsersController.register);
 
   const StocksController = stocks(db);
   app.get('/:symbol/chart/:duration', StocksController.getChart);

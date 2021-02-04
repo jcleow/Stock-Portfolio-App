@@ -3,10 +3,9 @@ import axios from 'axios';
 import { Button } from 'react-bootstrap';
 
 export default function SignInForm({ signInFormProps }) {
-  const { setLoggedIn, handleClose, setUsername } = signInFormProps;
+  const { setLoggedIn, setUsername, setFormDisplay } = signInFormProps;
   const [usernameInput, setUsernameInput] = useState('');
   const [passwordInput, setPasswordInput] = useState('');
-  const [display, setDisplay] = useState('');
 
   function handleUsernameInput(event) {
     setUsernameInput(event.target.value);
@@ -24,14 +23,13 @@ export default function SignInForm({ signInFormProps }) {
         setPasswordInput('');
         if (result.data.auth) {
           setLoggedIn(true);
-          console.log(result.data, 'result-data');
           setUsername(result.data.user.username);
         }
       })
       .catch((error) => console.log(error));
   }
   function handleRegistration() {
-    setDisplay('registration');
+    setFormDisplay('registration');
   }
   return (
     <div className="login-form">

@@ -66,19 +66,28 @@ export default function EquityChartHeader({ equityChartHeaderProps }) {
     accCostCurveData,
   } = equityChartHeaderProps;
 
-  const arrOfPortfolioValues = Object.values(equityCurveData).map((val) => val);
-  const arrOfAccCostValues = Object.values(accCostCurveData).map((cost) => cost);
-  const portfolioValue = arrOfAccCostValues.slice(-1)[0];
-  const portfolioCost = arrOfPortfolioValues.slice(-1)[0];
+  let arrOfPortfolioValues = [];
+  let arrOfAccCostValues = [];
+  let portfolioValue = 0;
+  let portfolioCost = 0;
+  let profitLoss = 0;
+  let profitLossPct = 0;
+  let formattedPnL = 0;
+  if (equityCurveData && accCostCurveData) {
+    arrOfPortfolioValues = Object.values(equityCurveData).map((val) => val);
+    arrOfAccCostValues = Object.values(accCostCurveData).map((cost) => cost);
+    portfolioValue = arrOfPortfolioValues.slice(-1)[0];
+    portfolioCost = arrOfAccCostValues.slice(-1)[0];
 
-  const profitLoss = portfolioValue - portfolioCost;
-  const profitLossPct = ((profitLoss / arrOfAccCostValues.slice(-1)[0]) * 100).toFixed(2);
-  const formattedPnL = new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(profitLoss);
+    profitLoss = portfolioValue - portfolioCost;
+    profitLossPct = ((profitLoss / arrOfAccCostValues.slice(-1)[0]) * 100).toFixed(2);
+    formattedPnL = new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(profitLoss);
+  }
 
   const formattedPV = new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -104,16 +113,12 @@ export default function EquityChartHeader({ equityChartHeaderProps }) {
               P/L:
               {' '}
               {formattedPnL}
+              {' '}
+              (
+              {profitLossPct}
+              %)
             </h5>
           )}
-        {isNaN(profitLossPct) ? null : (
-          <h6>
-            P/L%:
-            {' '}
-            {profitLossPct}
-          </h6>
-        ) }
-
       </div>
       <div className="mt-3 mr-3">
         <CreatePortfolioModal handleDisplayPortfolio={handleDisplayPortfolio} />

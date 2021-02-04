@@ -9,6 +9,7 @@ import {
 } from 'react-vis';
 
 export default function EquityChart({ equityChartProps }) {
+  console.log(equityChartProps, 'equityChartProps');
   const { equityCurveData, accCostCurveData, timeFrame } = equityChartProps;
 
   // To replace with error boundary?
