@@ -3,16 +3,20 @@ import axios from 'axios';
 import { Table, Button } from 'react-bootstrap';
 import EditTradesModal from '../Trade/EditTradesModal.jsx';
 
-function AddStockToPortfolioBtn({ currPortfolioId }) {
-  const [newSymbol, setNewSymbol] = useState();
+function AddStockToPortfolioBtn({
+  addNewSymbolProps, currPortfolioId, refreshPortfolioView,
+}) {
+  const { newSymbol, setNewSymbol } = addNewSymbolProps;
+
   const handleNewSymbol = (event) => {
     setNewSymbol(event.target.value);
   };
 
   const handleAddSymbol = () => {
     axios.post(`/portfolios/${currPortfolioId}/addSymbol`, { newSymbol })
-      .then((result) => {
-        console.log(result, 'result');
+      .then(() => {
+        setNewSymbol('');
+        refreshPortfolioView(null, currPortfolioId);
       })
       .catch((err) => console.log(err));
   };
@@ -37,6 +41,9 @@ function AddStockToPortfolioBtn({ currPortfolioId }) {
 }
 
 export default function PortfolioTable({ portfolioStocks, refreshPortfolioView, currPortfolioId }) {
+  // Track the new symbol that is being entered
+  const [newSymbol, setNewSymbol] = useState();
+  const addNewSymbolProps = { newSymbol, setNewSymbol };
   let rowsOfStockData;
   // Replace the following if condition with errorboundary?
   if (portfolioStocks) {
@@ -106,7 +113,7 @@ export default function PortfolioTable({ portfolioStocks, refreshPortfolioView, 
         </thead>
         <tbody>
           {rowsOfStockData}
-          <AddStockToPortfolioBtn currPortfolioId={currPortfolioId} />
+          <AddStockToPortfolioBtn currPortfolioId={currPortfolioId} refreshPortfolioView={refreshPortfolioView} addNewSymbolProps={addNewSymbolProps} />
         </tbody>
       </Table>
 
