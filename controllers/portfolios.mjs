@@ -5,7 +5,7 @@ const SANDBOXTOKEN = 'Tsk_c0d79534cc3f4d8fa07478c311b898d2';
 const GENERICURL = 'https://sandbox.iexapis.com/stable/stock';
 
 // Helper that calculates the total equity of a portfolio (1M view)
-const calculatePortfolioValue = (batchQuotes, arrayOfStockTrades, selectedStockIds, selectedStockNamesString) => {
+const calculatePortfolioValue = (batchQuotes, arrayOfStockTrades, selectedStockIds, selectedPortfolioStockIds, selectedStockNamesString) => {
   // First convert all the spot prices into an array of objects with
   // key: symbol and value: an object of dates as key and value as price
   const newArrayOfStkSpotPrices = batchQuotes.map((entry) => {
@@ -26,16 +26,24 @@ const calculatePortfolioValue = (batchQuotes, arrayOfStockTrades, selectedStockI
   newArrayOfStkSpotPrices.forEach((entry) => {
     consolStkSpotPrice = { ...consolStkSpotPrice, ...entry };
   });
-
-  const collectionOfStocksTraded = Object.entries(selectedStockIds).map(([key, value]) => (
+  console.log(selectedStockIds, 'selectedStockIds');
+  console.log(selectedPortfolioStockIds, 'selectedPortfolioStockIds-1');
+  console.log(consolStkSpotPrice, 'consolStkSpotPrice');
+  const collectionOfStocksTraded = Object.entries(selectedPortfolioStockIds).map(([key, value]) => (
     {
-      id: Number(key),
-      [value]: consolStkSpotPrice[value],
+      id: value,
+      [key]: consolStkSpotPrice[key],
     }));
+
+  console.log(collectionOfStocksTraded, 'collectionOfStocksTraded');
+  console.log(collectionOfStocksTraded[4], 'collectionOfStocksTraded-KO');
+  console.log(collectionOfStocksTraded[4].KO['2021-01-13'], 'collectionOfStocksTraded-KO-date');
 
   // Assigning all the stock trades into each key(stock)
   arrayOfStockTrades.forEach((stk) => {
+    console.log(stk, 'stk');
     stk.forEach((trade) => {
+      console.log(trade, 'trade');
       collectionOfStocksTraded.forEach((stock, index) => {
         const {
           tradeDate, portfolioStockId, position, costPrice, shares,
@@ -47,10 +55,13 @@ const calculatePortfolioValue = (batchQuotes, arrayOfStockTrades, selectedStockI
         } else {
           tradedShares = shares;
         }
+        console.log(stock, 'stock-2');
         const tradeDateStr = moment(tradeDate).format('YYYY-MM-DD');
-        const stockObj = stock[selectedStockIds[stock.id.toString()]];
+        // const stockObj = stock[selectedStockIds[stock.id.toString()]];
+        const symb = Object.keys(selectedPortfolioStockIds).filter((key) => selectedPortfolioStockIds[key] === stock.id);
+        const stockObj = stock[symb];
         const currStockTrade = stockObj[tradeDateStr];
-
+        console.log(stock.id, 'stock.id-1');
         if (stock.id === portfolioStockId) {
           if (!currStockTrade.hasOwnProperty('tradedShares') && !currStockTrade.hasOwnProperty('totalCost')) {
             currStockTrade.tradedShares = tradedShares;
@@ -74,10 +85,18 @@ const calculatePortfolioValue = (batchQuotes, arrayOfStockTrades, selectedStockI
               stockObj[date].cumCost += tradedShares * costPrice;
             }
           });
+        } else {
+          console.log(stock, 'stock');
+          console.log(stock.id, 'stock.id');
+          console.log(stock.id, 'portfolioStockId');
         }
       });
     });
   });
+
+  console.log(collectionOfStocksTraded, 'collectionOfStocksTraded');
+  console.log(collectionOfStocksTraded[0].AMD, 'collectionOfStocksTraded-AMD');
+  console.log(collectionOfStocksTraded[4].KO, 'collectionOfStocksTraded-KO');
   // Create an object only consolidated stock trades
   let consolStkTrades = {};
   // First delete the id of each entry
@@ -89,10 +108,12 @@ const calculatePortfolioValue = (batchQuotes, arrayOfStockTrades, selectedStockI
   // Create an object only portfolioValues template
   let portfolioValueTimeSeries = {};
   batchQuotes[0].chart.forEach((log) => (portfolioValueTimeSeries = { ...portfolioValueTimeSeries, [log.date]: 0 }));
-
+  console.log(portfolioValueTimeSeries, 'portfolioValueTimeSeries');
   // Array of relevant dates
   const timeSeries = Object.keys(portfolioValueTimeSeries);
   const symbolsInPortfolio = Object.keys(consolStkTrades);
+
+  console.log(symbolsInPortfolio, 'symbolsInPortfolio');
 
   symbolsInPortfolio.forEach((symbol) => {
     timeSeries.forEach((date) => {
@@ -123,9 +144,6 @@ const getBatchQuotes = (portfolioId, selectedStockIds, selectedPortfolioStockIds
         } = stock.quote;
         // Search for the appropriate portfolio_stock_id to append to stockInfoObj
         const selectedPortfolioStockId = selectedPortfolioStockIds[symbol];
-        console.log(selectedPortfolioStockIds, 'selectedPortfolioStockIds');
-        console.log(selectedPortfolioStockId, 'selectedPortfolioStockId');
-        console.log(selectedStockIds, 'selectedStockIds');
         const stockInfoObj = {
           portfolioId,
           portfolioStockId: selectedPortfolioStockId,
@@ -165,26 +183,23 @@ export default function portfolios(db) {
       const selectedPortfolio = await db.Portfolio.findByPk(portfolioId, {
         include: db.Stock,
       });
+
       // Retrieve individual stock symbols
       const selectedStockNames = selectedPortfolio.stocks.map((stock) => stock.stockSymbol);
+      console.log(selectedStockNames, 'selectedStockNames');
       // if stocks list is zero, exit the function
       if (selectedStockNames.length === 0) {
         res.send({ message: 'no stocks added' });
         return;
       }
       const selectedStockNamesString = selectedStockNames.join(',');
-
+      console.log(selectedStockNamesString, 'selectedStockNamesString');
       let selectedStockIds = {};
       let selectedPortfolioStockIds = {};
-      console.log(selectedPortfolio, 'selectedPortfolio');
-      console.log(selectedPortfolio.stocks, 'selectedPortfolio stocks');
-      console.log(selectedPortfolio.stocks[0], 'selectedPortfolio stock-1');
-      console.log(selectedPortfolio.stocks[0].portfolio_stock, 'selectedPortfolio stock-1');
-      console.log(selectedPortfolio.stocks[0].portfolio_stock.portfolioId, 'selectedPortfolio stock-1');
 
       selectedPortfolio.stocks.forEach((stock) => {
         selectedStockIds = { ...selectedStockIds, [stock.id]: stock.stockSymbol.toUpperCase() };
-        selectedPortfolioStockIds = { ...selectedPortfolioStockIds, [stock.stockSymbol.toUpperCase()]: stock.portfolio_stock.portfolioId };
+        selectedPortfolioStockIds = { ...selectedPortfolioStockIds, [stock.stockSymbol.toUpperCase()]: stock.portfolio_stock.id };
       });
 
       // Retrieve individual stock trades
@@ -209,13 +224,15 @@ export default function portfolios(db) {
             }, 0);
             return sharesPerStock;
           });
+          console.log(arrayOfSharesOwned, 'arrayOfSharesOwned');
+          console.log(arrayOfStockTrades, 'arrayOfStockTrades');
           // getBatchQuotes is a promise
           return getBatchQuotes(portfolioId, selectedStockIds, selectedPortfolioStockIds, arrayOfSharesOwned, arrayOfStockTrades, selectedStockNamesString);
         })
         .then((batchQuoteResults) => {
           // Calculate the portfolioValue over a time frame (fixed at 1M for now)
           const { essentialQuoteInfo, batchQuotes } = batchQuoteResults;
-          const portfolioValueTimeSeries = calculatePortfolioValue(batchQuotes, arrayOfStockTrades, selectedStockIds, selectedStockNamesString);
+          const portfolioValueTimeSeries = calculatePortfolioValue(batchQuotes, arrayOfStockTrades, selectedStockIds, selectedPortfolioStockIds, selectedStockNamesString);
           res.send({ essentialQuoteInfo, portfolioValueTimeSeries });
         })
         .catch((err) => console.log(err));
@@ -276,8 +293,6 @@ export default function portfolios(db) {
   const add = async (req, res) => {
     const { newSymbol } = req.body;
     const { portfolioId } = req.params;
-    console.log(req.body, 'req-body');
-    console.log(req.params, 'req-params');
 
     // first find if this stock exists, if not create a new one
     const stockToBeAdded = await db.Stock.findOne({
@@ -293,7 +308,7 @@ export default function portfolios(db) {
           console.log(result, 'result');
           return db.Stock.create({
             stockName: result.data.companyName,
-            stockSymbol: newSymbol,
+            stockSymbol: newSymbol.toLowerCase(),
           });
         })
         .then((stockCreated) => {

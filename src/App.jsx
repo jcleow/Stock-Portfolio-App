@@ -22,7 +22,6 @@ export default function App() {
   const sideBarProps = {
     username, loggedIn, setLoggedIn, setDisplay, setPortfolioList, setUsername,
   };
-  console.log(currPortfolioId, 'currPortfolioId');
   const portfolioButtonsProps = {
     portfolioList, setPortfolioStocks,
   };
