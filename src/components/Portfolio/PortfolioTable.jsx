@@ -3,14 +3,14 @@ import axios from 'axios';
 import { Table, Button } from 'react-bootstrap';
 import EditTradesModal from '../Trade/EditTradesModal.jsx';
 
-function AddStockToPortfolioBtn() {
+function AddStockToPortfolioBtn({ currPortfolioId }) {
   const [newSymbol, setNewSymbol] = useState();
   const handleNewSymbol = (event) => {
     setNewSymbol(event.target.value);
   };
 
   const handleAddSymbol = () => {
-    axios.post('/portfolios/:portfolioId/addSymbol', { newSymbol })
+    axios.post(`/portfolios/${currPortfolioId}/addSymbol`, { newSymbol })
       .then((result) => {
         console.log(result, 'result');
       })
@@ -36,12 +36,11 @@ function AddStockToPortfolioBtn() {
   );
 }
 
-export default function PortfolioTable({ portfolioStocks, refreshPortfolioView }) {
-  console.log('re-rendered');
-  console.log(portfolioStocks, 'portfolio rerendered');
+export default function PortfolioTable({ portfolioStocks, refreshPortfolioView, currPortfolioId }) {
   let rowsOfStockData;
   // Replace the following if condition with errorboundary?
   if (portfolioStocks) {
+    console.log(portfolioStocks, 'portfolioStocks');
     rowsOfStockData = portfolioStocks.map((stock, index) => {
       const avgTotalVolumeDisplay = new Intl.NumberFormat()
         .format(Number((stock.avgTotalVolume / (10 ** 6)).toFixed(0)));
@@ -107,7 +106,7 @@ export default function PortfolioTable({ portfolioStocks, refreshPortfolioView }
         </thead>
         <tbody>
           {rowsOfStockData}
-          <AddStockToPortfolioBtn />
+          <AddStockToPortfolioBtn currPortfolioId={currPortfolioId} />
         </tbody>
       </Table>
 

@@ -107,7 +107,7 @@ const calculatePortfolioValue = (batchQuotes, arrayOfStockTrades, selectedStockI
   return portfolioValueTimeSeries;
 };
 
-const getBatchQuotes = (portfolioId, selectedStockIds, arrayOfSharesOwned, arrayOfStockTrades, selectedStockNamesString) => {
+const getBatchQuotes = (portfolioId, selectedStockIds, selectedPortfolioStockIds, arrayOfSharesOwned, arrayOfStockTrades, selectedStockNamesString) => {
   let batchQuotes;
   let essentialQuoteInfo;
   // axios.get...then( ) returns a Promise that will resolve to the return value
@@ -122,7 +122,10 @@ const getBatchQuotes = (portfolioId, selectedStockIds, arrayOfSharesOwned, array
           symbol, companyName, change, changePercent, avgTotalVolume, marketCap,
         } = stock.quote;
         // Search for the appropriate portfolio_stock_id to append to stockInfoObj
-        const selectedPortfolioStockId = Object.keys(selectedStockIds).find((key) => selectedStockIds[key] === symbol);
+        const selectedPortfolioStockId = selectedPortfolioStockIds[symbol];
+        console.log(selectedPortfolioStockIds, 'selectedPortfolioStockIds');
+        console.log(selectedPortfolioStockId, 'selectedPortfolioStockId');
+        console.log(selectedStockIds, 'selectedStockIds');
         const stockInfoObj = {
           portfolioId,
           portfolioStockId: selectedPortfolioStockId,
@@ -172,10 +175,17 @@ export default function portfolios(db) {
       const selectedStockNamesString = selectedStockNames.join(',');
 
       let selectedStockIds = {};
+      let selectedPortfolioStockIds = {};
+      console.log(selectedPortfolio, 'selectedPortfolio');
+      console.log(selectedPortfolio.stocks, 'selectedPortfolio stocks');
+      console.log(selectedPortfolio.stocks[0], 'selectedPortfolio stock-1');
+      console.log(selectedPortfolio.stocks[0].portfolio_stock, 'selectedPortfolio stock-1');
+      console.log(selectedPortfolio.stocks[0].portfolio_stock.portfolioId, 'selectedPortfolio stock-1');
 
-      selectedPortfolio.stocks.forEach((stock) => (
-        selectedStockIds = { ...selectedStockIds, [stock.id]: stock.stockSymbol.toUpperCase() }
-      ));
+      selectedPortfolio.stocks.forEach((stock) => {
+        selectedStockIds = { ...selectedStockIds, [stock.id]: stock.stockSymbol.toUpperCase() };
+        selectedPortfolioStockIds = { ...selectedPortfolioStockIds, [stock.stockSymbol.toUpperCase()]: stock.portfolio_stock.portfolioId };
+      });
 
       // Retrieve individual stock trades
       const selectedPortfolioStocks = await db.PortfolioStock.findAll({ where: { portfolioId } });
@@ -200,7 +210,7 @@ export default function portfolios(db) {
             return sharesPerStock;
           });
           // getBatchQuotes is a promise
-          return getBatchQuotes(portfolioId, selectedStockIds, arrayOfSharesOwned, arrayOfStockTrades, selectedStockNamesString);
+          return getBatchQuotes(portfolioId, selectedStockIds, selectedPortfolioStockIds, arrayOfSharesOwned, arrayOfStockTrades, selectedStockNamesString);
         })
         .then((batchQuoteResults) => {
           // Calculate the portfolioValue over a time frame (fixed at 1M for now)
@@ -267,9 +277,10 @@ export default function portfolios(db) {
     const { newSymbol } = req.body;
     const { portfolioId } = req.params;
     console.log(req.body, 'req-body');
+    console.log(req.params, 'req-params');
 
     // first find if this stock exists, if not create a new one
-    let stockToBeAdded = await db.Stock.findOne({
+    const stockToBeAdded = await db.Stock.findOne({
       where:
     {
       stockSymbol: newSymbol,
@@ -277,21 +288,38 @@ export default function portfolios(db) {
     });
 
     if (!stockToBeAdded) {
-      stockToBeAdded = await db.Stock.create({
-        stockName: 'some name',
-        stockSymbol: newSymbol,
-      });
+      axios.get(`${GENERICURL}/${newSymbol}/quote?token=${SANDBOXTOKEN}`)
+        .then((result) => {
+          console.log(result, 'result');
+          return db.Stock.create({
+            stockName: result.data.companyName,
+            stockSymbol: newSymbol,
+          });
+        })
+        .then((stockCreated) => {
+          console.log(stockCreated, 'stockCreationResult');
+          console.log(stockCreated.id, 'stockCreationResult');
+          console.log(portfolioId, 'portfolioId');
+
+          return db.PortfolioStock.create({
+            portfolioId: Number(portfolioId),
+            stockId: stockCreated.id,
+          });
+        })
+        .then((createNewPortfolioStockResult) => {
+          console.log(createNewPortfolioStockResult, 'createNewPortfolioStockResult');
+          // res.send({ message: 'completed', newPortfolioStock });
+        })
+        .catch((err) => console.log(err));
     }
 
-    // create a new portfolio stock
-    const newPortfolioStock = await db.PortfolioStock.create({
-      where: {
-        portfolioId,
-        stockId: stockToBeAdded.id,
-      },
-    });
-
-    res.send({ message: 'completed', newPortfolioStock });
+    // // create a new portfolio stock
+    // const newPortfolioStock = await db.PortfolioStock.create({
+    //   where: {
+    //     portfolioId,
+    //     stockId: stockToBeAdded.id,
+    //   },
+    // });
   };
 
   return ({

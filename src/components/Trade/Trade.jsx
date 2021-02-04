@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import DatePicker from 'react-datepicker';
 import { addDays, subDays } from 'date-fns';
 import 'react-datepicker/dist/react-datepicker.css';
-import moment from 'moment';
 import {
   Dropdown, DropdownButton,
 } from 'react-bootstrap';
@@ -22,6 +21,8 @@ export default function Trade({
     shares,
     costPrice,
   } = tradesData[dataIndex];
+  console.log(tradesData, 'tradesData');
+  console.log(tradesData[dataIndex], 'tradesDataIndex');
 
   const [currTradeData, setCurrTradeData] = useState(tradesData[dataIndex]);
   const [startDate, setStartDate] = useState(new Date(tradeDate));

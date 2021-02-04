@@ -13,6 +13,7 @@ export default function EditTradesModal({
 
   // This tradesData is passed to the ajax request to update the trade
   const [tradesData, setTradesData] = useState([...historicalTrades]);
+  console.log(historicalTrades, 'historicalTrades');
   // Create the existing Trade entries
   const historicalTradeDisplay = tradesData.map((tradeData, index) => {
     // DataIndex is the index of its relevant data in the states' arrays
@@ -46,8 +47,9 @@ export default function EditTradesModal({
       .catch((err) => console.log(err));
   };
   const handleAddNewTrade = () => {
+    console.log(portfolioStockId, 'portfolioStockId');
     const newTradesData = [...tradesData, {
-      id: null, portfolioStockId, position: '', tradeDate: null, costPrice: null,
+      id: null, portfolioStockId: Number(portfolioStockId), position: '', tradeDate: null, costPrice: null,
     }];
     setTradesData(newTradesData);
   };

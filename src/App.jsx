@@ -13,6 +13,7 @@ export default function App() {
   const [display, setDisplay] = useState('main');
   const [portfolioList, setPortfolioList] = useState([]);
   const [portfolioStocks, setPortfolioStocks] = useState([]);
+  const [currPortfolioId, setCurrPortfolioId] = useState();
   const [equityChartData, setEquityChartData] = useState([]);
   // For purposes of charting equity curve
   const timeFrame = '1m';
@@ -21,7 +22,7 @@ export default function App() {
   const sideBarProps = {
     username, loggedIn, setLoggedIn, setDisplay, setPortfolioList, setUsername,
   };
-
+  console.log(currPortfolioId, 'currPortfolioId');
   const portfolioButtonsProps = {
     portfolioList, setPortfolioStocks,
   };
@@ -33,7 +34,8 @@ export default function App() {
     } else {
       portfolioId = targetPortfolioId;
     }
-    console.log('test-3');
+    setCurrPortfolioId(portfolioId);
+    console.log(portfolioId, 'portfolioId');
     axios.get(`/portfolios/${portfolioId}`)
       .then((result) => {
         console.log(result, 'result-0');
@@ -70,6 +72,7 @@ export default function App() {
           refreshPortfolioView={refreshPortfolioView}
         />
         <PortfolioTable
+          currPortfolioId={currPortfolioId}
           portfolioStocks={portfolioStocks}
           refreshPortfolioView={refreshPortfolioView}
         />
