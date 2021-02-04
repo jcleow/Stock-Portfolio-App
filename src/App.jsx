@@ -30,7 +30,6 @@ export default function App() {
     console.log(portfolioId, 'portfolioId');
     axios.get(`/portfolios/${portfolioId}`)
       .then((result) => {
-        console.log(result, 'result-0');
         setPortfolioStocks(result.data.essentialQuoteInfo);
         setEquityChartData(result.data.portfolioValueTimeSeries);
       })
@@ -42,7 +41,6 @@ export default function App() {
     axios.get('/portfolios')
       .then((result) => {
         if (result.data.message === 'success') {
-          console.log(result.data.portfolios, 'result.data.portfolios');
           setPortfolioList(result.data.portfolios);
           setDisplay('portfolio');
         }

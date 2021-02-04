@@ -1,7 +1,6 @@
 import React from 'react';
 import { GraphUp } from 'react-bootstrap-icons';
 import { Button } from 'react-bootstrap';
-import axios from 'axios';
 import SignInButton from './SignInButton.jsx';
 
 export default function SideBar({ sideBarProps }) {
