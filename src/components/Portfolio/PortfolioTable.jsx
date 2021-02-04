@@ -4,10 +4,9 @@ import { Table, Button } from 'react-bootstrap';
 import EditTradesModal from '../Trade/EditTradesModal.jsx';
 
 function AddStockToPortfolioBtn({
-  addNewSymbolProps, currPortfolioId, refreshPortfolioView,
+  currPortfolioId, refreshPortfolioView,
 }) {
-  const { newSymbol, setNewSymbol } = addNewSymbolProps;
-
+  const [newSymbol, setNewSymbol] = useState();
   const handleNewSymbol = (event) => {
     setNewSymbol(event.target.value);
   };
@@ -42,12 +41,9 @@ function AddStockToPortfolioBtn({
 
 export default function PortfolioTable({ portfolioStocks, refreshPortfolioView, currPortfolioId }) {
   // Track the new symbol that is being entered
-  const [newSymbol, setNewSymbol] = useState();
-  const addNewSymbolProps = { newSymbol, setNewSymbol };
   let rowsOfStockData;
   // Replace the following if condition with errorboundary?
   if (portfolioStocks) {
-    console.log(portfolioStocks, 'portfolioStocks');
     rowsOfStockData = portfolioStocks.map((stock, index) => {
       const avgTotalVolumeDisplay = new Intl.NumberFormat()
         .format(Number((stock.avgTotalVolume / (10 ** 6)).toFixed(0)));
@@ -113,7 +109,7 @@ export default function PortfolioTable({ portfolioStocks, refreshPortfolioView, 
         </thead>
         <tbody>
           {rowsOfStockData}
-          <AddStockToPortfolioBtn currPortfolioId={currPortfolioId} refreshPortfolioView={refreshPortfolioView} addNewSymbolProps={addNewSymbolProps} />
+          <AddStockToPortfolioBtn currPortfolioId={currPortfolioId} refreshPortfolioView={refreshPortfolioView} />
         </tbody>
       </Table>
 

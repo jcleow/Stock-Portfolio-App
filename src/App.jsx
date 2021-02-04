@@ -19,13 +19,6 @@ export default function App() {
   const timeFrame = '1m';
   const equityChartProps = { equityChartData, timeFrame };
 
-  const sideBarProps = {
-    username, loggedIn, setLoggedIn, setDisplay, setPortfolioList, setUsername,
-  };
-  const portfolioButtonsProps = {
-    portfolioList, setPortfolioStocks,
-  };
-
   const refreshPortfolioView = (event, targetPortfolioId) => {
     let portfolioId;
     if (!targetPortfolioId) {
@@ -44,7 +37,20 @@ export default function App() {
       .catch((error) => console.log(error));
   };
 
-  // To make sure username is shown
+  // To display the portfolio buttons and their corresponding portfolios
+  const handleDisplayPortfolio = () => {
+    axios.get('/portfolios')
+      .then((result) => {
+        if (result.data.message === 'success') {
+          console.log(result.data.portfolios, 'result.data.portfolios');
+          setPortfolioList(result.data.portfolios);
+          setDisplay('portfolio');
+        }
+      })
+      .catch((error) => console.log(error));
+  };
+
+  // To make sure username is everytime the page is reloaded
   useEffect(() => {
     if (document.cookie) {
       setLoggedIn(true);
@@ -56,6 +62,12 @@ export default function App() {
     }
   }, []);
 
+  const sideBarProps = {
+    username, loggedIn, setLoggedIn, setDisplay, setPortfolioList, setUsername, handleDisplayPortfolio,
+  };
+  const portfolioButtonsProps = {
+    portfolioList,
+  };
   return (
     <div>
       <SideBar sideBarProps={sideBarProps} />
@@ -64,7 +76,10 @@ export default function App() {
       {display === 'portfolio'
       && (
       <div>
-        <EquityChartHeader />
+        <EquityChartHeader
+          portfolioId={currPortfolioId}
+          handleDisplayPortfolio={handleDisplayPortfolio}
+        />
         <EquityChart equityChartProps={equityChartProps} />
         <PortfolioButtonList
           portfolioButtonsProps={portfolioButtonsProps}

@@ -1,19 +1,22 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import { Button, Modal, Form } from 'react-bootstrap';
 
-function CreatePortfolioModal() {
+function CreatePortfolioModal({ handleDisplayPortfolio }) {
   const [show, setShow] = useState(false);
   const [portfolioName, setPortfolioName] = useState();
 
   const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+  const handleShow = () => {
+    setShow(true);
+  };
   const handlePortfolioName = (e) => setPortfolioName(e.target.value);
   const handleCreatePortfolio = () => {
     axios.post('/portfolios/create', { portfolioName })
       .then((result) => {
         console.log(result);
         setShow(false);
+        handleDisplayPortfolio();
       })
       .catch((err) => console.log(err));
   };
@@ -55,7 +58,7 @@ function CreatePortfolioModal() {
   );
 }
 
-export default function EquityChartHeader() {
+export default function EquityChartHeader({ handleDisplayPortfolio }) {
   return (
     <div className="d-flex justify-content-between">
       <div className="offset-display mt-3">
@@ -63,7 +66,7 @@ export default function EquityChartHeader() {
         <div>P/L +/- 10%</div>
       </div>
       <div className="mt-3 mr-3">
-        <CreatePortfolioModal />
+        <CreatePortfolioModal handleDisplayPortfolio={handleDisplayPortfolio} />
       </div>
     </div>
   );
