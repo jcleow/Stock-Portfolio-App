@@ -13,9 +13,8 @@ export default function SignInButton({ signInButtonProps }) {
   return (
     <div>
 
-      <MenuItem onClick={handleShow}>
-        Sign In
-      </MenuItem>
+      <button type="submit" className="transparent-btn " onClick={handleShow}>Sign In</button>
+
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
           <div className="d-flex justify-content-center">

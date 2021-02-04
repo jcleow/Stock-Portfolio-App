@@ -19,9 +19,9 @@ export default function SignOutButton({ setLoggedIn }) {
 
   return (
     <div>
-      <MenuItem onClick={handleShow}>
+      <button type="submit" className="transparent-btn " onClick={handleShow}>
         Sign Out
-      </MenuItem>
+      </button>
       <Modal show={show} onHide={handleClose} backdrop="static">
         <Modal.Header closeButton>
           <div className="d-flex justify-content-center">

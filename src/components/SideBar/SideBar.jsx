@@ -37,7 +37,7 @@ export default function SideBar({ sideBarProps }) {
       <MenuItem>
         <button
           type="submit"
-          className="portfolio-btn"
+          className="transparent-btn"
           value={portfolioId}
           onClick={(e) => {
             refreshPortfolioView(e);
