@@ -67,11 +67,14 @@ export default function App() {
     portfolioList,
   };
   return (
-    <div>
-      <SideBar sideBarProps={sideBarProps} />
-      {display === 'main'
+    <div className="flex-container">
+      <div className="sidebar-flex">
+        <SideBar sideBarProps={sideBarProps} />
+      </div>
+      <div className="main-display-flex">
+        {display === 'main'
       && <MainDisplay />}
-      {display === 'portfolio'
+        {display === 'portfolio'
       && (
       <div>
         <EquityChartHeader
@@ -90,6 +93,7 @@ export default function App() {
         />
       </div>
       )}
+      </div>
     </div>
   );
 }

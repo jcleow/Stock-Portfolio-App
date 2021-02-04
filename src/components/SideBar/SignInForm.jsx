@@ -22,7 +22,6 @@ export default function SignInForm({ signInFormProps }) {
       .then((result) => {
         setUsernameInput('');
         setPasswordInput('');
-
         if (result.data.auth) {
           setLoggedIn(true);
           console.log(result.data, 'result-data');

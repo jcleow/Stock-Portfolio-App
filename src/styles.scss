@@ -1,5 +1,7 @@
 /** @format */
 @import "~bootstrap/scss/bootstrap";
+@import "~react-pro-sidebar/dist/scss/styles.scss";
+
 html {
   height: 100%;
 }
@@ -36,6 +38,20 @@ body {
 
 .options {
   border: none;
+}
+
+.sidebar {
+  height: 100vh;
+}
+
+.flex-container {
+  display: flex;
+}
+.sidebar-flex {
+  flex-grow: 0;
+}
+.maindispaly-flex {
+  flex-grow: 0;
 }
 
 // React-vis scss
