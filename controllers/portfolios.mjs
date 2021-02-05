@@ -5,13 +5,19 @@ const SANDBOXTOKEN = 'Tsk_c0d79534cc3f4d8fa07478c311b898d2';
 const GENERICURL = 'https://sandbox.iexapis.com/stable/stock';
 
 // Helper that calculates the total equity of a portfolio (1M view)
-const calcPortfolioValueAndCost = (batchQuotes, arrayOfStockTrades, selectedStockIds, selectedPortfolioStockIds, selectedStockNamesString) => {
+const calcPortfolioValueAndCost = (batchQuotes, arrayOfStockTrades, selectedPortfolioStockIds) => {
+  let storeFirstDateStr;
+
   // First convert all the spot prices into an array of objects with
   // key: symbol and value: an object of dates as key and value as price
   const newArrayOfStkSpotPrices = batchQuotes.map((entry) => {
     let datePrice = {};
 
-    entry.chart.forEach((chartUnit) => {
+    entry.chart.forEach((chartUnit, index) => {
+      if (index === 0) {
+        storeFirstDateStr = chartUnit.date;
+        console.log(storeFirstDateStr, 'storeFirstDateStr');
+      }
       datePrice = { ...datePrice, [chartUnit.date]: { close: chartUnit.close } };
     });
 
@@ -35,9 +41,14 @@ const calcPortfolioValueAndCost = (batchQuotes, arrayOfStockTrades, selectedStoc
     }));
 
   // Assigning all the stock trades into each key(stock)
+  console.log(arrayOfStockTrades, 'arrayOfStockTrades');
+  console.log(arrayOfStockTrades[0], 'arrayOfStockTrades - first trade');
+  console.log(arrayOfStockTrades[0].trade, 'arrayOfStockTrades data val');
+
   arrayOfStockTrades.forEach((stk) => {
     stk.forEach((trade) => {
-      collectionOfStocksTraded.forEach((stock, index) => {
+      console.log(stk, 'stk');
+      collectionOfStocksTraded.forEach((stock) => {
         const {
           tradeDate, portfolioStockId, position, costPrice, shares,
         } = trade;
@@ -53,28 +64,59 @@ const calcPortfolioValueAndCost = (batchQuotes, arrayOfStockTrades, selectedStoc
 
         const symb = Object.keys(selectedPortfolioStockIds).filter((key) => selectedPortfolioStockIds[key] === stock.id);
         const stockObj = stock[symb];
+        console.log(stockObj, 'stockObj');
+        // somewhere heere
         const currStockTrade = stockObj[tradeDateStr];
-        if (stock.id === portfolioStockId) {
-          if (!currStockTrade.hasOwnProperty('tradedShares') && !currStockTrade.hasOwnProperty('totalCost')) {
-            currStockTrade.tradedShares = tradedShares;
-            currStockTrade.totalCost = tradedShares * costPrice;
+        console.log(currStockTrade, 'currStockTrade');
+        if (currStockTrade) {
+          // If current portfolioStockId of this trade is same as the portfolioStock in the CollectionOfStocksTraded
+          if (stock.id === portfolioStockId) {
+            if (!currStockTrade.hasOwnProperty('tradedShares') && !currStockTrade.hasOwnProperty('totalCost')) {
+              currStockTrade.tradedShares = tradedShares;
+              currStockTrade.totalCost = tradedShares * costPrice;
+            } else {
+              currStockTrade.tradedShares += tradedShares;
+              currStockTrade.totalCost += tradedShares * costPrice;
+            }
+
+            const indexOfCurrDate = Object.keys(stockObj).findIndex((el) => el === tradeDateStr);
+
+            // Propagate the cumulative shares, cost and value forward to the other dates
+            const dateKeysToPropDataArray = Object.keys(stockObj).slice(indexOfCurrDate);
+            dateKeysToPropDataArray.forEach((date) => {
+              if (!stockObj[date].hasOwnProperty('cumShares')) {
+                stockObj[date].cumShares = tradedShares;
+                stockObj[date].cumValue = tradedShares * stockObj[date].close;
+                stockObj[date].cumCost = tradedShares * costPrice;
+              } else {
+                stockObj[date].cumShares += tradedShares;
+                stockObj[date].cumValue = stockObj[date].cumShares * stockObj[date].close;
+                stockObj[date].cumCost += tradedShares * costPrice;
+              }
+            });
+          }
+        } else if (stock.id === portfolioStockId) {
+          const datesPriorToStartArray = Object.keys(stockObj).slice(0, storeFirstDateStr);
+          console.log(datesPriorToStartArray, 'datesPriorToStartArray');
+          console.log(stockObj[storeFirstDateStr], 'stock obj first date');
+          if (!stockObj[storeFirstDateStr].hasOwnProperty('cumShares')) {
+            stockObj[storeFirstDateStr].cumShares = tradedShares;
+            stockObj[storeFirstDateStr].cumValue = tradedShares * stockObj[storeFirstDateStr].close;
+            stockObj[storeFirstDateStr].cumCost = tradedShares * costPrice;
           } else {
-            currStockTrade.tradedShares += tradedShares;
-            currStockTrade.totalCost += tradedShares * costPrice;
+            stockObj[storeFirstDateStr].cumShares += tradedShares;
+            stockObj[storeFirstDateStr].cumValue = stockObj[storeFirstDateStr].cumShares * stockObj[storeFirstDateStr].close;
+            stockObj[storeFirstDateStr].cumCost += tradedShares * costPrice;
           }
 
           const indexOfCurrDate = Object.keys(stockObj).findIndex((el) => el === tradeDateStr);
           // Propagate the cumulative shares, cost and value forward to the other dates
-          const dateKeysToPropDataArray = Object.keys(stockObj).slice(indexOfCurrDate);
+          const dateKeysToPropDataArray = Object.keys(stockObj).slice(indexOfCurrDate + 1);
           dateKeysToPropDataArray.forEach((date) => {
             if (!stockObj[date].hasOwnProperty('cumShares')) {
-              stockObj[date].cumShares = tradedShares;
-              stockObj[date].cumValue = tradedShares * stockObj[date].close;
-              stockObj[date].cumCost = tradedShares * costPrice;
-            } else {
-              stockObj[date].cumShares += tradedShares;
-              stockObj[date].cumValue = stockObj[date].cumShares * stockObj[date].close;
-              stockObj[date].cumCost += tradedShares * costPrice;
+              stockObj[date].cumShares = stockObj[storeFirstDateStr].cumShares;
+              stockObj[date].cumValue = stockObj[storeFirstDateStr].cumShares * stockObj[date].close;
+              stockObj[date].cumCost = stockObj[storeFirstDateStr].cumShares * costPrice;
             }
           });
         }
@@ -102,6 +144,7 @@ const calcPortfolioValueAndCost = (batchQuotes, arrayOfStockTrades, selectedStoc
   symbolsInPortfolio.forEach((symbol) => {
     timeSeries.forEach((date) => {
       if (consolStkTrades[symbol][date].hasOwnProperty('cumValue')) {
+        // This is if stk trade coincided with the time range viewed by user
         portfolioValueTimeSeries[date] += consolStkTrades[symbol][date].cumValue;
         accumulatedCostTimeSeries[date] += consolStkTrades[symbol][date].cumCost;
       } else {
@@ -110,11 +153,12 @@ const calcPortfolioValueAndCost = (batchQuotes, arrayOfStockTrades, selectedStoc
       }
     });
   });
+  console.log(consolStkTrades, 'consolStkTrades');
   console.log(accumulatedCostTimeSeries, 'accumulatedCostTimeSeries');
   return { portfolioValueTimeSeries, accumulatedCostTimeSeries };
 };
 
-const getBatchQuotes = (portfolioId, selectedStockIds, selectedPortfolioStockIds, arrayOfSharesOwned, arrayOfStockTrades, selectedStockNamesString) => {
+const getBatchQuotes = (portfolioId, selectedPortfolioStockIds, arrayOfSharesOwned, arrayOfStockTrades, selectedStockNamesString) => {
   let batchQuotes;
   let essentialQuoteInfo;
   // axios.get...then( ) returns a Promise that will resolve to the return value
@@ -210,12 +254,12 @@ export default function portfolios(db) {
             return sharesPerStock;
           });
           // getBatchQuotes is a promise
-          return getBatchQuotes(portfolioId, selectedStockIds, selectedPortfolioStockIds, arrayOfSharesOwned, arrayOfStockTrades, selectedStockNamesString);
+          return getBatchQuotes(portfolioId, selectedPortfolioStockIds, arrayOfSharesOwned, arrayOfStockTrades, selectedStockNamesString);
         })
         .then((batchQuoteResults) => {
           // Calculate the portfolioValue over a time frame (fixed at 1M for now)
           const { essentialQuoteInfo, batchQuotes } = batchQuoteResults;
-          const { portfolioValueTimeSeries, accumulatedCostTimeSeries } = calcPortfolioValueAndCost(batchQuotes, arrayOfStockTrades, selectedStockIds, selectedPortfolioStockIds, selectedStockNamesString);
+          const { portfolioValueTimeSeries, accumulatedCostTimeSeries } = calcPortfolioValueAndCost(batchQuotes, arrayOfStockTrades, selectedPortfolioStockIds, selectedStockNamesString);
           res.send({ essentialQuoteInfo, portfolioValueTimeSeries, accumulatedCostTimeSeries });
         })
         .catch((err) => console.log(err));
@@ -309,10 +353,6 @@ export default function portfolios(db) {
       where: {
         id: portfolioId,
       },
-      // include: [{
-      //   model: db.PortfolioStock,
-      //   include: db.Trade,
-      // }],
     });
     res.send({ message: 'portfolio deleted' });
   };

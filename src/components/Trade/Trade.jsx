@@ -81,7 +81,6 @@ export default function Trade({
         <DatePicker
           selected={startDate}
           onChange={handleTradeDate}
-          minDate={subDays(new Date(), 30)}
           maxDate={addDays(new Date(), 0)}
         />
       </td>
