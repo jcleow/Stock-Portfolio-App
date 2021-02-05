@@ -6,7 +6,7 @@ import CoyInfo from './CoyInfo.jsx';
 import SymbolLookup from './SymbolLookup.jsx';
 import StockKeyStats from './StockKeyStats.jsx';
 
-export default function MainDisplay() {
+export default function StockSearch() {
   // Track the price quote data for the price chart
   const [quoteData, setQuoteData] = useState([]);
   const [duration, setDuration] = useState('');

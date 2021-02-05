@@ -2,14 +2,14 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import PortfolioTable from './components/Portfolio/PortfolioTable.jsx';
 import SideBar from './components/SideBar/SideBar.jsx';
-import MainDisplay from './components/MainDisplay.jsx';
+import StockSearch from './components/StockSearch.jsx';
 import EquityChart from './components/Portfolio/EquityChart.jsx';
 import EquityChartHeader from './components/Portfolio/EquityChartHeader.jsx';
 
 export default function App() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [username, setUsername] = useState('');
-  const [display, setDisplay] = useState('main');
+  const [display, setDisplay] = useState('portfolio');
   const [portfolioList, setPortfolioList] = useState([]);
   const [portfolioStocks, setPortfolioStocks] = useState([]);
   const [currPortfolioId, setCurrPortfolioId] = useState();
@@ -73,6 +73,8 @@ export default function App() {
       const endPos = splitCookieVal[0].indexOf(';');
       const loggedInUsername = splitCookieVal[0].substring(startPos, endPos);
       setUsername(loggedInUsername);
+      // Display the available portfolios in sidebar and on main screen once page loads
+      handleDisplayPortfolio();
     }
   }, []);
 
@@ -103,8 +105,8 @@ export default function App() {
         <SideBar sideBarProps={sideBarProps} />
       </div>
       <div className="main-display-flex">
-        {display === 'main'
-      && <MainDisplay />}
+        {display === 'stockSearch'
+      && <StockSearch />}
         {display === 'portfolio'
       && (
       <div>
