@@ -2,10 +2,9 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { Modal, Button } from 'react-bootstrap';
 
-export default function DeletePortfolioModal({ selectedPortfolioName, currPortfolioId }) {
-  const [show, setShow] = useState(false);
+export default function DeletePortfolioModal({ selectedPortfolioName, currPortfolioId, modalProps }) {
+  const { show, setShow } = modalProps;
   const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
 
   const handleDeletePortfolio = () => {
     console.log(currPortfolioId, 'currPortfolioId-modal');
@@ -21,9 +20,6 @@ export default function DeletePortfolioModal({ selectedPortfolioName, currPortfo
 
   return (
     <div>
-      <button type="submit" className="delete-portfolio-btn " onClick={handleShow}>
-        Delete Portfolio
-      </button>
       <Modal show={show} onHide={handleClose} backdrop="static">
         <Modal.Header closeButton>
           <div className="d-flex justify-content-center">

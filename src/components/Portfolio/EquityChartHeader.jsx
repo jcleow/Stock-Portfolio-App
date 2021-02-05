@@ -1,9 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { FaCog } from 'react-icons/fa';
 import { DropdownButton, Dropdown } from 'react-bootstrap';
 import DeletePortfolioModal from './DeletePortfolioModal.jsx';
 
 export default function EquityChartHeader({ equityChartHeaderProps }) {
+  // Handle Delete button modal
+  const [show, setShow] = useState(false);
+  const handleShow = () => setShow(true);
+
   const {
     selectedPortfolioName,
     equityCurveData,
@@ -42,6 +46,7 @@ export default function EquityChartHeader({ equityChartHeaderProps }) {
     maximumFractionDigits: 0,
   }).format(portfolioValue);
 
+  const modalProps = { show, setShow };
   return (
     <div className="d-flex justify-content-between">
       <div className="offset-display mt-3">
@@ -68,14 +73,14 @@ export default function EquityChartHeader({ equityChartHeaderProps }) {
       </div>
       <div className="mt-3 mr-3">
         <DropdownButton variant="outline-dark" id="dropdown-basic-button" title={<FaCog size={20} />}>
-          <Dropdown.Item href="#/action-1">Edit Portfolio Name</Dropdown.Item>
-          <Dropdown.Item href="#/action-2">
-            <DeletePortfolioModal
-              selectedPortfolioName={selectedPortfolioName}
-              currPortfolioId={currPortfolioId}
-            />
-          </Dropdown.Item>
+          <Dropdown.Item>Edit Portfolio Name</Dropdown.Item>
+          <Dropdown.Item onClick={handleShow}>Delete Portfolio</Dropdown.Item>
         </DropdownButton>
+        <DeletePortfolioModal
+          selectedPortfolioName={selectedPortfolioName}
+          currPortfolioId={currPortfolioId}
+          modalProps={modalProps}
+        />
       </div>
     </div>
   );

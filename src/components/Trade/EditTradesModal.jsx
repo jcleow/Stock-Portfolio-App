@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import {
-  Button, Table, Modal,
+  Button, Table, Modal, Dropdown, DropdownButton,
 } from 'react-bootstrap';
 import { ThreeDotsVertical } from 'react-bootstrap-icons';
 import Trade from './Trade.jsx';
@@ -53,10 +53,12 @@ export default function EditTradesModal({
     setTradesData(newTradesData);
   };
   return (
+
     <>
-      <Button variant="outline-dark" className="options" onClick={handleShow}>
-        <ThreeDotsVertical />
-      </Button>
+      <DropdownButton id="dropdown-basic-button" variant="outline-dark" title={<ThreeDotsVertical />}>
+        <Dropdown.Item onClick={handleShow}>View/Edit Trades</Dropdown.Item>
+        <Dropdown.Item>Delete Trades</Dropdown.Item>
+      </DropdownButton>
 
       <Modal
         show={show}
