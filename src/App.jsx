@@ -48,6 +48,17 @@ export default function App() {
           setPortfolioList(result.data.portfolios);
           setDisplay('portfolio');
         }
+        if (result.data.portfolios.length > 0) {
+          setSelectedPortfolioName(result.data.portfolios[0].name);
+          return axios.get(`/portfolios/${result.data.portfolios[0].id}`);
+        }
+      })
+      .then((firstPortfolioResult) => {
+        if (firstPortfolioResult) {
+          setPortfolioStocks(firstPortfolioResult.data.essentialQuoteInfo);
+          setEquityCurveData(firstPortfolioResult.data.portfolioValueTimeSeries);
+          setAccCostCurveData(firstPortfolioResult.data.accumulatedCostTimeSeries);
+        }
       })
       .catch((error) => console.log(error));
   };

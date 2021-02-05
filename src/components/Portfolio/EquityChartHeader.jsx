@@ -73,6 +73,7 @@ export default function EquityChartHeader({ equityChartHeaderProps }) {
   let profitLoss = 0;
   let profitLossPct = 0;
   let formattedPnL = 0;
+
   if (equityCurveData && accCostCurveData) {
     arrOfPortfolioValues = Object.values(equityCurveData).map((val) => val);
     arrOfAccCostValues = Object.values(accCostCurveData).map((cost) => cost);
