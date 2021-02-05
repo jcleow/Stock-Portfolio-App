@@ -52,6 +52,7 @@ export default function App() {
           setSelectedPortfolioName(result.data.portfolios[0].name);
           return axios.get(`/portfolios/${result.data.portfolios[0].id}`);
         }
+        setSelectedPortfolioName('Please create a portfolio to begin');
       })
       .then((firstPortfolioResult) => {
         if (firstPortfolioResult) {
