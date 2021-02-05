@@ -46,9 +46,9 @@ db.Note = initNoteModel(sequelize, Sequelize.DataTypes);
 
 // 1-M association between user and portfolios
 db.Portfolio.belongsTo(db.User);
-db.User.hasMany(db.Portfolio);
+db.User.hasMany(db.Portfolio, { onDelete: 'cascade', foreignKey: { allowNull: false }, hooks: true });
 
-db.PortfolioStock.hasMany(db.Trade);
+db.PortfolioStock.hasMany(db.Trade, { onDelete: 'cascade', foreignKey: { allowNull: false }, hooks: true });
 db.Trade.hasMany(db.Note);
 
 // M:N association between portfolio and stock

@@ -302,11 +302,27 @@ export default function portfolios(db) {
     }
   };
 
+  const deletePortfolio = async (req, res) => {
+    const { portfolioId } = req.params;
+    console.log(portfolioId, 'currPortfolioId');
+    await db.Portfolio.destroy({
+      where: {
+        id: portfolioId,
+      },
+      // include: [{
+      //   model: db.PortfolioStock,
+      //   include: db.Trade,
+      // }],
+    });
+    res.send({ message: 'portfolio deleted' });
+  };
+
   return ({
     index,
     view,
     update,
     create,
     add,
+    deletePortfolio,
   });
 }

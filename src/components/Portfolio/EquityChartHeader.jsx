@@ -1,13 +1,16 @@
 import React from 'react';
 import { FaCog } from 'react-icons/fa';
+import { DropdownButton, Dropdown } from 'react-bootstrap';
+import DeletePortfolioModal from './DeletePortfolioModal.jsx';
 
 export default function EquityChartHeader({ equityChartHeaderProps }) {
   const {
     selectedPortfolioName,
     equityCurveData,
     accCostCurveData,
+    currPortfolioId,
   } = equityChartHeaderProps;
-
+  console.log(currPortfolioId, 'currPortfolioId-equitychart');
   let arrOfPortfolioValues = [];
   let arrOfAccCostValues = [];
   let portfolioValue = 0;
@@ -64,7 +67,15 @@ export default function EquityChartHeader({ equityChartHeaderProps }) {
           )}
       </div>
       <div className="mt-3 mr-3">
-        <FaCog size={20} onClick={() => { console.log('test-3'); }} />
+        <DropdownButton variant="outline-dark" id="dropdown-basic-button" title={<FaCog size={20} />}>
+          <Dropdown.Item href="#/action-1">Edit Portfolio Name</Dropdown.Item>
+          <Dropdown.Item href="#/action-2">
+            <DeletePortfolioModal
+              selectedPortfolioName={selectedPortfolioName}
+              currPortfolioId={currPortfolioId}
+            />
+          </Dropdown.Item>
+        </DropdownButton>
       </div>
     </div>
   );

@@ -34,6 +34,8 @@ module.exports = {
       },
       user_id: {
         type: Sequelize.INTEGER,
+        allowNull: true,
+        onDelete: 'CASCADE',
         references: {
           model: 'users',
           key: 'id',
@@ -84,6 +86,8 @@ module.exports = {
       },
       portfolio_id: {
         type: Sequelize.INTEGER,
+        allowNull: true,
+        onDelete: 'CASCADE',
         references: {
           model: 'portfolios',
           key: 'id',
@@ -115,6 +119,8 @@ module.exports = {
       },
       portfolio_stock_id: {
         type: Sequelize.INTEGER,
+        allowNull: true,
+        onDelete: 'CASCADE',
         references: {
           model: 'portfolio_stocks',
           key: 'id',
@@ -150,6 +156,8 @@ module.exports = {
       },
       trade_id: {
         type: Sequelize.INTEGER,
+        allowNull: true,
+        onDelete: 'CASCADE',
         references: {
           model: 'trades',
           key: 'id',

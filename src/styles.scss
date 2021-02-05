@@ -64,6 +64,15 @@ body {
 .transparent-btn:focus {
   border: none;
 }
+.dropdown-toggle::after {
+  display: none;
+}
+
+.delete-portfolio-btn {
+  border: none;
+  background-color: transparent;
+  outline: none;
+}
 
 // React-vis scss
 .react-vis-magic-css-import-rule {

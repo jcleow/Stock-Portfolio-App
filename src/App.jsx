@@ -20,6 +20,7 @@ export default function App() {
   // Manage states of all the stocks in the curr portfolio user is viewing
   const [portfolioStocks, setPortfolioStocks] = useState([]);
   const [currPortfolioId, setCurrPortfolioId] = useState();
+  console.log(currPortfolioId, 'currPortfolioId');
 
   // Manage data for current portfolio user is viewing
   const [equityCurveData, setEquityCurveData] = useState([]);
@@ -122,7 +123,9 @@ export default function App() {
       handleGetDefaultChart();
     }
   }, []);
-  const equityChartProps = { equityCurveData, accCostCurveData, timeFrame };
+  const equityChartProps = {
+    equityCurveData, accCostCurveData, timeFrame,
+  };
 
   const sideBarProps = {
     username,
@@ -144,6 +147,7 @@ export default function App() {
     selectedPortfolioName,
     equityCurveData,
     accCostCurveData,
+    currPortfolioId,
   };
 
   const stockSearchProps = {
@@ -171,7 +175,6 @@ export default function App() {
       && (
       <div>
         <EquityChartHeader
-          portfolioId={currPortfolioId}
           equityChartHeaderProps={equityChartHeaderProps}
         />
         <EquityChart equityChartProps={equityChartProps} />
