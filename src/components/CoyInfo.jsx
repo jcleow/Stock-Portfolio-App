@@ -2,13 +2,12 @@ import React from 'react';
 
 export default function CoyInfo({ coyInfo }) {
   const {
-    companyName, latestPrice, change, changePercent, isUSMarketOpen,
+    companyName, close, change, changePercent, isUSMarketOpen,
   } = coyInfo;
-  console.log(coyInfo, 'coyInfo');
   return (
     <div className="container">
       <h1>{companyName}</h1>
-      <h2>{latestPrice}</h2>
+      <h2>{close}</h2>
       <h5>
         {change > 0 && '+' }
         {change}

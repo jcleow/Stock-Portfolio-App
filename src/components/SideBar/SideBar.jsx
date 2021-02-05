@@ -19,6 +19,7 @@ export default function SideBar({ sideBarProps }) {
     setSelectedPortfolioName,
     portfolioList,
     refreshPortfolioView,
+    handleGetDefaultChart,
   } = sideBarProps;
 
   const signInButtonProps = { setLoggedIn, setUsername };
@@ -52,6 +53,7 @@ export default function SideBar({ sideBarProps }) {
 
   const handleDisplayStockSearch = () => {
     setDisplay('stockSearch');
+    handleGetDefaultChart();
   };
 
   const handleDisplayPortfolio = () => {
@@ -61,7 +63,7 @@ export default function SideBar({ sideBarProps }) {
   return (
     <div className="sidebar">
       <ProSidebar collapsed={collapsed} onMouseOver={handleMouseOver} onMouseLeave={handleMouseLeave}>
-        <div className="text-center mt-5">S T O N K S</div>
+        <div className="text-center mt-5">STONKS</div>
         <Menu iconShape="square">
           <MenuItem>{loggedIn ? `Welcome ${username}` : null }</MenuItem>
           <MenuItem icon={<FaGem />} onClick={handleDisplayStockSearch}>Search for Stock</MenuItem>

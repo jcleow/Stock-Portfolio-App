@@ -9,17 +9,36 @@ import EquityChartHeader from './components/Portfolio/EquityChartHeader.jsx';
 export default function App() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [username, setUsername] = useState('');
+
+  // Manage state of either portfolio view or stock search view
   const [display, setDisplay] = useState('portfolio');
+
+  // ********* Manage states for  Portfolio View *************//
+  // Manage states of current list of portfolios belonging to curr user
   const [portfolioList, setPortfolioList] = useState([]);
+
+  // Manage states of all the stocks in the curr portfolio user is viewing
   const [portfolioStocks, setPortfolioStocks] = useState([]);
   const [currPortfolioId, setCurrPortfolioId] = useState();
+
+  // Manage data for current portfolio user is viewing
   const [equityCurveData, setEquityCurveData] = useState([]);
   const [accCostCurveData, setAccCostCurveData] = useState([]);
   const [selectedPortfolioName, setSelectedPortfolioName] = useState();
 
-  // For purposes of charting equity curve
+  // ********* Manage states for  Stock Search View **********//
+  // Track the price quote data for the stock search price chart
+  const [quoteData, setQuoteData] = useState([]);
+  const [duration, setDuration] = useState('');
+  // Track the keystats of currently selected symbol
+  const [keyStats, setKeyStats] = useState(null);
+  // Track the coyInfoData
+  const [coyInfo, setCoyInfo] = useState([]);
+  // Track the currently selected symbol
+  const [symbol, setSymbol] = useState('');
+
+  // For purposes of charting initial display of first (and all) portfolio equity curve
   const timeFrame = '1m';
-  const equityChartProps = { equityCurveData, accCostCurveData, timeFrame };
 
   const refreshPortfolioView = (event, targetPortfolioId) => {
     let portfolioId;
@@ -64,6 +83,30 @@ export default function App() {
       .catch((error) => console.log(error));
   };
 
+  // Get default AAPL 1M chart when opening up stock search
+  function handleGetDefaultChart() {
+    let coyInfoData;
+    axios.get('/aapl/headlineInfo')
+      .then((result) => {
+        setSymbol('aapl');
+        coyInfoData = result.data;
+        return axios.get('/aapl/chart/1m');
+      })
+      .then((chartDataResult) => {
+        console.log(chartDataResult, 'chartDataResult');
+        // Due to IEX inconsistent prices with the chart we have to
+        // Remedy the latest closing price
+        setCoyInfo({ ...coyInfoData, close: chartDataResult.data.coordinates.slice(-1)[0].close });
+        setQuoteData(chartDataResult.data.coordinates);
+        setDuration(chartDataResult.data.duration);
+        return axios.get('/aapl/stats/');
+      })
+      .then((statsResults) => {
+        setKeyStats(statsResults.data);
+      })
+      .catch((error) => console.log(error));
+  }
+
   // To make sure username is everytime the page is reloaded
   useEffect(() => {
     if (document.cookie) {
@@ -75,21 +118,26 @@ export default function App() {
       setUsername(loggedInUsername);
       // Display the available portfolios in sidebar and on main screen once page loads
       handleDisplayPortfolio();
+      // Display the default portfolio on render to be default to 1M view
+      handleGetDefaultChart();
     }
   }, []);
+  const equityChartProps = { equityCurveData, accCostCurveData, timeFrame };
 
   const sideBarProps = {
     username,
     loggedIn,
+    portfolioList,
+
     setLoggedIn,
     setDisplay,
     setPortfolioList,
     setUsername,
+
     setSelectedPortfolioName,
     handleDisplayPortfolio,
     refreshPortfolioView,
-    portfolioList,
-
+    handleGetDefaultChart,
   };
 
   const equityChartHeaderProps = {
@@ -99,6 +147,19 @@ export default function App() {
     accCostCurveData,
   };
 
+  const stockSearchProps = {
+    quoteData,
+    duration,
+    keyStats,
+    symbol,
+    coyInfo,
+    setQuoteData,
+    setDuration,
+    setKeyStats,
+    setSymbol,
+    setCoyInfo,
+  };
+
   return (
     <div className="flex-container">
       <div className="sidebar-flex">
@@ -106,7 +167,7 @@ export default function App() {
       </div>
       <div className="main-display-flex">
         {display === 'stockSearch'
-      && <StockSearch />}
+      && <StockSearch stockSearchProps={stockSearchProps} />}
         {display === 'portfolio'
       && (
       <div>

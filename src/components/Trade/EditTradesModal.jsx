@@ -13,7 +13,6 @@ export default function EditTradesModal({
 
   // This tradesData is passed to the ajax request to update the trade
   const [tradesData, setTradesData] = useState([...historicalTrades]);
-  console.log(historicalTrades, 'historicalTrades');
   // Create the existing Trade entries
   const historicalTradeDisplay = tradesData.map((tradeData, index) => {
     // DataIndex is the index of its relevant data in the states' arrays
