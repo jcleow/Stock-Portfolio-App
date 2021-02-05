@@ -59,4 +59,5 @@ export default function routes(app) {
   app.post('/portfolios/create', PortfoliosController.create);
   app.post('/portfolios/:portfolioId/addSymbol', PortfoliosController.add);
   app.delete('/portfolios/:portfolioId/delete', PortfoliosController.deletePortfolio);
+  app.delete('/portfolioStocks/:portfolioStockId/delete', PortfoliosController.deletePortfolioStock);
 }

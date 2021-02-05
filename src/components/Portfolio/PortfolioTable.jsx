@@ -10,7 +10,7 @@ function AddStockToPortfolioBtn({
   const handleNewSymbol = (event) => {
     setNewSymbol(event.target.value);
   };
-
+  console.log(currPortfolioId, 'currPortfolioId');
   const handleAddSymbol = () => {
     axios.post(`/portfolios/${currPortfolioId}/addSymbol`, { newSymbol })
       .then(() => {

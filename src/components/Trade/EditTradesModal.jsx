@@ -36,7 +36,9 @@ export default function EditTradesModal({
   const handleCancel = () => {
     setShow(false);
   };
+
   const handleShow = () => setShow(true);
+
   const handleSaveTransactions = (event) => {
     axios.put(`/portfolios/${portfolioId}/stocks/${portfolioStockId}/update`, { tradesData })
       .then(() => refreshPortfolioView(event, portfolioId))
@@ -45,19 +47,33 @@ export default function EditTradesModal({
       })
       .catch((err) => console.log(err));
   };
+
   const handleAddNewTrade = () => {
-    console.log(portfolioStockId, 'portfolioStockId');
     const newTradesData = [...tradesData, {
       id: null, portfolioStockId: Number(portfolioStockId), position: '', tradeDate: null, costPrice: null,
     }];
     setTradesData(newTradesData);
   };
+
+  const handleDeletePortfolioStock = () => {
+    axios.delete(`/portfolioStocks/${portfolioStockId}/delete`)
+      .then((result) => {
+        console.log(result, 'result');
+        refreshPortfolioView(null, portfolioId);
+      })
+      .catch((error) => console.log(error));
+  };
+
   return (
 
     <>
-      <DropdownButton id="dropdown-basic-button" variant="outline-dark" title={<ThreeDotsVertical />}>
+      <DropdownButton
+        id="dropdown-basic-button"
+        variant="outline-dark"
+        title={<ThreeDotsVertical />}
+      >
         <Dropdown.Item onClick={handleShow}>View/Edit Trades</Dropdown.Item>
-        <Dropdown.Item>Delete Trades</Dropdown.Item>
+        <Dropdown.Item onClick={handleDeletePortfolioStock}>Delete Stock</Dropdown.Item>
       </DropdownButton>
 
       <Modal

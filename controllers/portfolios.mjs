@@ -54,9 +54,6 @@ const calcPortfolioValueAndCost = (batchQuotes, arrayOfStockTrades, selectedPort
     }));
 
   // Assigning all the stock trades into each key(stock)
-  console.log(arrayOfStockTrades, 'arrayOfStockTrades');
-  console.log(arrayOfStockTrades[0], 'arrayOfStockTrades - first trade');
-  console.log(arrayOfStockTrades[0].trade, 'arrayOfStockTrades data val');
 
   arrayOfStockTrades.forEach((stk) => {
     stk.forEach((trade) => {
@@ -77,10 +74,8 @@ const calcPortfolioValueAndCost = (batchQuotes, arrayOfStockTrades, selectedPort
 
         const symb = Object.keys(selectedPortfolioStockIds).filter((key) => selectedPortfolioStockIds[key] === stock.id);
         const stockObj = stock[symb];
-        console.log(stockObj, 'stockObj');
         // somewhere heere
         const currStockTrade = stockObj[tradeDateStr];
-        console.log(currStockTrade, 'currStockTrade');
         if (currStockTrade) {
           // If current portfolioStockId of this trade is same as the portfolioStock in the CollectionOfStocksTraded
           if (stock.id === portfolioStockId) {
@@ -147,8 +142,6 @@ const calcPortfolioValueAndCost = (batchQuotes, arrayOfStockTrades, selectedPort
       }
     });
   });
-  console.log(consolStkTrades, 'consolStkTrades');
-  console.log(accumulatedCostTimeSeries, 'accumulatedCostTimeSeries');
   return { portfolioValueTimeSeries, accumulatedCostTimeSeries };
 };
 
@@ -342,13 +335,22 @@ export default function portfolios(db) {
 
   const deletePortfolio = async (req, res) => {
     const { portfolioId } = req.params;
-    console.log(portfolioId, 'currPortfolioId');
     await db.Portfolio.destroy({
       where: {
         id: portfolioId,
       },
     });
     res.send({ message: 'portfolio deleted' });
+  };
+
+  const deletePortfolioStock = async (req, res) => {
+    const { portfolioStockId } = req.params;
+    await db.PortfolioStock.destroy({
+      where: {
+        id: portfolioStockId,
+      },
+    });
+    res.send({ message: `portfolioStockId ${portfolioStockId} has been deleted` });
   };
 
   return ({
@@ -358,5 +360,6 @@ export default function portfolios(db) {
     create,
     add,
     deletePortfolio,
+    deletePortfolioStock,
   });
 }

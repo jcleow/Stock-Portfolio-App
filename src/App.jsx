@@ -94,7 +94,6 @@ export default function App() {
         return axios.get('/aapl/chart/1m');
       })
       .then((chartDataResult) => {
-        console.log(chartDataResult, 'chartDataResult');
         // Due to IEX inconsistent prices with the chart we have to
         // Remedy the latest closing price
         setCoyInfo({ ...coyInfoData, close: chartDataResult.data.coordinates.slice(-1)[0].close });
@@ -119,6 +118,9 @@ export default function App() {
       setUsername(loggedInUsername);
       // Display the available portfolios in sidebar and on main screen once page loads
       handleDisplayPortfolio();
+
+      // *** buggy // Set currPortfolioId... to first portfolio upon refresh? ** buggy
+
       // Display the default portfolio on render to be default to 1M view
       handleGetDefaultChart();
     }
