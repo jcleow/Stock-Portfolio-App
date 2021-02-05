@@ -5,6 +5,7 @@ import {
 import {
   ProSidebar, Menu, MenuItem, SubMenu,
 } from 'react-pro-sidebar';
+import CreatePortfolioModal from './CreatePortfolioModal.jsx';
 import SignInButton from './SignInButton.jsx';
 import SignOutButton from './SignOutButton.jsx';
 
@@ -20,6 +21,7 @@ export default function SideBar({ sideBarProps }) {
     portfolioList,
     refreshPortfolioView,
     handleGetDefaultChart,
+    handleDisplayPortfolio,
   } = sideBarProps;
 
   const signInButtonProps = { setLoggedIn, setUsername };
@@ -51,12 +53,12 @@ export default function SideBar({ sideBarProps }) {
     );
   });
 
-  const handleDisplayStockSearch = () => {
+  const handleDisplayStockSearchView = () => {
     setDisplay('stockSearch');
     handleGetDefaultChart();
   };
 
-  const handleDisplayPortfolio = () => {
+  const handleDisplayPortfolioView = () => {
     setDisplay('portfolio');
   };
 
@@ -66,9 +68,10 @@ export default function SideBar({ sideBarProps }) {
         <div className="text-center mt-5">STONKS</div>
         <Menu iconShape="square">
           <MenuItem>{loggedIn ? `Welcome ${username}` : null }</MenuItem>
-          <MenuItem icon={<FaGem />} onClick={handleDisplayStockSearch}>Search for Stock</MenuItem>
-          <SubMenu title="Portfolios" icon={<FaHeart />} onClick={handleDisplayPortfolio}>
+          <MenuItem icon={<FaGem />} onClick={handleDisplayStockSearchView}>Search for Stock</MenuItem>
+          <SubMenu title="Portfolios" icon={<FaHeart />} onClick={handleDisplayPortfolioView}>
             {portfolioButtonList}
+            <MenuItem><CreatePortfolioModal handleDisplayPortfolio={handleDisplayPortfolio} /></MenuItem>
           </SubMenu>
           <SubMenu icon={<FaUserCircle />} title="Account Management">
             <MenuItem icon={<FaUserCircle />}>

@@ -141,7 +141,6 @@ export default function App() {
   };
 
   const equityChartHeaderProps = {
-    handleDisplayPortfolio,
     selectedPortfolioName,
     equityCurveData,
     accCostCurveData,
