@@ -4,6 +4,19 @@ import moment from 'moment';
 const SANDBOXTOKEN = 'Tsk_c0d79534cc3f4d8fa07478c311b898d2';
 const GENERICURL = 'https://sandbox.iexapis.com/stable/stock';
 
+// Helper that accumulates and propagates share holdings from start to end of timeSeries
+const accSharesValueCost = (stockObj, date, tradedShares, costPrice) => {
+  if (!stockObj[date].hasOwnProperty('cumShares')) {
+    stockObj[date].cumShares = tradedShares;
+    stockObj[date].cumValue = tradedShares * stockObj[date].close;
+    stockObj[date].cumCost = tradedShares * costPrice;
+  } else {
+    stockObj[date].cumShares += tradedShares;
+    stockObj[date].cumValue = stockObj[date].cumShares * stockObj[date].close;
+    stockObj[date].cumCost += tradedShares * costPrice;
+  }
+};
+
 // Helper that calculates the total equity of a portfolio (1M view)
 const calcPortfolioValueAndCost = (batchQuotes, arrayOfStockTrades, selectedPortfolioStockIds) => {
   let storeFirstDateStr;
@@ -80,34 +93,15 @@ const calcPortfolioValueAndCost = (batchQuotes, arrayOfStockTrades, selectedPort
             }
 
             const indexOfCurrDate = Object.keys(stockObj).findIndex((el) => el === tradeDateStr);
-
             // Propagate the cumulative shares, cost and value forward to the other dates
             const dateKeysToPropDataArray = Object.keys(stockObj).slice(indexOfCurrDate);
             dateKeysToPropDataArray.forEach((date) => {
-              if (!stockObj[date].hasOwnProperty('cumShares')) {
-                stockObj[date].cumShares = tradedShares;
-                stockObj[date].cumValue = tradedShares * stockObj[date].close;
-                stockObj[date].cumCost = tradedShares * costPrice;
-              } else {
-                stockObj[date].cumShares += tradedShares;
-                stockObj[date].cumValue = stockObj[date].cumShares * stockObj[date].close;
-                stockObj[date].cumCost += tradedShares * costPrice;
-              }
+              accSharesValueCost(stockObj, date, tradedShares, costPrice);
             });
           }
+          // else if this tradeDate is not in the timeSeriesView of the portfolio...
         } else if (stock.id === portfolioStockId) {
-          const datesPriorToStartArray = Object.keys(stockObj).slice(0, storeFirstDateStr);
-          console.log(datesPriorToStartArray, 'datesPriorToStartArray');
-          console.log(stockObj[storeFirstDateStr], 'stock obj first date');
-          if (!stockObj[storeFirstDateStr].hasOwnProperty('cumShares')) {
-            stockObj[storeFirstDateStr].cumShares = tradedShares;
-            stockObj[storeFirstDateStr].cumValue = tradedShares * stockObj[storeFirstDateStr].close;
-            stockObj[storeFirstDateStr].cumCost = tradedShares * costPrice;
-          } else {
-            stockObj[storeFirstDateStr].cumShares += tradedShares;
-            stockObj[storeFirstDateStr].cumValue = stockObj[storeFirstDateStr].cumShares * stockObj[storeFirstDateStr].close;
-            stockObj[storeFirstDateStr].cumCost += tradedShares * costPrice;
-          }
+          accSharesValueCost(stockObj, storeFirstDateStr, tradedShares, costPrice);
 
           const indexOfCurrDate = Object.keys(stockObj).findIndex((el) => el === tradeDateStr);
           // Propagate the cumulative shares, cost and value forward to the other dates
