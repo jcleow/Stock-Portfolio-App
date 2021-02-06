@@ -56,13 +56,13 @@ export default function routes(app) {
   const PortfoliosController = portfolios(db);
   app.get('/portfolios', PortfoliosController.index);
   app.get('/portfolios/:portfolioId', PortfoliosController.view);
-  // app.put('/portfolios/:portfolioId/stocks/:portfolioStockId/update', PortfoliosController.update);
   app.post('/portfolios/create', PortfoliosController.create);
   app.post('/portfolios/:portfolioId/addSymbol', PortfoliosController.add);
   app.delete('/portfolios/:portfolioId/delete', PortfoliosController.deletePortfolio);
   app.delete('/portfolioStocks/:portfolioStockId/delete', PortfoliosController.deletePortfolioStock);
 
   const TradesController = trades(db);
+  app.get('/portfolioStocks/:portfolioStockId/trades', TradesController.index);
   app.put('/portfolios/:portfolioId/stocks/:portfolioStockId/update', TradesController.update);
   app.delete('/portfolios/:portfolioId/portfolioStocks/:portfolioStockId/trades/:tradeId/delete', TradesController.deleteTrade);
 }

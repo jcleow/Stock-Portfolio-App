@@ -1,5 +1,15 @@
 export default function trades(db) {
   // Update the trade details of a portfolioStock
+  const index = async (req, res) => {
+    const { portfolioStockId } = req.params;
+    const updatedTradesData = await db.Trade.findAll({
+      where: {
+        portfolioStockId,
+      },
+    });
+    res.send({ updatedTradesData });
+  };
+
   const update = async (req, res) => {
     const { tradesData } = req.body;
     const updatedTradeData = tradesData.map(async (trade) => {
@@ -54,6 +64,7 @@ export default function trades(db) {
   };
 
   return {
+    index,
     update,
     deleteTrade,
   };

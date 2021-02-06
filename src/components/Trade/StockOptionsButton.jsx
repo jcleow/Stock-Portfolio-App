@@ -37,6 +37,11 @@ export default function StockOptionsButton({
 
   // Close the modal and do not save the edited trade transactions
   const handleCancel = () => {
+    axios.get(`/portfolioStocks/${portfolioStockId}/trades`)
+      .then((result) => {
+        setTradesData(result.data.updatedTradesData);
+      })
+      .catch((err) => console.log(err));
     setShow(false);
   };
 

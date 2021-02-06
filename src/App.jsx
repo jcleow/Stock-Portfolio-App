@@ -49,7 +49,6 @@ export default function App() {
       portfolioId = targetPortfolioId;
     }
     setCurrPortfolioId(portfolioId);
-    console.log(portfolioId, 'portfolioId');
     axios.get(`/portfolios/${portfolioId}`)
       .then((result) => {
         console.log(result, 'result');
