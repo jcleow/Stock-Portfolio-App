@@ -5,6 +5,7 @@ import {
 import {
   ProSidebar, Menu, MenuItem, SubMenu,
 } from 'react-pro-sidebar';
+import axios from 'axios';
 import CreatePortfolioModal from './CreatePortfolioModal.jsx';
 import SignInButton from './SignInButton.jsx';
 import SignOutButton from './SignOutButton.jsx';
@@ -34,6 +35,15 @@ export default function SideBar({ sideBarProps }) {
     setCollapsed(true);
   };
 
+  const updateCurrPortfolioIdInCookie = (currPortfolioId) => {
+    axios.put(`/currPortfolioId/${currPortfolioId}`)
+      .then((result) => {
+        console.log(result);
+        setCurrPortfolioId;
+      })
+      .catch((error) => console.log(error));
+  };
+
   const portfolioButtonList = portfolioList.map((portfolio) => {
     const portfolioId = portfolio.id;
     return (
@@ -43,6 +53,7 @@ export default function SideBar({ sideBarProps }) {
           className="transparent-btn"
           value={portfolioId}
           onClick={(e) => {
+            updateCurrPortfolioIdInCookie(portfolioId);
             refreshPortfolioView(e);
             setSelectedPortfolioName(portfolio.name);
           }}

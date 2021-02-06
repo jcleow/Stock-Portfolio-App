@@ -20,7 +20,7 @@ export default function App() {
   // Manage states of all the stocks in the curr portfolio user is viewing
   const [portfolioStocks, setPortfolioStocks] = useState([]);
   const [currPortfolioId, setCurrPortfolioId] = useState();
-  // console.log(currPortfolioId, 'currPortfolioId');
+  console.log(currPortfolioId, 'currPortfolioId');
 
   // Manage data for current portfolio user is viewing
   const [equityCurveData, setEquityCurveData] = useState([]);
@@ -51,6 +51,19 @@ export default function App() {
   // For purposes of charting initial display of first (and all) portfolio equity curve
   const timeFrame = '1m';
 
+  const getInfoFromCookie = () => {
+    if (document.cookie) {
+      const splitCookieVal = document.cookie.split(' ');
+      const usernameStartPos = splitCookieVal[0].indexOf('=') + 1;
+      const usernameEndPos = splitCookieVal[0].indexOf(';');
+      const loggedInUsername = splitCookieVal[0].substring(usernameStartPos, usernameEndPos);
+      const idStartPos = splitCookieVal[3].indexOf('=') + 1;
+      const trackedPortfolioId = splitCookieVal[3].substring(idStartPos);
+      return ({ loggedInUsername, trackedPortfolioId });
+    }
+    return null;
+  };
+
   const refreshPortfolioView = (event, targetPortfolioId) => {
     let portfolioId;
     if (!targetPortfolioId) {
@@ -79,6 +92,17 @@ export default function App() {
           setPortfolioList(result.data.portfolios);
           setDisplay('portfolio');
         }
+
+        const { trackedPortfolioId } = getInfoFromCookie();
+
+        if (trackedPortfolioId) {
+          const lastViewedIndex = result.data.portfolios.findIndex(
+            (portfolio) => portfolio.id === Number(trackedPortfolioId),
+          );
+          setSelectedPortfolioName(result.data.portfolios[lastViewedIndex].name);
+          return axios.get(`/portfolios/${trackedPortfolioId}`);
+        }
+
         if (result.data.portfolios.length > 0) {
           setSelectedPortfolioName(result.data.portfolios[0].name);
           return axios.get(`/portfolios/${result.data.portfolios[0].id}`);
@@ -127,16 +151,13 @@ export default function App() {
   useEffect(() => {
     if (document.cookie) {
       setLoggedIn(true);
-      const splitCookieVal = document.cookie.split(' ');
-      const startPos = splitCookieVal[0].indexOf('=') + 1;
-      const endPos = splitCookieVal[0].indexOf(';');
-      const loggedInUsername = splitCookieVal[0].substring(startPos, endPos);
+      const userCookieInfo = getInfoFromCookie();
+      const { loggedInUsername, trackedPortfolioId } = userCookieInfo;
       setUsername(loggedInUsername);
       // Display the available portfolios in sidebar and on main screen once page loads
       handleDisplayPortfolio();
-
-      // *** buggy // Set currPortfolioId... to first portfolio upon refresh? ** buggy
-
+      // Store the last viewed portfolio if user decides to refresh the page
+      setCurrPortfolioId(trackedPortfolioId);
       // Display the default stock search on render to be default to 1M view
       handleGetDefaultChart();
     }
@@ -204,12 +225,15 @@ export default function App() {
           equityChartHeaderProps={equityChartHeaderProps}
         />
         <EquityChart equityChartProps={equityChartProps} />
-        <PortfolioTable
-          currPortfolioId={currPortfolioId}
-          portfolioStocks={portfolioStocks}
-          refreshPortfolioView={refreshPortfolioView}
-          addSymbLoadingProps={addSymbLoadingProps}
-        />
+        {currPortfolioId
+          ? (
+            <PortfolioTable
+              currPortfolioId={currPortfolioId}
+              portfolioStocks={portfolioStocks}
+              refreshPortfolioView={refreshPortfolioView}
+              addSymbLoadingProps={addSymbLoadingProps}
+            />
+          ) : null}
       </div>
       )}
       </div>

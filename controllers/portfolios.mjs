@@ -57,7 +57,6 @@ const calcPortfolioValueAndCost = (batchQuotes, arrayOfStockTrades, selectedPort
 
   arrayOfStockTrades.forEach((stk) => {
     stk.forEach((trade) => {
-      console.log(stk, 'stk');
       collectionOfStocksTraded.forEach((stock) => {
         const {
           tradeDate, portfolioStockId, position, costPrice, shares,

@@ -32,6 +32,7 @@ export default function users(db) {
       res.cookie('loggedInUsername', selectedUser.username);
       res.cookie('loggedInUserId', selectedUser.id);
       res.cookie('loggedInHash', convertUserIdToHash(selectedUser.id));
+      res.cookie('currPortfolioId', null);
       res.send({ auth: true, user: selectedUser });
     } catch (err) {
       console.log(err);
@@ -47,6 +48,7 @@ export default function users(db) {
     res.clearCookie('loggedInHash');
     res.clearCookie('loggedInUserId');
     res.clearCookie('loggedInUsername');
+    res.clearCookie('currPortfolioId');
     res.send({ message: 'signed out' });
   };
 
@@ -75,10 +77,18 @@ export default function users(db) {
     res.send({ auth: true, user: newUser });
   };
 
+  const updateCurrPortfolioId = (req, res) => {
+    const { currPortfolioId } = req.params;
+    res.clearCookie('currPortfolioId');
+    res.cookie('currPortfolioId', currPortfolioId);
+    res.send({ message: `updated cookie to track currPortfolioId: ${currPortfolioId}` });
+  };
+
   return {
     signIn,
     signOut,
     checkLoggedIn,
     register,
+    updateCurrPortfolioId,
   };
 }
