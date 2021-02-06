@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import DatePicker from 'react-datepicker';
-import { addDays, subDays } from 'date-fns';
+import { addDays } from 'date-fns';
+import { ThreeDotsVertical } from 'react-bootstrap-icons';
 import 'react-datepicker/dist/react-datepicker.css';
 import {
   Dropdown, DropdownButton,
 } from 'react-bootstrap';
 
 export default function Trade({
-  dataIndex, tradeStates,
+  dataIndex, tradeStates, refreshPortfolioView, portfolioId, portfolioStockId,
 }) {
   const {
     tradesData,
@@ -21,8 +23,7 @@ export default function Trade({
     shares,
     costPrice,
   } = tradesData[dataIndex];
-  console.log(tradesData, 'tradesData');
-  console.log(tradesData[dataIndex], 'tradesDataIndex');
+  // console.log(tradesData[dataIndex], 'tradesData');
 
   const [currTradeData, setCurrTradeData] = useState(tradesData[dataIndex]);
   const [startDate, setStartDate] = useState(new Date(tradeDate));
@@ -60,6 +61,16 @@ export default function Trade({
     updateTradesData(event, 'position');
   };
 
+  const handleDeleteTrade = () => {
+    axios.delete(`portfolios/${portfolioId}/portfolioStocks/${portfolioStockId}/trades/${id}/delete`)
+      .then((updatedTradeDataResult) => {
+        console.log(updatedTradeDataResult, 'result');
+        setTradesData(updatedTradeDataResult.data.tradesData.trades);
+        refreshPortfolioView(null, portfolioId);
+      })
+      .catch((err) => console.log(err));
+  };
+
   const totalCost = shares * costPrice;
 
   return (
@@ -91,6 +102,13 @@ export default function Trade({
         <input value={costPrice} onChange={handleCostBasis} type="number" placeholder="Cost price" />
       </td>
       <td>{isNaN(totalCost) ? 0 : totalCost }</td>
+      <td>
+        <DropdownButton variant="outline-dark" id="dropdown-basic-button" title={<ThreeDotsVertical />}>
+          <Dropdown.Item as="button" type="submit" value="BUY" onClick={handleDeleteTrade}>
+            Delete This Trade
+          </Dropdown.Item>
+        </DropdownButton>
+      </td>
     </tr>
   );
 }

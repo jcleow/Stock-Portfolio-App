@@ -6,7 +6,7 @@ import {
 import { ThreeDotsVertical } from 'react-bootstrap-icons';
 import Trade from './Trade.jsx';
 
-export default function EditTradesModal({
+export default function StockOptionsButton({
   portfolioStockId, portfolioId, historicalTrades, refreshPortfolioView,
 }) {
   const [show, setShow] = useState(false);
@@ -26,6 +26,9 @@ export default function EditTradesModal({
       <Trade
         dataIndex={dataIndex}
         tradeStates={tradeStates}
+        refreshPortfolioView={refreshPortfolioView}
+        portfolioId={portfolioId}
+        portfolioStockId={portfolioStockId}
       />
     );
   });
@@ -99,6 +102,7 @@ export default function EditTradesModal({
                   <th>Shares Traded</th>
                   <th>Cost Basis $</th>
                   <th>Total Cost</th>
+                  <th />
                 </tr>
               </thead>
               <tbody>

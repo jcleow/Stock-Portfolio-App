@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { Table, Button } from 'react-bootstrap';
-import EditTradesModal from '../Trade/EditTradesModal.jsx';
+import StockOptionsButton from '../Trade/StockOptionsButton.jsx';
 
 function AddStockToPortfolioBtn({
   currPortfolioId, refreshPortfolioView,
@@ -58,7 +58,7 @@ export default function PortfolioTable({ portfolioStocks, refreshPortfolioView, 
       return (
         <tr>
           <td>
-            <EditTradesModal
+            <StockOptionsButton
               portfolioStockId={stock.portfolioStockId}
               portfolioId={stock.portfolioId}
               historicalTrades={historicalTrades}

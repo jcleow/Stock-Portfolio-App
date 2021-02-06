@@ -255,6 +255,7 @@ export default function portfolios(db) {
     }
   };
 
+  // Update the trade details of a portfolioStock
   const update = async (req, res) => {
     const { tradesData } = req.body;
     const updatedTradeData = tradesData.map(async (trade) => {
