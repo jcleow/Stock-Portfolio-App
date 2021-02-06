@@ -58,7 +58,7 @@ export default function StockOptionsButton({
 
   const handleAddNewTrade = () => {
     const newTradesData = [...tradesData, {
-      id: null, portfolioStockId: Number(portfolioStockId), position: '', tradeDate: null, costPrice: null,
+      id: null, portfolioStockId: Number(portfolioStockId), position: 'BUY', tradeDate: new Date(), costPrice: null,
     }];
     setTradesData(newTradesData);
   };

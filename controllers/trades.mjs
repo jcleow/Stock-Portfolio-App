@@ -21,7 +21,11 @@ export default function trades(db) {
 
       if (id === null) {
         newTrade = await db.Trade.create({
-          portfolioStockId, position, costPrice, tradeDate, shares,
+          portfolioStockId,
+          position,
+          costPrice,
+          tradeDate,
+          shares,
         });
       } else {
         newTrade = await db.Trade.update({

@@ -15,23 +15,31 @@ export default function StockSearch({ stockSearchProps }) {
     keyStats,
     symbol,
     coyInfo,
+    loadingCoyInfo,
+    loadingChart,
+    loadingKeyStats,
+    defaultLoadingState,
     setQuoteData,
     setDuration,
     setKeyStats,
     setSymbol,
     setCoyInfo,
+    setLoadingCoyInfo,
+    setLoadingChart,
+    setLoadingKeyStats,
+
   } = stockSearchProps;
-  // // Track the coyInfoData
-  // const [coyInfo, setCoyInfo] = useState([]);
-  // // Track the currently selected symbol
-  // const [symbol, setSymbol] = useState('');
 
   function handleGetChart(timeFrame) {
     let coyInfoData;
+    setLoadingCoyInfo(true);
+    setLoadingChart(true);
+    setLoadingKeyStats(true);
     axios.get(`/${symbolInput}/headlineInfo`)
       .then((result) => {
         setSymbol(result.data.symbol);
         coyInfoData = result.data;
+        setLoadingCoyInfo(false);
         return axios.get(`/${symbolInput}/chart/${timeFrame}`);
       })
       .then((chartDataResult) => {
@@ -40,12 +48,13 @@ export default function StockSearch({ stockSearchProps }) {
         setCoyInfo({ ...coyInfoData, close: chartDataResult.data.coordinates.slice(-1)[0].close });
         setQuoteData(chartDataResult.data.coordinates);
         setDuration(chartDataResult.data.duration);
+        setLoadingChart(false);
         return axios.get(`/${symbolInput}/stats/`);
       })
       .then((statsResults) => {
-        console.log(statsResults, 'statsResults');
         setKeyStats(statsResults.data);
         setSymbolInput('');
+        setLoadingKeyStats(false);
       })
       .catch((error) => console.log(error));
   }
@@ -77,13 +86,16 @@ export default function StockSearch({ stockSearchProps }) {
           </div>
         </div>
       </div>
-      {symbol
-        ? <CoyInfo coyInfo={coyInfo} />
-        : null}
-      <PriceChart priceChartProps={priceChartProps} />
+      {loadingCoyInfo
+        ? <img alt="loading..." src="/spinner.gif" />
+        : <CoyInfo coyInfo={coyInfo} />}
+      {loadingChart
+        ? <img alt="loading..." src="/spinner.gif" />
+        : <PriceChart priceChartProps={priceChartProps} />}
       <div className="offset-display">
-        {keyStats
-      && <StockKeyStats keyStats={keyStats} />}
+        {loadingKeyStats
+          ? <img alt="loading..." src="/spinner.gif" />
+          : <StockKeyStats keyStats={keyStats} />}
       </div>
     </div>
   );

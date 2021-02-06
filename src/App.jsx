@@ -20,7 +20,7 @@ export default function App() {
   // Manage states of all the stocks in the curr portfolio user is viewing
   const [portfolioStocks, setPortfolioStocks] = useState([]);
   const [currPortfolioId, setCurrPortfolioId] = useState();
-  console.log(currPortfolioId, 'currPortfolioId');
+  // console.log(currPortfolioId, 'currPortfolioId');
 
   // Manage data for current portfolio user is viewing
   const [equityCurveData, setEquityCurveData] = useState([]);
@@ -38,6 +38,13 @@ export default function App() {
   // Track the currently selected symbol
   const [symbol, setSymbol] = useState('');
 
+  // Track the loading animation of stock search
+  // Storing as an object does not work in one render for different components
+  // const [loadingStock, setLoadingStock] = useState(defaultLoadingStock);
+  const [loadingCoyInfo, setLoadingCoyInfo] = useState(true);
+  const [loadingChart, setLoadingChart] = useState(true);
+  const [loadingKeyStats, setLoadingKeyStats] = useState(true);
+
   // For purposes of charting initial display of first (and all) portfolio equity curve
   const timeFrame = '1m';
 
@@ -51,7 +58,6 @@ export default function App() {
     setCurrPortfolioId(portfolioId);
     axios.get(`/portfolios/${portfolioId}`)
       .then((result) => {
-        console.log(result, 'result');
         setPortfolioStocks(result.data.essentialQuoteInfo);
         setEquityCurveData(result.data.portfolioValueTimeSeries);
         setAccCostCurveData(result.data.accumulatedCostTimeSeries);
@@ -86,10 +92,12 @@ export default function App() {
   // Get default AAPL 1M chart when opening up stock search
   function handleGetDefaultChart() {
     let coyInfoData;
+
     axios.get('/aapl/headlineInfo')
       .then((result) => {
         setSymbol('aapl');
         coyInfoData = result.data;
+        setLoadingCoyInfo(false);
         return axios.get('/aapl/chart/1m');
       })
       .then((chartDataResult) => {
@@ -98,10 +106,12 @@ export default function App() {
         setCoyInfo({ ...coyInfoData, close: chartDataResult.data.coordinates.slice(-1)[0].close });
         setQuoteData(chartDataResult.data.coordinates);
         setDuration(chartDataResult.data.duration);
+        setLoadingChart(false);
         return axios.get('/aapl/stats/');
       })
       .then((statsResults) => {
         setKeyStats(statsResults.data);
+        setLoadingKeyStats(false);
       })
       .catch((error) => console.log(error));
   }
@@ -120,7 +130,7 @@ export default function App() {
 
       // *** buggy // Set currPortfolioId... to first portfolio upon refresh? ** buggy
 
-      // Display the default portfolio on render to be default to 1M view
+      // Display the default stock search on render to be default to 1M view
       handleGetDefaultChart();
     }
   }, []);
@@ -157,11 +167,17 @@ export default function App() {
     keyStats,
     symbol,
     coyInfo,
+    loadingCoyInfo,
+    loadingChart,
+    loadingKeyStats,
     setQuoteData,
     setDuration,
     setKeyStats,
     setSymbol,
     setCoyInfo,
+    setLoadingCoyInfo,
+    setLoadingChart,
+    setLoadingKeyStats,
   };
 
   return (

@@ -14,7 +14,6 @@ export default function EquityChartHeader({ equityChartHeaderProps }) {
     accCostCurveData,
     currPortfolioId,
   } = equityChartHeaderProps;
-  console.log(currPortfolioId, 'currPortfolioId-equitychart');
   let arrOfPortfolioValues = [];
   let arrOfAccCostValues = [];
   let portfolioValue = 0;
