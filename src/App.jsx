@@ -45,6 +45,9 @@ export default function App() {
   const [loadingChart, setLoadingChart] = useState(true);
   const [loadingKeyStats, setLoadingKeyStats] = useState(true);
 
+  // Track the loading animation for disabling the loading of adding a new symbol button
+  const [loadingNewSymbol, setLoadingNewSymbol] = useState(false);
+
   // For purposes of charting initial display of first (and all) portfolio equity curve
   const timeFrame = '1m';
 
@@ -55,18 +58,21 @@ export default function App() {
     } else {
       portfolioId = targetPortfolioId;
     }
+    setLoadingNewSymbol(true);
     setCurrPortfolioId(portfolioId);
     axios.get(`/portfolios/${portfolioId}`)
       .then((result) => {
         setPortfolioStocks(result.data.essentialQuoteInfo);
         setEquityCurveData(result.data.portfolioValueTimeSeries);
         setAccCostCurveData(result.data.accumulatedCostTimeSeries);
+        setLoadingNewSymbol(false);
       })
       .catch((error) => console.log(error));
   };
 
   // To display the portfolio buttons and their corresponding portfolios
   const handleDisplayPortfolio = () => {
+    setLoadingNewSymbol(true);
     axios.get('/portfolios')
       .then((result) => {
         if (result.data.message === 'success') {
@@ -84,6 +90,7 @@ export default function App() {
           setPortfolioStocks(firstPortfolioResult.data.essentialQuoteInfo);
           setEquityCurveData(firstPortfolioResult.data.portfolioValueTimeSeries);
           setAccCostCurveData(firstPortfolioResult.data.accumulatedCostTimeSeries);
+          setLoadingNewSymbol(false);
         }
       })
       .catch((error) => console.log(error));
@@ -180,6 +187,8 @@ export default function App() {
     setLoadingKeyStats,
   };
 
+  const addSymbLoadingProps = { loadingNewSymbol, setLoadingNewSymbol };
+
   return (
     <div className="flex-container">
       <div className="sidebar-flex">
@@ -199,6 +208,7 @@ export default function App() {
           currPortfolioId={currPortfolioId}
           portfolioStocks={portfolioStocks}
           refreshPortfolioView={refreshPortfolioView}
+          addSymbLoadingProps={addSymbLoadingProps}
         />
       </div>
       )}

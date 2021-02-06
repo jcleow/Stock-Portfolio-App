@@ -13,8 +13,8 @@ function AddStockToPortfolioBtn({
   const handleAddSymbol = () => {
     axios.post(`/portfolios/${currPortfolioId}/addSymbol`, { newSymbol })
       .then(() => {
-        setNewSymbol('');
         refreshPortfolioView(null, currPortfolioId);
+        setNewSymbol('');
       })
       .catch((err) => console.log(err));
   };
@@ -38,7 +38,11 @@ function AddStockToPortfolioBtn({
   );
 }
 
-export default function PortfolioTable({ portfolioStocks, refreshPortfolioView, currPortfolioId }) {
+export default function PortfolioTable({
+  portfolioStocks, refreshPortfolioView, currPortfolioId, addSymbLoadingProps,
+}) {
+  const { loadingNewSymbol, setLoadingNewSymbol } = addSymbLoadingProps;
+
   // Track the new symbol that is being entered
   let rowsOfStockData;
   // Replace the following if condition with errorboundary?
@@ -108,7 +112,15 @@ export default function PortfolioTable({ portfolioStocks, refreshPortfolioView, 
         </thead>
         <tbody>
           {rowsOfStockData}
-          <AddStockToPortfolioBtn currPortfolioId={currPortfolioId} refreshPortfolioView={refreshPortfolioView} />
+          { loadingNewSymbol
+            ? <img src="/doublering.gif" alt="loading" />
+            : (
+              <AddStockToPortfolioBtn
+                currPortfolioId={currPortfolioId}
+                refreshPortfolioView={refreshPortfolioView}
+                loadingNewSymbol={loadingNewSymbol}
+              />
+            )}
         </tbody>
       </Table>
 
