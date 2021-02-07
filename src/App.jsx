@@ -94,21 +94,27 @@ export default function App() {
           setDisplay('portfolio');
         }
 
-        const { trackedPortfolioId } = getInfoFromCookie();
-
-        if (!Number.isNaN(trackedPortfolioId)) {
-          const lastViewedIndex = result.data.portfolios.findIndex(
-            (portfolio) => portfolio.id === Number(trackedPortfolioId),
-          );
-          setSelectedPortfolioName(result.data.portfolios[lastViewedIndex].name);
-          return axios.get(`/portfolios/${trackedPortfolioId}`);
+        const allCookieInfo = getInfoFromCookie();
+        let trackedPortfolioId;
+        if (allCookieInfo) {
+          trackedPortfolioId = allCookieInfo.trackedPortfolioId;
+        }
+        if (trackedPortfolioId) {
+          if (!Number.isNaN(trackedPortfolioId)) {
+            const lastViewedIndex = result.data.portfolios.findIndex(
+              (portfolio) => portfolio.id === Number(trackedPortfolioId),
+            );
+            setSelectedPortfolioName(result.data.portfolios[lastViewedIndex].name);
+            return axios.get(`/portfolios/${trackedPortfolioId}`);
+          }
         }
 
-        if (result.data.portfolios.length > 0) {
+        if (result.data.portfolios && result.data.portfolios.length > 0) {
           setSelectedPortfolioName(result.data.portfolios[0].name);
           setCurrPortfolioId(Number(result.data.portfolios[0].id));
           return axios.get(`/portfolios/${result.data.portfolios[0].id}`);
         }
+
         setSelectedPortfolioName('Please create a portfolio to begin');
       })
       .then((firstPortfolioResult) => {
@@ -131,7 +137,6 @@ export default function App() {
       .then((result) => {
         setSymbol('aapl');
         coyInfoData = result.data;
-        setLoadingCoyInfo(false);
         return axios.get('/aapl/chart/1m');
       })
       .then((chartDataResult) => {
@@ -140,6 +145,7 @@ export default function App() {
         setCoyInfo({ ...coyInfoData, close: chartDataResult.data.coordinates.slice(-1)[0].close });
         setQuoteData(chartDataResult.data.coordinates);
         setDuration(chartDataResult.data.duration);
+        setLoadingCoyInfo(false);
         setLoadingChart(false);
         return axios.get('/aapl/stats/');
       })
@@ -166,11 +172,12 @@ export default function App() {
     // Display the available portfolios in sidebar and on main screen once page loads
     handleDisplayPortfolio();
     // Display the default stock search on render to be default to 1M view
-    console.log(symbol, 'symbol');
-    if (symbol === undefined) {
+    if (symbol === '') {
       handleGetDefaultChart();
     }
   }, []);
+  console.log(symbol, 'symbol');
+
   const equityChartProps = {
     equityCurveData, accCostCurveData, timeFrame,
   };
@@ -225,8 +232,8 @@ export default function App() {
         <SideBar sideBarProps={sideBarProps} />
       </div>
       <div className="main-display-flex">
-        {display === 'stockSearch' || Number.isNaN(currPortfolioId) || currPortfolioId === undefined
-          ? <StockSearch stockSearchProps={stockSearchProps} /> : null}
+        {(display === 'stockSearch' || Number.isNaN(currPortfolioId) || currPortfolioId === undefined)
+          && <StockSearch stockSearchProps={stockSearchProps} />}
         {display === 'portfolio' && !Number.isNaN(currPortfolioId) && currPortfolioId !== undefined
           ? (
             <div>
