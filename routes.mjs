@@ -6,7 +6,7 @@ import users from './controllers/users.mjs';
 import portfolios from './controllers/portfolios.mjs';
 import trades from './controllers/trades.mjs';
 
-export default function routes(app) {
+export default function bindRoutes(app) {
   app.use(async (req, res, next) => {
     req.middlewareLoggedIn = false;
 
