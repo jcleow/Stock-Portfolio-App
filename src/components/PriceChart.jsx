@@ -101,7 +101,7 @@ export default function PriceChart({ priceChartProps }) {
               </p>
               <p>
                 Price:
-                <b><NumberFormat value={Number(value.y)} displayType="text" thousandSeparator prefix="$" /></b>
+                <b><NumberFormat value={Number(value.y)} displayType="text" thousandSeparator prefix="$" decimalScale={2} fixedDecimalScale /></b>
               </p>
             </div>
           </Hint>

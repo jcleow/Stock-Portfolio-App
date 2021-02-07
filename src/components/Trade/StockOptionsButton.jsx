@@ -105,8 +105,8 @@ export default function StockOptionsButton({
                   <th>Position</th>
                   <th>Date of Trade</th>
                   <th>Shares Traded</th>
-                  <th>Cost Basis $</th>
-                  <th>Total Cost</th>
+                  <th>Cost Basis ($)</th>
+                  <th>Total Cost ($)</th>
                   <th />
                 </tr>
               </thead>
@@ -122,7 +122,7 @@ export default function StockOptionsButton({
           </div>
           <div>
             <Button variant="primary" className="mr-2" onClick={handleSaveTransactions}>Save</Button>
-            <Button variant="danger" onClick={handleCancel}>
+            <Button variant="outline-danger" onClick={handleCancel}>
               Cancel
             </Button>
           </div>

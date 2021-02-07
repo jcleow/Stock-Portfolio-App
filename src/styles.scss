@@ -54,6 +54,13 @@ body {
   border: none;
 }
 
+.add-symbol-btn {
+  background-color: transparent;
+  border: none;
+  color: #6847fe;
+  font-size: 27px;
+}
+
 .sidebar {
   position: sticky;
   top: 0;
@@ -134,6 +141,17 @@ th {
 
 .purple-font {
   color: #6847fe;
+}
+.symbol-input,
+.symbol-lookup {
+  border: 1px solid #adadad;
+  border-radius: 10px;
+  width: 20vh;
+}
+
+.symbol-input::placeholder,
+.symbol-lookup::placeholder {
+  font-size: 12px;
 }
 
 // React-vis scss

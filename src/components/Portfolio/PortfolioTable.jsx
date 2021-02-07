@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Table, Button } from 'react-bootstrap';
+import NumberFormat from 'react-number-format';
 import StockOptionsButton from '../Trade/StockOptionsButton.jsx';
 
 function AddStockToPortfolioBtn({
@@ -23,17 +23,10 @@ function AddStockToPortfolioBtn({
     <tr>
       <td />
       <td />
-      <td>
-        <input placeholder="Input symbol (e.g KO)" value={newSymbol} onChange={handleNewSymbol} />
-        <Button variant="outline-primary" className="options" onClick={handleAddSymbol}>+</Button>
+      <td colSpan="6">
+        <input placeholder="Input symbol (e.g KO)" className="symbol-input" value={newSymbol} onChange={handleNewSymbol} />
+        <button className="add-symbol-btn" onClick={handleAddSymbol}>+</button>
       </td>
-      <td />
-      <td />
-      <td />
-      <td />
-      <td />
-      <td />
-      <td />
       <td />
     </tr>
   );
@@ -76,7 +69,7 @@ export default function PortfolioTable({
           <td>{stock.companyName}</td>
           <td>{stock.close}</td>
           <td>{stock.change}</td>
-          <td>{stock.changePercent}</td>
+          <td><NumberFormat value={stock.changePercent * 100} displayType="text" decimalScale={2} fixedDecimalScale /></td>
           <td>
             {avgTotalVolumeDisplay}
           </td>
@@ -102,11 +95,19 @@ export default function PortfolioTable({
             <th>No.</th>
             <th>Symbol</th>
             <th>Name</th>
-            <th>Price $</th>
+            <th>Price ($)</th>
             <th>Change</th>
             <th>% Change</th>
-            <th>Volume $(M)</th>
-            <th>Market Cap $(M)</th>
+            <th>
+              Volume ($
+              {'\''}
+              m)
+            </th>
+            <th>
+              Market Cap ($
+              {'\''}
+              m)
+            </th>
             <th>Shares</th>
             <th>Fair Value ($)</th>
           </tr>

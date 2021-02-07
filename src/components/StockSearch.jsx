@@ -18,7 +18,6 @@ export default function StockSearch({ stockSearchProps }) {
     loadingCoyInfo,
     loadingChart,
     loadingKeyStats,
-    defaultLoadingState,
     setQuoteData,
     setDuration,
     setKeyStats,

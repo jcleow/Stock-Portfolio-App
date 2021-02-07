@@ -3,6 +3,7 @@ import axios from 'axios';
 import DatePicker from 'react-datepicker';
 import { addDays } from 'date-fns';
 import { ThreeDotsVertical } from 'react-bootstrap-icons';
+import NumberFormat from 'react-number-format';
 import 'react-datepicker/dist/react-datepicker.css';
 import {
   Dropdown, DropdownButton,
@@ -101,7 +102,11 @@ export default function Trade({
       <td>
         <input value={costPrice} onChange={handleCostBasis} type="number" placeholder="Cost price" />
       </td>
-      <td>{isNaN(totalCost) ? 0 : totalCost }</td>
+      <td>
+
+        {isNaN(totalCost) ? 0
+          : <NumberFormat value={totalCost} displayType="text" thousandSeparator />}
+      </td>
       <td>
         <DropdownButton variant="options-btn" id="dropdown-basic-button" title={<ThreeDotsVertical />}>
           <Dropdown.Item as="button" type="submit" value="BUY" onClick={handleDeleteTrade}>
