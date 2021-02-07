@@ -11,17 +11,25 @@ function AddStockToPortfolioBtn({
     setNewSymbol(event.target.value);
   };
   const handleAddSymbol = () => {
+    // If user does not key in a symbol, alert user to key a legit symb
     if (!newSymbol) {
       alert('You must key in a symbol! E.g Coca Cola: KO');
       return;
     }
     const upperCaseSymbol = newSymbol.toUpperCase();
     axios.post(`/portfolios/${currPortfolioId}/addSymbol`, { newSymbol: upperCaseSymbol })
-      .then(() => {
+      .then((result) => {
+        console.log(result, 'symb result');
+        if (result.data.err) {
+          alert('You did not key in a legit symbol, please try again');
+          setNewSymbol('');
+        }
         refreshPortfolioView(null, currPortfolioId);
         setNewSymbol('');
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        console.log(err);
+      });
   };
   return (
     <tr>

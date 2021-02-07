@@ -329,7 +329,10 @@ export default function portfolios(db) {
           // To pass the newly created symbol back
           res.send({ message: 'completed' });
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+          console.log(err);
+          res.send({ message: 'failure', err });
+        });
     }
   };
 
