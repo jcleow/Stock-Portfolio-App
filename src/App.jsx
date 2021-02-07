@@ -37,6 +37,7 @@ export default function App() {
   const [coyInfo, setCoyInfo] = useState([]);
   // Track the currently selected symbol
   const [symbol, setSymbol] = useState('');
+  console.log(symbol, 'symbol-start');
 
   // Track the loading animation of stock search
   // Storing as an object does not work in one render for different components
@@ -165,7 +166,10 @@ export default function App() {
     // Display the available portfolios in sidebar and on main screen once page loads
     handleDisplayPortfolio();
     // Display the default stock search on render to be default to 1M view
-    handleGetDefaultChart();
+    console.log(symbol, 'symbol');
+    if (symbol === undefined) {
+      handleGetDefaultChart();
+    }
   }, []);
   const equityChartProps = {
     equityCurveData, accCostCurveData, timeFrame,

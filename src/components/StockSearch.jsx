@@ -35,11 +35,17 @@ export default function StockSearch({ stockSearchProps }) {
     setLoadingCoyInfo(true);
     setLoadingChart(true);
     setLoadingKeyStats(true);
-    axios.get(`/${symbolInput}/headlineInfo`)
+    let selectedSymbol = symbolInput;
+    if (!symbolInput) {
+      selectedSymbol = symbol;
+    }
+
+    axios.get(`/${selectedSymbol}/headlineInfo`)
       .then((result) => {
+        console.log(result.data.symbol, 'result symbol');
         setSymbol(result.data.symbol);
         coyInfoData = result.data;
-        return axios.get(`/${symbolInput}/chart/${timeFrame}`);
+        return axios.get(`/${symbol}/chart/${timeFrame}`);
       })
       .then((chartDataResult) => {
         // Due to IEX inconsistent prices with the chart we have to
@@ -49,7 +55,7 @@ export default function StockSearch({ stockSearchProps }) {
         setDuration(chartDataResult.data.duration);
         setLoadingCoyInfo(false);
         setLoadingChart(false);
-        return axios.get(`/${symbolInput}/stats/`);
+        return axios.get(`/${selectedSymbol}/stats/`);
       })
       .then((statsResults) => {
         setKeyStats(statsResults.data);
