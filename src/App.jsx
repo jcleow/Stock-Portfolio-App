@@ -123,6 +123,7 @@ export default function App() {
 
   // Get default AAPL 1M chart when opening up stock search
   function handleGetDefaultChart() {
+    console.log('getting default aapl chart');
     let coyInfoData;
 
     axios.get('/aapl/headlineInfo')
@@ -160,11 +161,11 @@ export default function App() {
       if (!Number.isNaN(trackedPortfolioId)) {
         setCurrPortfolioId(trackedPortfolioId);
       }
-      // Display the available portfolios in sidebar and on main screen once page loads
-      handleDisplayPortfolio();
-      // Display the default stock search on render to be default to 1M view
-      handleGetDefaultChart();
     }
+    // Display the available portfolios in sidebar and on main screen once page loads
+    handleDisplayPortfolio();
+    // Display the default stock search on render to be default to 1M view
+    handleGetDefaultChart();
   }, []);
   const equityChartProps = {
     equityCurveData, accCostCurveData, timeFrame,
@@ -220,8 +221,8 @@ export default function App() {
         <SideBar sideBarProps={sideBarProps} />
       </div>
       <div className="main-display-flex">
-        {display === 'stockSearch'
-      && <StockSearch stockSearchProps={stockSearchProps} />}
+        {display === 'stockSearch' || Number.isNaN(currPortfolioId) || currPortfolioId === undefined
+          ? <StockSearch stockSearchProps={stockSearchProps} /> : null}
         {display === 'portfolio' && !Number.isNaN(currPortfolioId) && currPortfolioId !== undefined
           ? (
             <div>
@@ -236,7 +237,7 @@ export default function App() {
                 addSymbLoadingProps={addSymbLoadingProps}
               />
             </div>
-          ) : null}
+          ) : () => { setDisplay('stockSearch'); }}
       </div>
     </div>
   );

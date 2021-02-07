@@ -39,7 +39,6 @@ export default function StockSearch({ stockSearchProps }) {
       .then((result) => {
         setSymbol(result.data.symbol);
         coyInfoData = result.data;
-        setLoadingCoyInfo(false);
         return axios.get(`/${symbolInput}/chart/${timeFrame}`);
       })
       .then((chartDataResult) => {
@@ -48,6 +47,7 @@ export default function StockSearch({ stockSearchProps }) {
         setCoyInfo({ ...coyInfoData, close: chartDataResult.data.coordinates.slice(-1)[0].close });
         setQuoteData(chartDataResult.data.coordinates);
         setDuration(chartDataResult.data.duration);
+        setLoadingCoyInfo(false);
         setLoadingChart(false);
         return axios.get(`/${symbolInput}/stats/`);
       })
