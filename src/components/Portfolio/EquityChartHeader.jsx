@@ -47,8 +47,8 @@ export default function EquityChartHeader({ equityChartHeaderProps }) {
 
   const modalProps = { show, setShow };
   return (
-    <div className="d-flex justify-content-between">
-      <div className="offset-display mt-3">
+    <div className="chart-header d-flex justify-content-between">
+      <div className="mt-3">
         <h2>
           {selectedPortfolioName}
         </h2>

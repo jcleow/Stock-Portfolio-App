@@ -64,9 +64,9 @@ export default function EquityChart({ equityChartProps }) {
   const YLOW = getLowestPrice(dataPoints);
 
   return (
-    <div className="container offset-display ">
+    <div>
       <div className="d-flex justify-content-center">
-        <XYPlot onMouseLeave={() => { setValue(null); }} height={500} width={1000} xType="ordinal">
+        <XYPlot onMouseLeave={() => { setValue(null); }} height={400} width={1000} xType="ordinal">
           <XAxis tickValues={xAxisTickValues} />
           <LineMarkSeries
             onNearestX={rememberValue}

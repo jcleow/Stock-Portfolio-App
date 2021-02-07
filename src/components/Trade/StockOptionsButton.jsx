@@ -77,7 +77,7 @@ export default function StockOptionsButton({
     <>
       <DropdownButton
         id="dropdown-basic-button"
-        variant="outline-dark"
+        variant="options-btn"
         title={<ThreeDotsVertical />}
       >
         <Dropdown.Item onClick={handleShow}>View/Edit Trades</Dropdown.Item>
@@ -98,7 +98,7 @@ export default function StockOptionsButton({
         </Modal.Header>
         <Modal.Body>
           <div className="container">
-            <Table striped bordered hover>
+            <table>
               <thead>
                 <tr>
                   <th>Trade Id</th>
@@ -113,7 +113,7 @@ export default function StockOptionsButton({
               <tbody>
                 {allTradeDisplay}
               </tbody>
-            </Table>
+            </table>
           </div>
         </Modal.Body>
         <Modal.Footer className="d-flex justify-content-between">

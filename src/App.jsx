@@ -58,7 +58,7 @@ export default function App() {
       const usernameEndPos = splitCookieVal[0].indexOf(';');
       const loggedInUsername = splitCookieVal[0].substring(usernameStartPos, usernameEndPos);
       const idStartPos = splitCookieVal[3].indexOf('=') + 1;
-      const trackedPortfolioId = splitCookieVal[3].substring(idStartPos);
+      const trackedPortfolioId = Number(splitCookieVal[3].substring(idStartPos));
       return ({ loggedInUsername, trackedPortfolioId });
     }
     return null;
@@ -95,7 +95,7 @@ export default function App() {
 
         const { trackedPortfolioId } = getInfoFromCookie();
 
-        if (trackedPortfolioId) {
+        if (!Number.isNaN(trackedPortfolioId)) {
           const lastViewedIndex = result.data.portfolios.findIndex(
             (portfolio) => portfolio.id === Number(trackedPortfolioId),
           );
@@ -105,6 +105,7 @@ export default function App() {
 
         if (result.data.portfolios.length > 0) {
           setSelectedPortfolioName(result.data.portfolios[0].name);
+          setCurrPortfolioId(Number(result.data.portfolios[0].id));
           return axios.get(`/portfolios/${result.data.portfolios[0].id}`);
         }
         setSelectedPortfolioName('Please create a portfolio to begin');
@@ -122,6 +123,7 @@ export default function App() {
 
   // Get default AAPL 1M chart when opening up stock search
   function handleGetDefaultChart() {
+    console.log('getting default aapl chart');
     let coyInfoData;
 
     axios.get('/aapl/headlineInfo')
@@ -154,13 +156,16 @@ export default function App() {
       const userCookieInfo = getInfoFromCookie();
       const { loggedInUsername, trackedPortfolioId } = userCookieInfo;
       setUsername(loggedInUsername);
-      // Display the available portfolios in sidebar and on main screen once page loads
-      handleDisplayPortfolio();
       // Store the last viewed portfolio if user decides to refresh the page
-      setCurrPortfolioId(trackedPortfolioId);
-      // Display the default stock search on render to be default to 1M view
-      handleGetDefaultChart();
+      console.log(trackedPortfolioId, 'trackedPortfolioId');
+      if (!Number.isNaN(trackedPortfolioId)) {
+        setCurrPortfolioId(trackedPortfolioId);
+      }
     }
+    // Display the available portfolios in sidebar and on main screen once page loads
+    handleDisplayPortfolio();
+    // Display the default stock search on render to be default to 1M view
+    handleGetDefaultChart();
   }, []);
   const equityChartProps = {
     equityCurveData, accCostCurveData, timeFrame,
@@ -216,26 +221,23 @@ export default function App() {
         <SideBar sideBarProps={sideBarProps} />
       </div>
       <div className="main-display-flex">
-        {display === 'stockSearch'
-      && <StockSearch stockSearchProps={stockSearchProps} />}
-        {display === 'portfolio'
-      && (
-      <div>
-        <EquityChartHeader
-          equityChartHeaderProps={equityChartHeaderProps}
-        />
-        <EquityChart equityChartProps={equityChartProps} />
-        {currPortfolioId
+        {display === 'stockSearch' || Number.isNaN(currPortfolioId) || currPortfolioId === undefined
+          ? <StockSearch stockSearchProps={stockSearchProps} /> : null}
+        {display === 'portfolio' && !Number.isNaN(currPortfolioId) && currPortfolioId !== undefined
           ? (
-            <PortfolioTable
-              currPortfolioId={currPortfolioId}
-              portfolioStocks={portfolioStocks}
-              refreshPortfolioView={refreshPortfolioView}
-              addSymbLoadingProps={addSymbLoadingProps}
-            />
-          ) : null}
-      </div>
-      )}
+            <div>
+              <EquityChartHeader
+                equityChartHeaderProps={equityChartHeaderProps}
+              />
+              <EquityChart equityChartProps={equityChartProps} />
+              <PortfolioTable
+                currPortfolioId={currPortfolioId}
+                portfolioStocks={portfolioStocks}
+                refreshPortfolioView={refreshPortfolioView}
+                addSymbLoadingProps={addSymbLoadingProps}
+              />
+            </div>
+          ) : () => { setDisplay('stockSearch'); }}
       </div>
     </div>
   );
