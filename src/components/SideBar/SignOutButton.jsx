@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { Button, Modal } from 'react-bootstrap';
-import { MenuItem } from 'react-pro-sidebar';
 
 export default function SignOutButton({ setLoggedIn }) {
   const [show, setShow] = useState(false);
@@ -13,6 +12,8 @@ export default function SignOutButton({ setLoggedIn }) {
       .then(() => {
         setShow(false);
         setLoggedIn(false);
+        // refresh the page to reset the page
+        window.location = '/';
       })
       .catch((err) => console.log(err));
   };

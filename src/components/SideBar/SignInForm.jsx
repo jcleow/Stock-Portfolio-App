@@ -3,7 +3,9 @@ import axios from 'axios';
 import { Button } from 'react-bootstrap';
 
 export default function SignInForm({ signInFormProps }) {
-  const { setLoggedIn, setUsername, setFormDisplay } = signInFormProps;
+  const {
+    setLoggedIn, setUsername, setFormDisplay,
+  } = signInFormProps;
   const [usernameInput, setUsernameInput] = useState('');
   const [passwordInput, setPasswordInput] = useState('');
 
@@ -24,6 +26,7 @@ export default function SignInForm({ signInFormProps }) {
         if (result.data.auth) {
           setLoggedIn(true);
           setUsername(result.data.user.username);
+          window.location = '/';
         }
       })
       .catch((error) => console.log(error));
