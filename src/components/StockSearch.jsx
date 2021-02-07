@@ -48,8 +48,23 @@ export default function StockSearch({ stockSearchProps }) {
       })
       .then((chartDataResult) => {
         // Due to IEX inconsistent prices with the chart we have to
-        // Remedy the latest closing price
-        setCoyInfo({ ...coyInfoData, close: chartDataResult.data.coordinates.slice(-1)[0].close });
+        // Remedy the latest closing price,change & change pct
+        const revisedCurrClosePrice = chartDataResult.data.coordinates.slice(-1)[0].close;
+        const revisedLastClosePrice = chartDataResult.data.coordinates.slice(-2, -1)[0].close;
+        const revisedChange = revisedCurrClosePrice - revisedLastClosePrice;
+        const revisedChangePct = (revisedChange / revisedLastClosePrice) * 100;
+
+        console.log(revisedCurrClosePrice, 'revisedCurrClosePrice');
+        console.log(revisedLastClosePrice, 'revisedLastClosePrice');
+        console.log(revisedChange, 'revisedChange');
+        console.log(revisedChangePct, 'revisedChangePct');
+
+        setCoyInfo({
+          ...coyInfoData,
+          close: revisedCurrClosePrice,
+          change: revisedChange,
+          changePercent: revisedChangePct,
+        });
         setQuoteData(chartDataResult.data.coordinates);
         setDuration(chartDataResult.data.duration);
         setLoadingCoyInfo(false);

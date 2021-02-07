@@ -30,7 +30,7 @@ export default function CoyInfo({ coyInfo }) {
         {' '}
         {changePercent > 0 && '+'}
         (
-        {(Number(changePercent) * 100).toFixed(2)}
+        {Number(changePercent).toFixed(2)}
         %)
       </h6>
       <h6>{isUSMarketOpen ? 'Open' : 'Closed'}</h6>
