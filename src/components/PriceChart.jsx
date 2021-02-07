@@ -6,6 +6,8 @@ import {
   LineSeries,
   LineMarkSeries,
   Hint,
+  GradientDefs,
+  AreaSeries,
 } from 'react-vis';
 
 export default function PriceChart({ priceChartProps }) {
@@ -66,8 +68,19 @@ export default function PriceChart({ priceChartProps }) {
           <LineMarkSeries
             onNearestX={rememberValue}
             onValueMouseOut={forgetValue}
+            color="#846AFD"
             data={dataPoints}
             size={0}
+          />
+          <GradientDefs>
+            <linearGradient id="CoolGradient" x1="0" x2="0" y1="0" y2="1">
+              <stop offset="0%" stopColor="#846AFD" stopOpacity={0.4} />
+              <stop offset="100%" stopColor="#FAF9FF" stopOpacity={0.1} />
+            </linearGradient>
+          </GradientDefs>
+          <AreaSeries
+            color="url(#CoolGradient)"
+            data={dataPoints}
           />
           {value ? (
             <LineSeries

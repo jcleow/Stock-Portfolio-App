@@ -62,9 +62,11 @@ export default function StockSearch({ stockSearchProps }) {
   function ToggleMonthPriceButton() {
     const chartTimeFrames = ['1m', '3m', '6m'];
     const listOfButtons = chartTimeFrames.map((timeFrame) => (
-      <Button variant="outline-dark" type="submit" onClick={() => { handleGetChart(timeFrame); }}>
-        {timeFrame}
-      </Button>
+      <div className="timeframe-option">
+        <Button variant="outline-dark" type="submit" onClick={() => { handleGetChart(timeFrame); }}>
+          {timeFrame}
+        </Button>
+      </div>
     ));
     return listOfButtons;
   }
@@ -75,28 +77,32 @@ export default function StockSearch({ stockSearchProps }) {
   const priceChartProps = { quoteData, duration };
 
   return (
-    <div>
-      <div className="container">
-        <div className="row">
-          <div className="col d-flex justify-content-between">
-            <SymbolLookup symbolLookUpProps={symbolLookUpProps} />
-            <div>
+    <div className="container">
+      <div className="row mt-5">
+        <div className="col d-flex justify-content-between">
+          {loadingCoyInfo
+            ? <img alt="loading..." src="/spinner.gif" />
+            : <CoyInfo coyInfo={coyInfo} />}
+        </div>
+        <div className="col d-flex flex-column align-items-end">
+          <div className="row">
+            <div className="col">
+              <SymbolLookup symbolLookUpProps={symbolLookUpProps} />
+            </div>
+          </div>
+          <div className="row mt-3">
+            <div className="col d-flex justify-content-between">
               <ToggleMonthPriceButton />
             </div>
           </div>
         </div>
       </div>
-      {loadingCoyInfo
-        ? <img alt="loading..." src="/spinner.gif" />
-        : <CoyInfo coyInfo={coyInfo} />}
       {loadingChart
         ? <img alt="loading..." src="/spinner.gif" />
         : <PriceChart priceChartProps={priceChartProps} />}
-      <div className="offset-display">
-        {loadingKeyStats
-          ? <img alt="loading..." src="/spinner.gif" />
-          : <StockKeyStats keyStats={keyStats} />}
-      </div>
+      {loadingKeyStats
+        ? <img alt="loading..." src="/spinner.gif" />
+        : <StockKeyStats keyStats={keyStats} />}
     </div>
   );
 }

@@ -49,9 +49,9 @@ export default function EquityChartHeader({ equityChartHeaderProps }) {
   return (
     <div className="chart-header d-flex justify-content-between">
       <div className="mt-3">
-        <h2>
+        <h6 className="light-grey-font">
           {selectedPortfolioName}
-        </h2>
+        </h6>
         {isNaN(portfolioValue) ? null : (
           <h1>
             {formattedPV}
@@ -59,15 +59,13 @@ export default function EquityChartHeader({ equityChartHeaderProps }) {
         )}
         {isNaN(profitLoss)
           ? null : (
-            <h5>
-              P/L:
-              {' '}
+            <h6 className="mt-1 purple-font">
               {formattedPnL}
               {' '}
               (
               {profitLossPct}
               %)
-            </h5>
+            </h6>
           )}
       </div>
       <div className="mt-3 mr-3">

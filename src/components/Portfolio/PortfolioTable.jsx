@@ -11,7 +11,8 @@ function AddStockToPortfolioBtn({
     setNewSymbol(event.target.value);
   };
   const handleAddSymbol = () => {
-    axios.post(`/portfolios/${currPortfolioId}/addSymbol`, { newSymbol })
+    const upperCaseSymbol = newSymbol.toUpperCase();
+    axios.post(`/portfolios/${currPortfolioId}/addSymbol`, { newSymbol: upperCaseSymbol })
       .then(() => {
         refreshPortfolioView(null, currPortfolioId);
         setNewSymbol('');
@@ -23,7 +24,7 @@ function AddStockToPortfolioBtn({
       <td />
       <td />
       <td>
-        <input placeholder="input symbol" value={newSymbol} onChange={handleNewSymbol} />
+        <input placeholder="Input symbol" value={newSymbol} onChange={handleNewSymbol} />
         <Button variant="outline-primary" className="options" onClick={handleAddSymbol}>+</Button>
       </td>
       <td />
@@ -98,7 +99,7 @@ export default function PortfolioTable({
         <thead>
           <tr>
             <th />
-            <th>#</th>
+            <th>No.</th>
             <th>Symbol</th>
             <th>Name</th>
             <th>Price $</th>

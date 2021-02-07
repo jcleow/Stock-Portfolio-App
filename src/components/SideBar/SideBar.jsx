@@ -76,7 +76,7 @@ export default function SideBar({ sideBarProps }) {
   return (
     <div className="sidebar">
       <ProSidebar collapsed={collapsed} onMouseOver={handleMouseOver} onMouseLeave={handleMouseLeave}>
-        <div className="text-center mt-5">STONKS</div>
+        <div className="text-center mt-5 logo-font">STONKS</div>
         <Menu iconShape="square">
           <MenuItem>{loggedIn ? `Welcome ${username}` : null }</MenuItem>
           <MenuItem icon={<FaGem />} onClick={handleDisplayStockSearchView}>Search for Stock</MenuItem>

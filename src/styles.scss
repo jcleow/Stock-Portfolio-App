@@ -1,5 +1,11 @@
 /** @format */
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap");
 @import "~bootstrap/scss/bootstrap";
+$sidebar-bg-color: #f5f6fa;
+$submenu-bg-color: #f5f6fa;
+$icon-bg-color: transparent;
+$highlight-color: #6847fe;
+
 @import "~react-pro-sidebar/dist/scss/styles.scss";
 
 html {
@@ -8,7 +14,9 @@ html {
 body {
   margin: 0;
   height: 100%;
+  background-color: white;
 }
+
 .side-bar {
   background: lightgray;
   display: inline-block;
@@ -23,6 +31,12 @@ body {
 .logo {
   font-size: 50px;
   margin-top: 50px;
+}
+.logo-font {
+  font-size: 13px;
+  font-weight: bold;
+  font-family: "Roboto", sans-serif;
+  color: #6847fe;
 }
 
 .profile-pic {
@@ -91,8 +105,8 @@ td {
   padding: 8px 16px;
 }
 th {
-  color: white;
-  background: rgb(19, 14, 118);
+  color: black;
+  background: white;
 }
 
 .options-btn {
@@ -105,11 +119,21 @@ th {
   border-radius: 2px;
   border-color: silver;
 }
+.timeframe-option {
+  margin-left: 15px;
+}
 
 .chart-header {
   width: 70%;
   margin-left: auto;
   margin-right: auto;
+}
+.light-grey-font {
+  color: #a5adc6;
+}
+
+.purple-font {
+  color: #6847fe;
 }
 
 // React-vis scss

@@ -2,10 +2,6 @@ import cookieParser from 'cookie-parser';
 import express from 'express';
 import methodOverride from 'method-override';
 import webpack from 'webpack';
-import webpackDevMiddleware from 'webpack-dev-middleware';
-import webpackHotMiddleware from 'webpack-hot-middleware';
-
-import webpackConfig from './webpack_conf/webpack.dev.js';
 import bindRoutes from './routes.mjs';
 
 // Initialise Express instance
@@ -28,6 +24,9 @@ app.use(express.static('dist'));
 // Set up Webpack in dev env
 const env = process.env.NODE_ENV || 'development';
 if (env === 'development') {
+  const { default: webpackDevMiddleware } =  await import('webpack-dev-middleware');
+  const { default: webpackHotMiddleware } = await import('webpack-hot-middleware');
+  const { default: webpackConfig } = await import('./webpack_conf/webpack.dev.js');
   const compiler = webpack(webpackConfig);
   app.use(webpackDevMiddleware(compiler, {
     publicPath: webpackConfig.output.publicPath,

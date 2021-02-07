@@ -6,14 +6,17 @@ import {
   LineSeries,
   LineMarkSeries,
   Hint,
+  GradientDefs,
+  AreaSeries,
 } from 'react-vis';
+import NumberFormat from 'react-number-format';
 
 export default function EquityChart({ equityChartProps }) {
   const { equityCurveData, accCostCurveData, timeFrame } = equityChartProps;
 
   // To replace with error boundary?
   if (!equityCurveData) {
-    return (<XYPlot onMouseLeave={() => { setValue(null); }} height={500} width={1000} xType="ordinal" />);
+    return (<XYPlot onMouseLeave={() => { setValue(null); }} height={400} width={1000} xType="ordinal" />);
   }
   // Set the state for the hint value
   const [value, setValue] = useState(null);
@@ -71,33 +74,48 @@ export default function EquityChart({ equityChartProps }) {
           <LineMarkSeries
             onNearestX={rememberValue}
             onValueMouseOut={forgetValue}
+            color="#846AFD"
             data={dataPoints}
             size={0}
+          />
+          <GradientDefs>
+            <linearGradient id="CoolGradient" x1="0" x2="0" y1="0" y2="1">
+              <stop offset="0%" stopColor="#846AFD" stopOpacity={0.4} />
+              <stop offset="100%" stopColor="#FAF9FF" stopOpacity={0.1} />
+            </linearGradient>
+          </GradientDefs>
+          <AreaSeries
+            color="url(#CoolGradient)"
+            data={dataPoints}
           />
           {value ? (
             <LineSeries
               data={[{ x: value.x, y: value.y }, { x: value.x, y: YLOW }]}
-              stroke="grey"
+              stroke="#f5f6fa"
               size={1}
             />
           ) : null}
           {value
           && (
           <Hint value={value}>
-            <div className="rv-hint_content" style={{ background: 'lightgray', color: 'black' }}>
+            <div className="rv-hint_content" style={{ background: 'rgba(255, 255, 255, 0.5)', color: 'rgba(0,0,0, 0.6)' }}>
               <p>
                 Date:
-                {value.x}
+                {' '}
+                <b>{value.x}</b>
               </p>
               <p>
-                Cumulative Value:$
-                {value.y}
+                Total Value:
+                {' '}
+                <b><NumberFormat value={value.y} displayType="text" thousandSeparator prefix="$" /></b>
               </p>
             </div>
           </Hint>
           )}
         </XYPlot>
       </div>
+      {YLOW === Infinity
+        && <div>Add a stock and trade to continue</div>}
     </div>
   );
 }
