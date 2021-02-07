@@ -93,8 +93,8 @@ export default function PortfolioTable({
     });
   }
   return (
-    <div className="offset-display">
-      <Table striped bordered hover>
+    <div className="table-fix-head">
+      <table>
         <thead>
           <tr>
             <th />
@@ -122,8 +122,7 @@ export default function PortfolioTable({
               />
             )}
         </tbody>
-      </Table>
-
+      </table>
     </div>
   );
 }

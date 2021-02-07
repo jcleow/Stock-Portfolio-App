@@ -18,7 +18,7 @@ body {
   width: 20%;
 }
 .offset-display {
-  margin-left: 20%;
+  margin-left: 30%;
 }
 .logo {
   font-size: 50px;
@@ -50,10 +50,10 @@ body {
   display: flex;
 }
 .sidebar-flex {
-  flex-grow: 0;
+  flex: 0;
 }
 .main-display-flex {
-  flex-grow: 0;
+  flex: 1;
 }
 .transparent-btn {
   border: none;
@@ -72,6 +72,44 @@ body {
   border: none;
   background-color: transparent;
   outline: none;
+}
+.table-fix-head {
+  overflow-y: auto;
+  height: 40vh;
+}
+.table-fix-head thead th {
+  position: sticky;
+  top: 0;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+th,
+td {
+  padding: 8px 16px;
+}
+th {
+  color: white;
+  background: rgb(19, 14, 118);
+}
+
+.options-btn {
+  color: none;
+  background-color: none;
+  border-color: none;
+}
+.options-btn:hover {
+  border-style: 1px solid;
+  border-radius: 2px;
+  border-color: silver;
+}
+
+.chart-header {
+  width: 70%;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 // React-vis scss

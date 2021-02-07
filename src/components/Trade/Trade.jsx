@@ -103,7 +103,7 @@ export default function Trade({
       </td>
       <td>{isNaN(totalCost) ? 0 : totalCost }</td>
       <td>
-        <DropdownButton variant="outline-dark" id="dropdown-basic-button" title={<ThreeDotsVertical />}>
+        <DropdownButton variant="options-btn" id="dropdown-basic-button" title={<ThreeDotsVertical />}>
           <Dropdown.Item as="button" type="submit" value="BUY" onClick={handleDeleteTrade}>
             Delete This Trade
           </Dropdown.Item>
