@@ -41,7 +41,6 @@ export default function StockSearch({ stockSearchProps }) {
 
     axios.get(`/${selectedSymbol}/headlineInfo`)
       .then((result) => {
-        console.log(result.data.symbol, 'result symbol');
         setSymbol(result.data.symbol);
         coyInfoData = result.data;
         return axios.get(`/${symbol}/chart/${timeFrame}`);
@@ -53,11 +52,6 @@ export default function StockSearch({ stockSearchProps }) {
         const revisedLastClosePrice = chartDataResult.data.coordinates.slice(-2, -1)[0].close;
         const revisedChange = revisedCurrClosePrice - revisedLastClosePrice;
         const revisedChangePct = (revisedChange / revisedLastClosePrice) * 100;
-
-        console.log(revisedCurrClosePrice, 'revisedCurrClosePrice');
-        console.log(revisedLastClosePrice, 'revisedLastClosePrice');
-        console.log(revisedChange, 'revisedChange');
-        console.log(revisedChangePct, 'revisedChangePct');
 
         setCoyInfo({
           ...coyInfoData,

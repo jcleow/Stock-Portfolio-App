@@ -11,6 +11,10 @@ function AddStockToPortfolioBtn({
     setNewSymbol(event.target.value);
   };
   const handleAddSymbol = () => {
+    if (!newSymbol) {
+      alert('You must key in a symbol! E.g Coca Cola: KO');
+      return;
+    }
     const upperCaseSymbol = newSymbol.toUpperCase();
     axios.post(`/portfolios/${currPortfolioId}/addSymbol`, { newSymbol: upperCaseSymbol })
       .then(() => {
