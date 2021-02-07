@@ -19,7 +19,6 @@ function AddStockToPortfolioBtn({
     const upperCaseSymbol = newSymbol.toUpperCase();
     axios.post(`/portfolios/${currPortfolioId}/addSymbol`, { newSymbol: upperCaseSymbol })
       .then((result) => {
-        console.log(result, 'symb result');
         if (result.data.err) {
           alert('You did not key in a legit symbol, please try again');
           setNewSymbol('');
