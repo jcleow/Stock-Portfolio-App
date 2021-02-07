@@ -107,15 +107,15 @@ export default function EquityChart({ equityChartProps }) {
               <p>
                 Total Value:
                 {' '}
-                <b><NumberFormat value={value.y} displayType="text" thousandSeparator prefix="$" /></b>
+                <b><NumberFormat value={Number(value.y)} displayType="text" thousandSeparator prefix="$" /></b>
               </p>
             </div>
           </Hint>
           )}
         </XYPlot>
       </div>
-      {YLOW === Infinity
-        && <div>Add a stock and trade to continue</div>}
+      {/* {YLOW === Infinity
+        && <div>Add a stock and trade to continue</div>} */}
     </div>
   );
 }

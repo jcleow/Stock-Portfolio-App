@@ -24,7 +24,7 @@ function AddStockToPortfolioBtn({
       <td />
       <td />
       <td>
-        <input placeholder="Input symbol" value={newSymbol} onChange={handleNewSymbol} />
+        <input placeholder="Input symbol (e.g KO)" value={newSymbol} onChange={handleNewSymbol} />
         <Button variant="outline-primary" className="options" onClick={handleAddSymbol}>+</Button>
       </td>
       <td />

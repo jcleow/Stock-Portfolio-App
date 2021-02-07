@@ -9,6 +9,7 @@ import {
   GradientDefs,
   AreaSeries,
 } from 'react-vis';
+import NumberFormat from 'react-number-format';
 
 export default function PriceChart({ priceChartProps }) {
   const { quoteData, duration } = priceChartProps;
@@ -85,21 +86,22 @@ export default function PriceChart({ priceChartProps }) {
           {value ? (
             <LineSeries
               data={[{ x: value.x, y: value.y }, { x: value.x, y: YLOW }]}
-              stroke="grey"
+              stroke="#f5f6fa"
               size={1}
             />
           ) : null}
           {value
           && (
           <Hint value={value}>
-            <div className="rv-hint_content" style={{ background: 'lightgray', color: 'black' }}>
+            <div className="rv-hint_content" style={{ background: 'rgba(255, 255, 255, 0.5)', color: 'rgba(0,0,0, 0.6)' }}>
               <p>
                 Date:
-                {value.x}
+                {' '}
+                <b>{value.x}</b>
               </p>
               <p>
-                Price:$
-                {value.y}
+                Price:
+                <b><NumberFormat value={Number(value.y)} displayType="text" thousandSeparator prefix="$" /></b>
               </p>
             </div>
           </Hint>

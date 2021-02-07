@@ -23,8 +23,11 @@ export default function CoyInfo({ coyInfo }) {
       <h6 className="light-grey-font">{companyName}</h6>
       <h1>{formattedClose}</h1>
       <h6 className="purple-font mt-3">
+        {' '}
         {change > 0 && '+' }
         {formattedChange}
+
+        {' '}
         {changePercent > 0 && '+'}
         (
         {(Number(changePercent) * 100).toFixed(2)}
