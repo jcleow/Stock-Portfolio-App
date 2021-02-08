@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Button } from 'react-bootstrap';
+import { Button, Form } from 'react-bootstrap';
 
 export default function SignInForm({ signInFormProps }) {
   const {
@@ -36,25 +36,39 @@ export default function SignInForm({ signInFormProps }) {
   }
   return (
     <div className="login-form">
-      <div className="container d-flex flex-row justify-content-center">
-        <div className="row d-flex flex-column justify-content-center">
-          <div className="col d-flex justify-content-center">
-            <input placeholder="Username" value={usernameInput} onChange={handleUsernameInput} />
-          </div>
-          <div className="col d-flex justify-content-center">
-            <input placeholder="Password" type="password" value={passwordInput} onChange={handlePasswordInput} />
-          </div>
-          <div className="col d-flex justify-content-center">
-            Don't have an account?
-            <button className="bg-transparent border-0 text-primary" onClick={handleRegistration}>Register</button>
-          </div>
-          <div className="col d-flex justify-content-center">
-            <Button variant="secondary" onClick={handleSignIn}>
-              Sign in
-            </Button>
-          </div>
+      <Form>
+        <Form.Group controlId="formBasicEmail">
+          <Form.Label>Username</Form.Label>
+          <Form.Control
+            type="text"
+            placeholder="Username"
+            value={usernameInput}
+            onChange={handleUsernameInput}
+            required
+          />
+        </Form.Group>
+
+        <Form.Group controlId="formBasicPassword">
+          <Form.Label>Password</Form.Label>
+          <Form.Control
+            placeholder="Password"
+            type="password"
+            value={passwordInput}
+            onChange={handlePasswordInput}
+            required
+          />
+        </Form.Group>
+        <div className="col d-flex justify-content-center">
+          Don't have an account?
+          <button className="bg-transparent border-0 text-primary" onClick={handleRegistration}>Register</button>
         </div>
-      </div>
+        <div className="col d-flex justify-content-center">
+          <Button variant="secondary" onClick={handleSignIn}>
+            Sign In
+          </Button>
+        </div>
+      </Form>
+
     </div>
   );
 }
