@@ -93,8 +93,8 @@ module.exports = {
         cost_price: 200,
         shares: 200,
         trade_date: new Date('2021/02/03'),
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        created_at: new Date(),
+        updated_at: new Date(),
       },
       {
         portfolio_stock_id: 2,
@@ -102,8 +102,8 @@ module.exports = {
         cost_price: 150,
         shares: 150,
         trade_date: new Date('2021/02/04'),
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        created_at: new Date(),
+        updated_at: new Date(),
       },
       {
         portfolio_stock_id: 3,
@@ -111,8 +111,8 @@ module.exports = {
         cost_price: 300,
         shares: 300,
         trade_date: new Date('2021/01/21'),
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        created_at: new Date(),
+        updated_at: new Date(),
       },
       {
         portfolio_stock_id: 4,
@@ -120,8 +120,8 @@ module.exports = {
         cost_price: 400,
         shares: 400,
         trade_date: new Date('2021/01/25'),
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        created_at: new Date(),
+        updated_at: new Date(),
       },
     ];
 
