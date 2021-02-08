@@ -154,6 +154,15 @@ th {
   font-size: 12px;
 }
 
+.portfolio-value-label {
+  border: 1px #adadad;
+  border-radius: 3px;
+  font-size: 1 rem;
+  color: #adadad;
+  padding: 5px;
+  background-color: #f5f6fa;
+}
+
 // React-vis scss
 .react-vis-magic-css-import-rule {
   display: inherit;

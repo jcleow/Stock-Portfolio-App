@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { FaCog } from 'react-icons/fa';
 import { DropdownButton, Dropdown } from 'react-bootstrap';
+import NumberFormat from 'react-number-format';
 import DeletePortfolioModal from './DeletePortfolioModal.jsx';
 
 export default function EquityChartHeader({ equityChartHeaderProps }) {
@@ -16,26 +17,45 @@ export default function EquityChartHeader({ equityChartHeaderProps }) {
   } = equityChartHeaderProps;
   let arrOfPortfolioValues = [];
   let arrOfAccCostValues = [];
-  let portfolioValue = 0;
+  // Today's PV
+  let currPortfolioValue = 0;
+  // Yesterday's PV
+  let prevPortfolioValue = 0;
   let portfolioCost = 0;
   let profitLoss = 0;
   let profitLossPct = 0;
+  let pvDailyChange = 0;
+  let pvDailyChangePct = 0;
   let formattedPnL = 0;
+  let formattedPVChng = 0;
 
   if (equityCurveData && accCostCurveData) {
     arrOfPortfolioValues = Object.values(equityCurveData).map((val) => val);
     arrOfAccCostValues = Object.values(accCostCurveData).map((cost) => cost);
-    portfolioValue = arrOfPortfolioValues.slice(-1)[0];
+    currPortfolioValue = arrOfPortfolioValues.slice(-1)[0];
+    prevPortfolioValue = arrOfPortfolioValues.slice(-2, -1)[0];
     portfolioCost = arrOfAccCostValues.slice(-1)[0];
 
-    profitLoss = portfolioValue - portfolioCost;
+    profitLoss = currPortfolioValue - portfolioCost;
     profitLossPct = ((profitLoss / arrOfAccCostValues.slice(-1)[0]) * 100).toFixed(2);
+    pvDailyChange = currPortfolioValue - prevPortfolioValue;
+    pvDailyChangePct = (pvDailyChange / prevPortfolioValue) * 100;
+
+    // PV against cost
     formattedPnL = new Intl.NumberFormat('en-US', {
       style: 'currency',
       currency: 'USD',
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     }).format(profitLoss);
+
+    // Change in PV
+    formattedPVChng = new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(pvDailyChange);
   }
 
   const formattedPV = new Intl.NumberFormat('en-US', {
@@ -43,7 +63,7 @@ export default function EquityChartHeader({ equityChartHeaderProps }) {
     currency: 'USD',
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
-  }).format(portfolioValue);
+  }).format(currPortfolioValue);
 
   const modalProps = { show, setShow };
   return (
@@ -52,32 +72,36 @@ export default function EquityChartHeader({ equityChartHeaderProps }) {
         <h6 className="light-grey-font">
           {selectedPortfolioName}
         </h6>
-        {isNaN(portfolioValue) ? null : (
+        {isNaN(currPortfolioValue) ? null : (
           <h1>
-            {formattedPV}
+            {/* {formattedPV} */}
+            <NumberFormat value={Number(currPortfolioValue)} displayType="text" thousandSeparator prefix="$" decimalScale={0} fixedDecimalScale />
           </h1>
         )}
-        {isNaN(profitLoss)
+        {isNaN(pvDailyChange)
           ? null : (
             <h6 className="mt-1 purple-font">
-              {formattedPnL}
+              {formattedPVChng}
               {' '}
               (
-              {profitLossPct}
+              {pvDailyChangePct.toFixed(2)}
               %)
             </h6>
           )}
       </div>
-      <div className="mt-3 mr-3">
-        <DropdownButton variant="outline-dark" id="dropdown-basic-button" title={<FaCog size={20} />}>
-          <Dropdown.Item>Edit Portfolio Name</Dropdown.Item>
-          <Dropdown.Item onClick={handleShow}>Delete Portfolio</Dropdown.Item>
-        </DropdownButton>
-        <DeletePortfolioModal
-          selectedPortfolioName={selectedPortfolioName}
-          currPortfolioId={currPortfolioId}
-          modalProps={modalProps}
-        />
+      <div className="mt-3 mr-3 d-flex flex-column align-items-end">
+        <div>
+          <DropdownButton variant="outline-dark" id="dropdown-basic-button" title={<FaCog size={20} />}>
+            <Dropdown.Item>Edit Portfolio Name</Dropdown.Item>
+            <Dropdown.Item onClick={handleShow}>Delete Portfolio</Dropdown.Item>
+          </DropdownButton>
+          <DeletePortfolioModal
+            selectedPortfolioName={selectedPortfolioName}
+            currPortfolioId={currPortfolioId}
+            modalProps={modalProps}
+          />
+        </div>
+        <div className="portfolio-value-label mt-2">Total Portfolio Value (1M)</div>
       </div>
     </div>
   );

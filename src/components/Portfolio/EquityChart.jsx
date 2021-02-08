@@ -107,7 +107,7 @@ export default function EquityChart({ equityChartProps }) {
               <p>
                 Total Value:
                 {' '}
-                <b><NumberFormat value={Number(value.y)} displayType="text" thousandSeparator prefix="$" /></b>
+                <b><NumberFormat value={Number(value.y)} displayType="text" thousandSeparator prefix="$" decimalScale={0} fixedDecimalScale /></b>
               </p>
             </div>
           </Hint>
