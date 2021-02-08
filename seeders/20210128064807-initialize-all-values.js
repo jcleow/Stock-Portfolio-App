@@ -36,12 +36,12 @@ module.exports = {
         created_at: new Date(),
         updated_at: new Date(),
       }, {
-        stock_name: 'Microsoft Corp',
+        stock_name: 'Microsoft Corporation',
         stock_symbol: 'msft',
         created_at: new Date(),
         updated_at: new Date(),
       }, {
-        stock_name: 'Tesla',
+        stock_name: 'Tesla Inc',
         stock_symbol: 'tsla',
         created_at: new Date(),
         updated_at: new Date(),
@@ -56,7 +56,7 @@ module.exports = {
     const portfolioList = [
       {
         user_id: 1,
-        name: 'low risk',
+        name: 'Tech Stocks',
         created_at: new Date(),
         updated_at: new Date(),
       },
@@ -86,10 +86,50 @@ module.exports = {
       },
     ];
 
+    const tradesList = [
+      {
+        portfolio_stock_id: 1,
+        position: 'BUY',
+        cost_price: 200,
+        shares: 200,
+        trade_date: new Date('2021/02/03'),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        portfolio_stock_id: 2,
+        position: 'BUY',
+        cost_price: 150,
+        shares: 150,
+        trade_date: new Date('2021/02/04'),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        portfolio_stock_id: 3,
+        position: 'BUY',
+        cost_price: 300,
+        shares: 300,
+        trade_date: new Date('2021/01/21'),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        portfolio_stock_id: 4,
+        position: 'BUY',
+        cost_price: 400,
+        shares: 400,
+        trade_date: new Date('2021/01/25'),
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+    ];
+
     await queryInterface.bulkInsert('users', usersList);
     await queryInterface.bulkInsert('stocks', stocksList);
     await queryInterface.bulkInsert('portfolios', portfolioList);
     await queryInterface.bulkInsert('portfolio_stocks', portfolioStocksList);
+    await queryInterface.bulkInsert('trades', tradesList);
   },
 
   down: async (queryInterface, Sequelize) => {
@@ -97,5 +137,6 @@ module.exports = {
     await queryInterface.bulkDelete('stocks', null, {});
     await queryInterface.bulkDelete('portfolios', null, {});
     await queryInterface.bulkDelete('portfolio_stocks', null, {});
+    await queryInterface.bulkDelete('trades', null, {});
   },
 };
