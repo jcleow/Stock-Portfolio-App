@@ -64,6 +64,7 @@ export default function bindRoutes(app) {
 
   const TradesController = trades(db);
   app.get('/portfolioStocks/:portfolioStockId/trades', TradesController.index);
+  app.get('/holidays', TradesController.getHolidays);
   app.put('/portfolios/:portfolioId/stocks/:portfolioStockId/update', TradesController.update);
   app.delete('/portfolios/:portfolioId/portfolioStocks/:portfolioStockId/trades/:tradeId/delete', TradesController.deleteTrade);
 }

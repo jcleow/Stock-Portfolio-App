@@ -44,7 +44,7 @@ function AddStockToPortfolioBtn({
 }
 
 export default function PortfolioTable({
-  portfolioStocks, refreshPortfolioView, currPortfolioId, addSymbLoadingProps,
+  portfolioStocks, refreshPortfolioView, currPortfolioId, addSymbLoadingProps, holidays,
 }) {
   const { loadingNewSymbol, setLoadingNewSymbol } = addSymbLoadingProps;
 
@@ -71,6 +71,7 @@ export default function PortfolioTable({
               portfolioId={stock.portfolioId}
               historicalTrades={historicalTrades}
               refreshPortfolioView={refreshPortfolioView}
+              holidays={holidays}
             />
           </td>
           <td>

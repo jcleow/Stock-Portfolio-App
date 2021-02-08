@@ -1,3 +1,8 @@
+import axios from 'axios';
+
+const SANDBOXTOKEN = 'Tsk_c0d79534cc3f4d8fa07478c311b898d2';
+// const GENERICURL = 'https://sandbox.iexapis.com/stable/stock';
+
 export default function trades(db) {
   // Update the trade details of a portfolioStock
   const index = async (req, res) => {
@@ -67,9 +72,19 @@ export default function trades(db) {
     res.send({ message: `Trade id ${tradeId} is deleted`, tradesData: updatedTrades });
   };
 
+  const getHolidays = (req, res) => {
+    axios.get(`https://sandbox.iexapis.com/stable/ref-data/us/dates/holiday/last/50?token=${SANDBOXTOKEN}`)
+      .then((holidayResults) => {
+        const holidays = holidayResults.data.map((holiday) => holiday.date);
+        res.send({ holidays });
+      })
+      .catch((err) => console.log(err));
+  };
+
   return {
     index,
     update,
     deleteTrade,
+    getHolidays,
   };
 }

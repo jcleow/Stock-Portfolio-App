@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import DatePicker from 'react-datepicker';
-import { addDays } from 'date-fns';
+import { addDays, getDay, subDays } from 'date-fns';
 import { ThreeDotsVertical } from 'react-bootstrap-icons';
 import NumberFormat from 'react-number-format';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -10,7 +10,7 @@ import {
 } from 'react-bootstrap';
 
 export default function Trade({
-  dataIndex, tradeStates, refreshPortfolioView, portfolioId, portfolioStockId,
+  dataIndex, tradeStates, refreshPortfolioView, portfolioId, portfolioStockId, holidays,
 }) {
   const {
     tradesData,
@@ -24,7 +24,10 @@ export default function Trade({
     shares,
     costPrice,
   } = tradesData[dataIndex];
-  // console.log(tradesData[dataIndex], 'tradesData');
+
+  const listOfHolidays = holidays.map((day) => new Date(day));
+  console.log(holidays, 'holidays');
+  console.log(listOfHolidays, 'listOfHolidays');
 
   const [currTradeData, setCurrTradeData] = useState(tradesData[dataIndex]);
   const [startDate, setStartDate] = useState(new Date(tradeDate));
@@ -62,6 +65,12 @@ export default function Trade({
     updateTradesData(event, 'position');
   };
 
+  // Disable all weekends as markets are closed
+  const isWeekday = (date) => {
+    const day = getDay(date);
+    return day !== 0 && day !== 6;
+  };
+
   const handleDeleteTrade = () => {
     axios.delete(`portfolios/${portfolioId}/portfolioStocks/${portfolioStockId}/trades/${id}/delete`)
       .then((updatedTradeDataResult) => {
@@ -94,6 +103,8 @@ export default function Trade({
           selected={startDate}
           onChange={handleTradeDate}
           maxDate={addDays(new Date(), 0)}
+          filterDate={isWeekday}
+          excludeDates={[new Date(), subDays(new Date(), 1), ...listOfHolidays]}
         />
       </td>
       <td>

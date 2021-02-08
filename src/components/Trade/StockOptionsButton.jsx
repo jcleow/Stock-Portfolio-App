@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import {
-  Button, Table, Modal, Dropdown, DropdownButton,
+  Button, Modal, Dropdown, DropdownButton,
 } from 'react-bootstrap';
 import { ThreeDotsVertical } from 'react-bootstrap-icons';
 import Trade from './Trade.jsx';
 
 export default function StockOptionsButton({
-  portfolioStockId, portfolioId, historicalTrades, refreshPortfolioView,
+  portfolioStockId, portfolioId, historicalTrades, refreshPortfolioView, holidays,
 }) {
   const [show, setShow] = useState(false);
 
@@ -29,6 +29,7 @@ export default function StockOptionsButton({
         refreshPortfolioView={refreshPortfolioView}
         portfolioId={portfolioId}
         portfolioStockId={portfolioStockId}
+        holidays={holidays}
       />
     );
   });
@@ -73,14 +74,18 @@ export default function StockOptionsButton({
   };
 
   return (
-
     <>
       <DropdownButton
         id="dropdown-basic-button"
         variant="options-btn"
         title={<ThreeDotsVertical />}
       >
-        <Dropdown.Item onClick={handleShow}>View/Edit Trades</Dropdown.Item>
+        <Dropdown.Item onClick={() => {
+          handleShow();
+        }}
+        >
+          View/Edit Trades
+        </Dropdown.Item>
         <Dropdown.Item onClick={handleDeletePortfolioStock}>Delete Stock</Dropdown.Item>
       </DropdownButton>
 

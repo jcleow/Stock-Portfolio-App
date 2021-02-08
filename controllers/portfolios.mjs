@@ -29,7 +29,6 @@ const calcPortfolioValueAndCost = (batchQuotes, arrayOfStockTrades, selectedPort
     entry.chart.forEach((chartUnit, index) => {
       if (index === 0) {
         storeFirstDateStr = chartUnit.date;
-        console.log(storeFirstDateStr, 'storeFirstDateStr');
       }
       datePrice = { ...datePrice, [chartUnit.date]: { close: chartUnit.close } };
     });

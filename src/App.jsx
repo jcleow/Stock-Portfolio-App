@@ -9,6 +9,7 @@ import EquityChartHeader from './components/Portfolio/EquityChartHeader.jsx';
 export default function App() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [username, setUsername] = useState('');
+  const [holidays, setHolidays] = useState([]);
 
   // Manage state of either portfolio view or stock search view
   const [display, setDisplay] = useState('portfolio');
@@ -129,7 +130,7 @@ export default function App() {
   };
 
   // Get default AAPL 1M chart when opening up stock search
-  function handleGetDefaultChart() {
+  const handleGetDefaultChart = () => {
     console.log('getting default aapl chart');
     let coyInfoData;
 
@@ -154,7 +155,17 @@ export default function App() {
         setLoadingKeyStats(false);
       })
       .catch((error) => console.log(error));
-  }
+  };
+
+  // Get all the holidays in the past 50 days starting from today
+  const getPastMarketHolidays = () => {
+    axios.get('/holidays')
+      .then((result) => {
+        console.log(result, 'holidays result');
+        setHolidays(result.data.holidays);
+      })
+      .catch((error) => console.log(error));
+  };
 
   // To make sure username is everytime the page is reloaded
   useEffect(() => {
@@ -175,6 +186,7 @@ export default function App() {
     if (symbol === '') {
       handleGetDefaultChart();
     }
+    getPastMarketHolidays();
   }, []);
   console.log(symbol, 'symbol');
 
@@ -246,6 +258,7 @@ export default function App() {
                 portfolioStocks={portfolioStocks}
                 refreshPortfolioView={refreshPortfolioView}
                 addSymbLoadingProps={addSymbLoadingProps}
+                holidays={holidays}
               />
             </div>
           ) : () => { setDisplay('stockSearch'); }}
