@@ -21,7 +21,6 @@ export default function App() {
   // Manage states of all the stocks in the curr portfolio user is viewing
   const [portfolioStocks, setPortfolioStocks] = useState([]);
   const [currPortfolioId, setCurrPortfolioId] = useState();
-  console.log(currPortfolioId, 'currPortfolioId');
 
   // Manage data for current portfolio user is viewing
   const [equityCurveData, setEquityCurveData] = useState([]);
@@ -38,7 +37,6 @@ export default function App() {
   const [coyInfo, setCoyInfo] = useState([]);
   // Track the currently selected symbol
   const [symbol, setSymbol] = useState('');
-  console.log(symbol, 'symbol-start');
 
   // Track the loading animation of stock search
   // Storing as an object does not work in one render for different components
@@ -161,7 +159,6 @@ export default function App() {
   const getPastMarketHolidays = () => {
     axios.get('/holidays')
       .then((result) => {
-        console.log(result, 'holidays result');
         setHolidays(result.data.holidays);
       })
       .catch((error) => console.log(error));
@@ -175,7 +172,6 @@ export default function App() {
       const { loggedInUsername, trackedPortfolioId } = userCookieInfo;
       setUsername(loggedInUsername);
       // Store the last viewed portfolio if user decides to refresh the page
-      console.log(trackedPortfolioId, 'trackedPortfolioId');
       if (!Number.isNaN(trackedPortfolioId)) {
         setCurrPortfolioId(trackedPortfolioId);
       }
@@ -188,7 +184,6 @@ export default function App() {
     }
     getPastMarketHolidays();
   }, []);
-  console.log(symbol, 'symbol');
 
   const equityChartProps = {
     equityCurveData, accCostCurveData, timeFrame,

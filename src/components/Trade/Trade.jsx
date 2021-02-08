@@ -26,8 +26,6 @@ export default function Trade({
   } = tradesData[dataIndex];
 
   const listOfHolidays = holidays.map((day) => new Date(day));
-  console.log(holidays, 'holidays');
-  console.log(listOfHolidays, 'listOfHolidays');
 
   const [currTradeData, setCurrTradeData] = useState(tradesData[dataIndex]);
   const [startDate, setStartDate] = useState(new Date(tradeDate));
