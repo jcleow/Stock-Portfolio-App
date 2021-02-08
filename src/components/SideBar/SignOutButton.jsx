@@ -34,10 +34,10 @@ export default function SignOutButton({ setLoggedIn }) {
         <Modal.Body>
           <div className="d-flex justify-content-center">
             <div className="mr-3">
-              <Button type="submit" variant="danger" onClick={handleSignOut}> Yes </Button>
+              <Button type="submit" variant="outline-danger" onClick={handleSignOut}> Yes </Button>
             </div>
             <div>
-              <Button type="submit" variant="outline-info" onClick={handleClose}>Cancel</Button>
+              <Button type="submit" variant="info" onClick={handleClose}>Cancel</Button>
             </div>
           </div>
         </Modal.Body>
