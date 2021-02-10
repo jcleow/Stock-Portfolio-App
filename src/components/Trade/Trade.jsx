@@ -100,7 +100,7 @@ export default function Trade({
           onChange={handleTradeDate}
           maxDate={addDays(new Date(), 0)}
           filterDate={isWeekday}
-          excludeDates={[new Date(), subDays(new Date(), 1), ...listOfHolidays]}
+          excludeDates={[...listOfHolidays]}
         />
       </td>
       <td>
