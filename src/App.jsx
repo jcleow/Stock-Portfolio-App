@@ -129,7 +129,6 @@ export default function App() {
 
   // Get default AAPL 1M chart when opening up stock search
   const handleGetDefaultChart = () => {
-    console.log('getting default aapl chart');
     let coyInfoData;
 
     axios.get('/aapl/headlineInfo')
@@ -141,7 +140,16 @@ export default function App() {
       .then((chartDataResult) => {
         // Due to IEX inconsistent prices with the chart we have to
         // Remedy the latest closing price
-        setCoyInfo({ ...coyInfoData, close: chartDataResult.data.coordinates.slice(-1)[0].close });
+        const revisedCurrClosePrice = chartDataResult.data.coordinates.slice(-1)[0].close;
+        const revisedLastClosePrice = chartDataResult.data.coordinates.slice(-2, -1)[0].close;
+        const revisedChange = revisedCurrClosePrice - revisedLastClosePrice;
+        const revisedChangePct = (revisedChange / revisedLastClosePrice) * 100;
+        setCoyInfo({
+          ...coyInfoData,
+          close: revisedCurrClosePrice,
+          change: revisedChange,
+          changePercent: revisedChangePct,
+        });
         setQuoteData(chartDataResult.data.coordinates);
         setDuration(chartDataResult.data.duration);
         setLoadingCoyInfo(false);
