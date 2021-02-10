@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import axios from 'axios';
+import React from 'react';
 import { Search } from 'react-bootstrap-icons';
 
 export default function SymbolLookup({ symbolLookUpProps }) {

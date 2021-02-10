@@ -19,10 +19,17 @@ export default function trades(db) {
     const { tradesData } = req.body;
     const updatedTradeData = tradesData.map(async (trade) => {
       const {
-        id, portfolioStockId, position, costPrice, tradeDate, shares,
+        id, portfolioStockId, position, costPrice, tradeDate, shares, toDelete,
       } = trade;
 
       let newTrade;
+      if (toDelete) {
+        await db.Trade.destroy({
+          where: {
+            id,
+          },
+        });
+      }
 
       if (id === null) {
         newTrade = await db.Trade.create({

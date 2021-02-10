@@ -76,7 +76,7 @@ export default function StockSearch({ stockSearchProps }) {
   function ToggleMonthPriceButton() {
     const chartTimeFrames = ['1m', '3m', '6m'];
     const listOfButtons = chartTimeFrames.map((timeFrame) => (
-      <div className="timeframe-option">
+      <div className="timeframe-option" key={timeFrame}>
         <Button variant="outline-dark" type="submit" onClick={() => { handleGetChart(timeFrame); }}>
           {timeFrame}
         </Button>

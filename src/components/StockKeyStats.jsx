@@ -27,9 +27,9 @@ export default function StockKeyStats({ keyStats }) {
     [{ 'Dividend Yield': dividendYieldDisplay }, { 'PE Ratio': peRatio.toFixed(2) }],
   ];
 
-  const keyStatsDisplay = arrayOfStats.map((row) => {
-    const rowDisplay = row.map((stat) => (
-      <div className="col d-flex justify-content-between">
+  const keyStatsDisplay = arrayOfStats.map((row, rowIndex) => {
+    const rowDisplay = row.map((stat, statIndex) => (
+      <div className="col d-flex justify-content-between" key={rowIndex + statIndex}>
         <div>
           {Object.keys(stat)}
         </div>
@@ -41,7 +41,7 @@ export default function StockKeyStats({ keyStats }) {
       </div>
     ));
     return (
-      <div className="row">
+      <div className="row" key={rowIndex}>
         {rowDisplay}
       </div>
     );

@@ -13,6 +13,7 @@ export default function StockOptionsButton({
 
   // This tradesData is passed to the ajax request to update the trade
   const [tradesData, setTradesData] = useState([...historicalTrades]);
+
   // Create the existing Trade entries
   const historicalTradeDisplay = tradesData.map((tradeData, index) => {
     // DataIndex is the index of its relevant data in the states' arrays
@@ -22,6 +23,7 @@ export default function StockOptionsButton({
       tradesData,
       setTradesData,
     };
+
     return (
       <Trade
         dataIndex={dataIndex}
@@ -53,6 +55,11 @@ export default function StockOptionsButton({
       .then(() => refreshPortfolioView(event, portfolioId))
       .then(() => {
         setShow(false);
+        return axios.get(`/portfolioStocks/${portfolioStockId}/trades`);
+      })
+      .then((updatedStockTradesResults) => {
+        console.log(updatedStockTradesResults);
+        setTradesData([...updatedStockTradesResults.data.updatedTradesData]);
       })
       .catch((err) => console.log(err));
   };

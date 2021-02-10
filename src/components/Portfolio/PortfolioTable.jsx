@@ -46,7 +46,7 @@ function AddStockToPortfolioBtn({
 export default function PortfolioTable({
   portfolioStocks, refreshPortfolioView, currPortfolioId, addSymbLoadingProps, holidays,
 }) {
-  const { loadingNewSymbol, setLoadingNewSymbol } = addSymbLoadingProps;
+  const { loadingNewSymbol } = addSymbLoadingProps;
 
   // Track the new symbol that is being entered
   let rowsOfStockData;

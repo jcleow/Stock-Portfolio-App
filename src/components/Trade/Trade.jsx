@@ -29,6 +29,7 @@ export default function Trade({
 
   const [currTradeData, setCurrTradeData] = useState(tradesData[dataIndex]);
   const [startDate, setStartDate] = useState(new Date(tradeDate));
+  const [toDelete, setToDelete] = useState(false);
 
   // Helper that alters the array of tradesData
   const updateTradesData = (event, dataProp) => {
@@ -70,18 +71,24 @@ export default function Trade({
   };
 
   const handleDeleteTrade = () => {
-    axios.delete(`portfolios/${portfolioId}/portfolioStocks/${portfolioStockId}/trades/${id}/delete`)
-      .then((updatedTradeDataResult) => {
-        console.log(updatedTradeDataResult, 'result');
-        setTradesData(updatedTradeDataResult.data.tradesData.trades);
-        refreshPortfolioView(null, portfolioId);
-      })
-      .catch((err) => console.log(err));
+    // axios.delete(`portfolios/${portfolioId}/portfolioStocks/${portfolioStockId}/trades/${id}/delete`)
+    //   .then((updatedTradeDataResult) => {
+    //     console.log(updatedTradeDataResult, 'result');
+    //     setTradesData(updatedTradeDataResult.data.tradesData.trades);
+    //     refreshPortfolioView(null, portfolioId);
+    //   })
+    //   .catch((err) => console.log(err));
+    setToDelete(true);
+    tradesData[dataIndex].toDelete = true;
+    setTradesData([...tradesData]);
   };
 
   const totalCost = shares * costPrice;
 
   return (
+    <>
+      {!toDelete
+    && (
     <tr>
       <td>
         {id}
@@ -112,7 +119,6 @@ export default function Trade({
         <input value={costPrice} onChange={handleCostBasis} type="number" placeholder="Cost price" />
       </td>
       <td>
-
         {isNaN(totalCost) ? 0
           : <NumberFormat value={totalCost} displayType="text" thousandSeparator />}
       </td>
@@ -124,5 +130,7 @@ export default function Trade({
         </DropdownButton>
       </td>
     </tr>
+    )}
+    </>
   );
 }
