@@ -157,7 +157,7 @@ export default function App() {
         }
         setSymbol(result.data.symbol);
         coyInfoData = result.data;
-        return axios.get(`/${symbol}/chart/${timePeriod}`);
+        return axios.get(`/${selectedSymbol}/chart/${timePeriod}`);
       })
       .then((chartDataResult) => {
         // Due to IEX inconsistent prices with the chart we have to
