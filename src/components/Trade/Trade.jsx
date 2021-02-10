@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import DatePicker from 'react-datepicker';
 import { addDays, getDay, subDays } from 'date-fns';
 import { ThreeDotsVertical } from 'react-bootstrap-icons';
@@ -10,7 +9,7 @@ import {
 } from 'react-bootstrap';
 
 export default function Trade({
-  dataIndex, tradeStates, refreshPortfolioView, portfolioId, portfolioStockId, holidays,
+  dataIndex, tradeStates, holidays,
 }) {
   const {
     tradesData,
@@ -51,7 +50,6 @@ export default function Trade({
   };
   const handleTradeDate = (event) => {
     setStartDate(event);
-    console.log(event, 'event');
     updateTradesData(event, 'tradeDate');
   };
   const handleSharesTraded = (event) => {
@@ -71,13 +69,6 @@ export default function Trade({
   };
 
   const handleDeleteTrade = () => {
-    // axios.delete(`portfolios/${portfolioId}/portfolioStocks/${portfolioStockId}/trades/${id}/delete`)
-    //   .then((updatedTradeDataResult) => {
-    //     console.log(updatedTradeDataResult, 'result');
-    //     setTradesData(updatedTradeDataResult.data.tradesData.trades);
-    //     refreshPortfolioView(null, portfolioId);
-    //   })
-    //   .catch((err) => console.log(err));
     setToDelete(true);
     tradesData[dataIndex].toDelete = true;
     setTradesData([...tradesData]);

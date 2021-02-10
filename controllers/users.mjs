@@ -41,7 +41,6 @@ export default function users(db) {
 
   const signOut = async (req, res) => {
     const { loggedInUserId } = req;
-    console.log(req.loggedInUserId, 'req');
     const currUser = await db.User.findByPk(loggedInUserId);
     currUser.loggedIn = false;
     await currUser.save();
@@ -77,6 +76,7 @@ export default function users(db) {
     res.send({ auth: true, user: newUser });
   };
 
+  // Update and keep track for client/user on the current portfolio being viewed
   const updateCurrPortfolioId = (req, res) => {
     const { currPortfolioId } = req.params;
     res.clearCookie('currPortfolioId');

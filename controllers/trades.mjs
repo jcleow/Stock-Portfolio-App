@@ -63,22 +63,6 @@ export default function trades(db) {
       .catch((err) => console.log(err));
   };
 
-  const deleteTrade = async (req, res) => {
-    const { portfolioStockId, tradeId } = req.params;
-    await db.Trade.destroy({
-      where: {
-        id: tradeId,
-      },
-    });
-    const updatedTrades = await db.PortfolioStock.findByPk(
-      portfolioStockId,
-      { include: db.Trade },
-    );
-
-    console.log(updatedTrades, 'updatedTrades');
-    res.send({ message: `Trade id ${tradeId} is deleted`, tradesData: updatedTrades });
-  };
-
   const getHolidays = (req, res) => {
     axios.get(`https://sandbox.iexapis.com/stable/ref-data/us/dates/holiday/last/50?token=${SANDBOXTOKEN}`)
       .then((holidayResults) => {
@@ -91,7 +75,6 @@ export default function trades(db) {
   return {
     index,
     update,
-    deleteTrade,
     getHolidays,
   };
 }

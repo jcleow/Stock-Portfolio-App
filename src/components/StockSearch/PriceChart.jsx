@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import {
   XYPlot,
   XAxis,
-  ChartLabel,
   LineSeries,
   LineMarkSeries,
   Hint,

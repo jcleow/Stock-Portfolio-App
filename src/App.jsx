@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import PortfolioTable from './components/Portfolio/PortfolioTable.jsx';
 import SideBar from './components/SideBar/SideBar.jsx';
-import StockSearch from './components/StockSearch.jsx';
+import StockSearch from './components/StockSearch/StockSearch.jsx';
 import EquityChart from './components/Portfolio/EquityChart.jsx';
 import EquityChartHeader from './components/Portfolio/EquityChartHeader.jsx';
 

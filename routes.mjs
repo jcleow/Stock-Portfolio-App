@@ -49,7 +49,7 @@ export default function bindRoutes(app) {
   app.post('/register', UsersController.register);
   app.put('/currPortfolioId/:currPortfolioId', UsersController.updateCurrPortfolioId);
 
-  const StocksController = stocks(db);
+  const StocksController = stocks();
   app.get('/:symbol/chart/:duration', StocksController.getChart);
   app.get('/:symbol/headlineInfo', StocksController.getSymbol);
   app.get('/:symbol/stats', StocksController.getStats);
@@ -66,5 +66,4 @@ export default function bindRoutes(app) {
   app.get('/portfolioStocks/:portfolioStockId/trades', TradesController.index);
   app.get('/holidays', TradesController.getHolidays);
   app.put('/portfolios/:portfolioId/stocks/:portfolioStockId/update', TradesController.update);
-  app.delete('/portfolios/:portfolioId/portfolioStocks/:portfolioStockId/trades/:tradeId/delete', TradesController.deleteTrade);
 }

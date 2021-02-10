@@ -16,38 +16,21 @@ export default function EquityChartHeader({ equityChartHeaderProps }) {
     currPortfolioId,
   } = equityChartHeaderProps;
   let arrOfPortfolioValues = [];
-  let arrOfAccCostValues = [];
   // Today's PV
   let currPortfolioValue = 0;
   // Yesterday's PV
   let prevPortfolioValue = 0;
-  let portfolioCost = 0;
-  let profitLoss = 0;
-  let profitLossPct = 0;
   let pvDailyChange = 0;
   let pvDailyChangePct = 0;
-  let formattedPnL = 0;
   let formattedPVChng = 0;
 
   if (equityCurveData && accCostCurveData) {
     arrOfPortfolioValues = Object.values(equityCurveData).map((val) => val);
-    arrOfAccCostValues = Object.values(accCostCurveData).map((cost) => cost);
     currPortfolioValue = arrOfPortfolioValues.slice(-1)[0];
     prevPortfolioValue = arrOfPortfolioValues.slice(-2, -1)[0];
-    portfolioCost = arrOfAccCostValues.slice(-1)[0];
 
-    profitLoss = currPortfolioValue - portfolioCost;
-    profitLossPct = ((profitLoss / arrOfAccCostValues.slice(-1)[0]) * 100).toFixed(2);
     pvDailyChange = currPortfolioValue - prevPortfolioValue;
     pvDailyChangePct = (pvDailyChange / prevPortfolioValue) * 100;
-
-    // PV against cost
-    formattedPnL = new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(profitLoss);
 
     // Change in PV
     formattedPVChng = new Intl.NumberFormat('en-US', {
@@ -58,13 +41,6 @@ export default function EquityChartHeader({ equityChartHeaderProps }) {
     }).format(pvDailyChange);
   }
 
-  const formattedPV = new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(currPortfolioValue);
-
   const modalProps = { show, setShow };
   return (
     <div className="chart-header d-flex justify-content-between">
@@ -74,7 +50,6 @@ export default function EquityChartHeader({ equityChartHeaderProps }) {
         </h6>
         {isNaN(currPortfolioValue) ? null : (
           <h1>
-            {/* {formattedPV} */}
             <NumberFormat value={Number(currPortfolioValue)} displayType="text" thousandSeparator prefix="$" decimalScale={0} fixedDecimalScale />
           </h1>
         )}

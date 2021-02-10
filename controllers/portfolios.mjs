@@ -143,6 +143,7 @@ const calcPortfolioValueAndCost = (batchQuotes, arrayOfStockTrades, selectedPort
   return { portfolioValueTimeSeries, accumulatedCostTimeSeries };
 };
 
+// Helper that obtains quotes of multiple symbols together
 const getBatchQuotes = (portfolioId, selectedPortfolioStockIds, arrayOfSharesOwned, arrayOfStockTrades, selectedStockNamesString) => {
   let batchQuotes;
   let essentialQuoteInfo;
@@ -181,6 +182,7 @@ const getBatchQuotes = (portfolioId, selectedPortfolioStockIds, arrayOfSharesOwn
 };
 
 export default function portfolios(db) {
+  // Lists all the portfolios in the sidebar
   const index = async (req, res) => {
     if (req.middlewareLoggedIn) {
       const { loggedInUserId } = req.cookies;
@@ -192,6 +194,7 @@ export default function portfolios(db) {
     res.send({ message: 'not logged in' });
   };
 
+  // View a single portfolio
   const view = async (req, res) => {
     const { portfolioId } = req.params;
     try {
@@ -285,12 +288,13 @@ export default function portfolios(db) {
     });
 
     Promise.all(updatedTradeData)
-      .then((result) => {
+      .then(() => {
         res.send({ message: 'newTradeCreated' });
       })
       .catch((err) => console.log(err));
   };
 
+  // Create a new portfolio
   const create = async (req, res) => {
     const { portfolioName } = req.body;
     await db.Portfolio.create({
@@ -323,8 +327,7 @@ export default function portfolios(db) {
           portfolioId: Number(portfolioId),
           stockId: stockCreated.id,
         }))
-        .then((createNewPortfolioStockResult) => {
-          console.log(createNewPortfolioStockResult, 'createNewPortfolioStockResult');
+        .then(() => {
           // To pass the newly created symbol back
           res.send({ message: 'completed' });
         })
@@ -335,6 +338,7 @@ export default function portfolios(db) {
     }
   };
 
+  // Delete a portfolio
   const deletePortfolio = async (req, res) => {
     const { portfolioId } = req.params;
     await db.Portfolio.destroy({
@@ -345,6 +349,7 @@ export default function portfolios(db) {
     res.send({ message: 'portfolio deleted' });
   };
 
+  // Delete a stock belonging to a portfolio
   const deletePortfolioStock = async (req, res) => {
     const { portfolioStockId } = req.params;
     await db.PortfolioStock.destroy({

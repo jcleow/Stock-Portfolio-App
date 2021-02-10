@@ -1,29 +1,13 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import {
-  Button, Form, InputGroup, Col,
+  Button, Form,
 } from 'react-bootstrap';
 
 export default function RegistrationForm({ registrationFormProps }) {
-  const { setLoggedIn, setUsername, setFormDisplay } = registrationFormProps;
+  const { setLoggedIn, setUsername } = registrationFormProps;
   const [usernameInput, setUsernameInput] = useState('');
   const [passwordInput, setPasswordInput] = useState('');
-  const [confirmPasswordInput, setConfirmPasswordInput] = useState('');
-
-  // const [isValidState, setIsValidState] = useState('isInvalid');
-  // const validationAttr = { 'data-attr': isValidState };
-
-  const [validated, setValidated] = useState(false);
-
-  const handleSubmit = (event) => {
-    const form = event.currentTarget;
-    if (form.checkValidity() === false) {
-      event.preventDefault();
-      event.stopPropagation();
-    }
-
-    setValidated(true);
-  };
 
   function handleUsernameInput(event) {
     setUsernameInput(event.target.value);
@@ -31,19 +15,6 @@ export default function RegistrationForm({ registrationFormProps }) {
 
   function handlePasswordInput(event) {
     setPasswordInput(event.target.value);
-  }
-
-  function handleConfirmPasswordInput(event) {
-    setConfirmPasswordInput(event.target.value);
-    if (passwordInput !== confirmPasswordInput) {
-      setIsValidState('isInvalid');
-    } else {
-      setIsValidState('isValid');
-    }
-  }
-
-  function handleSignIn() {
-    setFormDisplay('signIn');
   }
 
   function handleRegistration() {

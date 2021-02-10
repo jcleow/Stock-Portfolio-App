@@ -13,8 +13,7 @@ export default function CreatePortfolioModal({ handleDisplayPortfolio }) {
   const handlePortfolioName = (e) => setPortfolioName(e.target.value);
   const handleCreatePortfolio = () => {
     axios.post('/portfolios/create', { portfolioName })
-      .then((result) => {
-        console.log(result);
+      .then(() => {
         setShow(false);
         handleDisplayPortfolio();
       })

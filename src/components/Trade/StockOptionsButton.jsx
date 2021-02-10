@@ -28,9 +28,6 @@ export default function StockOptionsButton({
       <Trade
         dataIndex={dataIndex}
         tradeStates={tradeStates}
-        refreshPortfolioView={refreshPortfolioView}
-        portfolioId={portfolioId}
-        portfolioStockId={portfolioStockId}
         holidays={holidays}
       />
     );
@@ -58,7 +55,6 @@ export default function StockOptionsButton({
         return axios.get(`/portfolioStocks/${portfolioStockId}/trades`);
       })
       .then((updatedStockTradesResults) => {
-        console.log(updatedStockTradesResults);
         setTradesData([...updatedStockTradesResults.data.updatedTradesData]);
       })
       .catch((err) => console.log(err));
@@ -73,8 +69,7 @@ export default function StockOptionsButton({
 
   const handleDeletePortfolioStock = () => {
     axios.delete(`/portfolioStocks/${portfolioStockId}/delete`)
-      .then((result) => {
-        console.log(result, 'result');
+      .then(() => {
         refreshPortfolioView(null, portfolioId);
       })
       .catch((error) => console.log(error));

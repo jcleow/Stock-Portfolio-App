@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import {
   XYPlot,
   XAxis,
-  ChartLabel,
   LineSeries,
   LineMarkSeries,
   Hint,
@@ -12,12 +11,13 @@ import {
 import NumberFormat from 'react-number-format';
 
 export default function EquityChart({ equityChartProps }) {
+  // Acc cost curve data to be included subsequently
   const { equityCurveData, accCostCurveData, timeFrame } = equityChartProps;
 
-  // To replace with error boundary?
   if (!equityCurveData) {
     return (<XYPlot onMouseLeave={() => { setValue(null); }} height={400} width={1000} xType="ordinal" />);
   }
+
   // Set the state for the hint value
   const [value, setValue] = useState(null);
 
@@ -36,6 +36,7 @@ export default function EquityChart({ equityChartProps }) {
     setValue(val);
   };
 
+  // Options for different time frames on the chart
   const dateDisplayFactor = () => {
     let factor = 0;
     if (timeFrame === '1m') {
@@ -114,8 +115,6 @@ export default function EquityChart({ equityChartProps }) {
           )}
         </XYPlot>
       </div>
-      {/* {YLOW === Infinity
-        && <div>Add a stock and trade to continue</div>} */}
     </div>
   );
 }
