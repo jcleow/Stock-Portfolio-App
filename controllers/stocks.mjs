@@ -20,7 +20,10 @@ export default function stocks() {
       .then((result) => {
         res.send(result.data);
       })
-      .catch((error) => console.log(error));
+      .catch((error) => {
+        console.log(error);
+        res.send({ error });
+      });
   };
 
   // Get the headline stats of a symbol

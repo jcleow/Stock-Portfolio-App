@@ -38,6 +38,9 @@ export default function App() {
   // Track the currently selected symbol
   const [symbol, setSymbol] = useState('');
 
+  // Track the current input symbol in stockSearch
+  const [symbolInput, setSymbolInput] = useState('');
+
   // Track the loading animation of stock search
   // Storing as an object does not work in one render for different components
   // const [loadingStock, setLoadingStock] = useState(defaultLoadingStock);
@@ -113,7 +116,6 @@ export default function App() {
           setCurrPortfolioId(Number(result.data.portfolios[0].id));
           return axios.get(`/portfolios/${result.data.portfolios[0].id}`);
         }
-
         setSelectedPortfolioName('Please create a portfolio to begin');
       })
       .then((firstPortfolioResult) => {
@@ -127,23 +129,44 @@ export default function App() {
       .catch((error) => console.log(error));
   };
 
-  // Get default AAPL 1M chart when opening up stock search
-  const handleGetDefaultChart = () => {
-    let coyInfoData;
+  // **
+  //  *
+  //  * @param {String} timePeriod
+  //  * @param {String} symbolInput
+  //  * @param {Boolean} defaultView - 'Set to true if default view'
+  //  */
 
-    axios.get('/aapl/headlineInfo')
+  function handleGetChart(timePeriod, symbolInput, defaultView) {
+    let coyInfoData;
+    setLoadingCoyInfo(true);
+    setLoadingChart(true);
+    setLoadingKeyStats(true);
+    let selectedSymbol = symbolInput;
+    if (!symbolInput) {
+      selectedSymbol = symbol;
+    }
+
+    axios.get(`/${selectedSymbol}/headlineInfo`)
       .then((result) => {
-        setSymbol('aapl');
+        if (result.data.error) {
+          alert('You have not entered a valid symbol. Please try again');
+          setSymbolInput('');
+          // Default to AAPL 1m chart
+          handleGetChart('1m', 'aapl', true);
+          return;
+        }
+        setSymbol(result.data.symbol);
         coyInfoData = result.data;
-        return axios.get('/aapl/chart/1m');
+        return axios.get(`/${symbol}/chart/${timePeriod}`);
       })
       .then((chartDataResult) => {
         // Due to IEX inconsistent prices with the chart we have to
-        // Remedy the latest closing price
+        // Remedy the latest closing price,change & change pct
         const revisedCurrClosePrice = chartDataResult.data.coordinates.slice(-1)[0].close;
         const revisedLastClosePrice = chartDataResult.data.coordinates.slice(-2, -1)[0].close;
         const revisedChange = revisedCurrClosePrice - revisedLastClosePrice;
         const revisedChangePct = (revisedChange / revisedLastClosePrice) * 100;
+
         setCoyInfo({
           ...coyInfoData,
           close: revisedCurrClosePrice,
@@ -154,14 +177,17 @@ export default function App() {
         setDuration(chartDataResult.data.duration);
         setLoadingCoyInfo(false);
         setLoadingChart(false);
-        return axios.get('/aapl/stats/');
+        return axios.get(`/${selectedSymbol}/stats/`);
       })
       .then((statsResults) => {
         setKeyStats(statsResults.data);
+        if (!defaultView) {
+          setSymbolInput('');
+        }
         setLoadingKeyStats(false);
       })
       .catch((error) => console.log(error));
-  };
+  }
 
   // Get all the holidays in the past 50 days starting from today
   const getPastMarketHolidays = () => {
@@ -186,9 +212,9 @@ export default function App() {
     }
     // Display the available portfolios in sidebar and on main screen once page loads
     handleDisplayPortfolio();
-    // Display the default stock search on render to be default to 1M view
+    // Display the default stock search on render to be default to 1M view of AAPL
     if (symbol === '') {
-      handleGetDefaultChart();
+      handleGetChart('1m', 'aapl', true);
     }
     getPastMarketHolidays();
   }, []);
@@ -210,7 +236,7 @@ export default function App() {
     setSelectedPortfolioName,
     handleDisplayPortfolio,
     refreshPortfolioView,
-    handleGetDefaultChart,
+    handleGetChart,
   };
 
   const equityChartHeaderProps = {
@@ -224,19 +250,13 @@ export default function App() {
     quoteData,
     duration,
     keyStats,
-    symbol,
     coyInfo,
     loadingCoyInfo,
     loadingChart,
     loadingKeyStats,
-    setQuoteData,
-    setDuration,
-    setKeyStats,
-    setSymbol,
-    setCoyInfo,
-    setLoadingCoyInfo,
-    setLoadingChart,
-    setLoadingKeyStats,
+    handleGetChart,
+    symbolInput,
+    setSymbolInput,
   };
 
   const addSymbLoadingProps = { loadingNewSymbol, setLoadingNewSymbol };

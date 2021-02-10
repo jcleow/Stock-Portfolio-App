@@ -21,7 +21,7 @@ export default function SideBar({ sideBarProps }) {
     setSelectedPortfolioName,
     portfolioList,
     refreshPortfolioView,
-    handleGetDefaultChart,
+    handleGetChart,
     handleDisplayPortfolio,
   } = sideBarProps;
 
@@ -66,7 +66,7 @@ export default function SideBar({ sideBarProps }) {
 
   const handleDisplayStockSearchView = () => {
     setDisplay('stockSearch');
-    handleGetDefaultChart();
+    handleGetChart('1m', 'aapl', true);
   };
 
   const handleDisplayPortfolioView = () => {

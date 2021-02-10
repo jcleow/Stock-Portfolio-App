@@ -11,7 +11,7 @@ export default function SymbolLookup({ symbolLookUpProps }) {
   return (
     <div>
       <input id="coy-lookup" className="symbol-lookup" placeholder="Symbol Lookup e.g KO" value={symbolInput} onChange={handleInput} />
-      <button type="submit" className="transparent-btn" onClick={() => { handleGetChart('1m'); }}><Search /></button>
+      <button type="submit" className="transparent-btn" onClick={() => { handleGetChart('1m', symbolInput, false); }}><Search /></button>
     </div>
   );
 }

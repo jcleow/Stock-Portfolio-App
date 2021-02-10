@@ -7,77 +7,25 @@ import SymbolLookup from './SymbolLookup.jsx';
 import StockKeyStats from './StockKeyStats.jsx';
 
 export default function StockSearch({ stockSearchProps }) {
-  const [symbolInput, setSymbolInput] = useState('');
   // Track the price quote data for the price chart
   const {
     quoteData,
     duration,
     keyStats,
-    symbol,
     coyInfo,
     loadingCoyInfo,
     loadingChart,
     loadingKeyStats,
-    setQuoteData,
-    setDuration,
-    setKeyStats,
-    setSymbol,
-    setCoyInfo,
-    setLoadingCoyInfo,
-    setLoadingChart,
-    setLoadingKeyStats,
-
+    handleGetChart,
+    symbolInput,
+    setSymbolInput,
   } = stockSearchProps;
-
-  function handleGetChart(timeFrame) {
-    let coyInfoData;
-    setLoadingCoyInfo(true);
-    setLoadingChart(true);
-    setLoadingKeyStats(true);
-    let selectedSymbol = symbolInput;
-    if (!symbolInput) {
-      selectedSymbol = symbol;
-    }
-
-    axios.get(`/${selectedSymbol}/headlineInfo`)
-      .then((result) => {
-        setSymbol(result.data.symbol);
-        coyInfoData = result.data;
-        return axios.get(`/${symbol}/chart/${timeFrame}`);
-      })
-      .then((chartDataResult) => {
-        // Due to IEX inconsistent prices with the chart we have to
-        // Remedy the latest closing price,change & change pct
-        const revisedCurrClosePrice = chartDataResult.data.coordinates.slice(-1)[0].close;
-        const revisedLastClosePrice = chartDataResult.data.coordinates.slice(-2, -1)[0].close;
-        const revisedChange = revisedCurrClosePrice - revisedLastClosePrice;
-        const revisedChangePct = (revisedChange / revisedLastClosePrice) * 100;
-
-        setCoyInfo({
-          ...coyInfoData,
-          close: revisedCurrClosePrice,
-          change: revisedChange,
-          changePercent: revisedChangePct,
-        });
-        setQuoteData(chartDataResult.data.coordinates);
-        setDuration(chartDataResult.data.duration);
-        setLoadingCoyInfo(false);
-        setLoadingChart(false);
-        return axios.get(`/${selectedSymbol}/stats/`);
-      })
-      .then((statsResults) => {
-        setKeyStats(statsResults.data);
-        setSymbolInput('');
-        setLoadingKeyStats(false);
-      })
-      .catch((error) => console.log(error));
-  }
 
   function ToggleMonthPriceButton() {
     const chartTimeFrames = ['1m', '3m', '6m'];
     const listOfButtons = chartTimeFrames.map((timeFrame) => (
       <div className="timeframe-option" key={timeFrame}>
-        <Button variant="outline-dark" type="submit" onClick={() => { handleGetChart(timeFrame); }}>
+        <Button variant="outline-dark" type="submit" onClick={() => { handleGetChart(timeFrame, symbolInput, false); }}>
           {timeFrame}
         </Button>
       </div>
