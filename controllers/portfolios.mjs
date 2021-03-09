@@ -131,7 +131,6 @@ export default function portfolios(db) {
   const add = async (req, res) => {
     const { newSymbol } = req.body;
     const { portfolioId } = req.params;
-    console.log(newSymbol, 'newSymbol');
     // first find if this stock exists in DB records, if not create a new one
     const stockInDB = await db.Stock.findOne({
       where:
@@ -139,7 +138,6 @@ export default function portfolios(db) {
       stockSymbol: newSymbol.toLowerCase(),
     },
     });
-    console.log(stockInDB?.id, 'stockInDB.stock');
     let stockInCurrPortfolio;
     if (stockInDB) {
       stockInCurrPortfolio = await db.PortfolioStock.findOne({
@@ -150,9 +148,6 @@ export default function portfolios(db) {
       },
       });
     }
-    console.log(stockInDB, 'stockToBeAdded');
-    console.log(stockInCurrPortfolio, 'stockInCurrPortfolio');
-    console.log(!stockInDB, 'stockToBeAdded not null');
     if (!stockInCurrPortfolio && !stockInDB) {
       axios.get(`${GENERICURL}/${newSymbol}/quote?token=${SANDBOXTOKEN}`)
         .then((result) => db.Stock.create({
