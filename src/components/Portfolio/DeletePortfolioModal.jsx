@@ -1,21 +1,10 @@
 import React from 'react';
-import axios from 'axios';
 import { Modal, Button } from 'react-bootstrap';
+import handleDeletePortfolio from './PortfolioHelper.jsx';
 
 export default function DeletePortfolioModal({ selectedPortfolioName, currPortfolioId, modalProps }) {
   const { show, setShow } = modalProps;
   const handleClose = () => setShow(false);
-
-  const handleDeletePortfolio = () => {
-    axios.delete(`/portfolios/${currPortfolioId}/delete`)
-      .then((result) => {
-        console.log(result);
-        // reload all the portfolios
-        // display first portfolio view
-        setShow(false);
-      })
-      .catch((err) => console.log(err));
-  };
 
   return (
     <div>
@@ -41,7 +30,7 @@ export default function DeletePortfolioModal({ selectedPortfolioName, currPortfo
           <br />
           <div className="d-flex justify-content-center">
             <div className="mr-3">
-              <Button type="submit" variant="danger" onClick={handleDeletePortfolio}> Yes </Button>
+              <Button type="submit" variant="danger" onClick={() => { handleDeletePortfolio(setShow, currPortfolioId); }}> Yes </Button>
             </div>
             <div>
               <Button type="submit" variant="outline-info" onClick={handleClose}>Cancel</Button>
