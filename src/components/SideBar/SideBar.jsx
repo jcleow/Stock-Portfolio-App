@@ -37,10 +37,6 @@ export default function SideBar({ sideBarProps }) {
 
   const updateCurrPortfolioIdInCookie = (currPortfolioId) => {
     axios.put(`/currPortfolioId/${currPortfolioId}`)
-      .then((result) => {
-        console.log(result);
-        setCurrPortfolioId;
-      })
       .catch((error) => console.log(error));
   };
 

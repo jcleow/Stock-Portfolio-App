@@ -38,7 +38,6 @@ export default function bindRoutes(app) {
 
   // special JS page. Include the webpack index.html file
   app.get('/', (req, res) => {
-    console.log('test');
     res.sendFile(resolve('dist', 'main.html'));
   });
 

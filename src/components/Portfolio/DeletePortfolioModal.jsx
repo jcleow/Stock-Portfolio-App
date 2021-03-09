@@ -7,7 +7,6 @@ export default function DeletePortfolioModal({ selectedPortfolioName, currPortfo
   const handleClose = () => setShow(false);
 
   const handleDeletePortfolio = () => {
-    console.log(currPortfolioId, 'currPortfolioId-modal');
     axios.delete(`/portfolios/${currPortfolioId}/delete`)
       .then((result) => {
         console.log(result);
