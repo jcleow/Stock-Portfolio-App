@@ -2,7 +2,10 @@
 
 # Stock-Portfolio-App
 
-<iframe width="791" height="445" src="https://www.youtube.com/embed/RxihjXRp7cQ" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+![image alt text](https://example.com/link-to-image)
+https://i9.ytimg.com/vi/RxihjXRp7cQ/mq3.jpg?sqp=COyynIIG&rs=AOn4CLCf974f7f_CMZcHHh_xJzsk5Q3ZrQ
+(https://youtu.be/RxihjXRp7cQ "Stocks Portfolio App")
+
 
 Link to ERD:
 https://drive.google.com/file/d/1XRCJGJvbEBLF2PZeekeI0a3UzYbpflLf/view?usp=sharing
