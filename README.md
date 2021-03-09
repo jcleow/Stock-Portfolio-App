@@ -1,10 +1,11 @@
 <!-- @format -->
 
 # Stock-Portfolio-App
+Youtube Demonstration of App Features (click on picture):
 
 [![Stocks Portfolio App](https://imgur.com/tRdstRz.png)](https://www.youtube.com/watch?v=RxihjXRp7cQ")
 
-Youtube Demo on how the app works.
+
 
 
 Link to ERD:
