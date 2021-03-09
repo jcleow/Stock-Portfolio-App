@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import {
   Button, Modal, Dropdown, DropdownButton,
 } from 'react-bootstrap';
 import { ThreeDotsVertical } from 'react-bootstrap-icons';
+import getPortfolioStockTrades, { updatePortfolioTrades, deletePortfolioStock } from './TradeHelper.jsx';
 import Trade from './Trade.jsx';
 
 export default function StockOptionsButton({
@@ -37,27 +37,21 @@ export default function StockOptionsButton({
 
   // Close the modal and do not save the edited trade transactions
   const handleCancel = () => {
-    axios.get(`/portfolioStocks/${portfolioStockId}/trades`)
-      .then((result) => {
-        setTradesData(result.data.updatedTradesData);
-      })
-      .catch((err) => console.log(err));
-    setShow(false);
+    getPortfolioStockTrades(setTradesData, setShow, portfolioStockId);
   };
 
   const handleShow = () => setShow(true);
 
   const handleSaveTransactions = (event) => {
-    axios.put(`/portfolios/${portfolioId}/stocks/${portfolioStockId}/update`, { tradesData })
-      .then(() => refreshPortfolioView(event, portfolioId))
-      .then(() => {
-        setShow(false);
-        return axios.get(`/portfolioStocks/${portfolioStockId}/trades`);
-      })
-      .then((updatedStockTradesResults) => {
-        setTradesData([...updatedStockTradesResults.data.updatedTradesData]);
-      })
-      .catch((err) => console.log(err));
+    updatePortfolioTrades(
+      event,
+      refreshPortfolioView,
+      setShow,
+      portfolioId,
+      portfolioStockId,
+      tradesData,
+      setTradesData,
+    );
   };
 
   const handleAddNewTrade = () => {
@@ -68,11 +62,7 @@ export default function StockOptionsButton({
   };
 
   const handleDeletePortfolioStock = () => {
-    axios.delete(`/portfolioStocks/${portfolioStockId}/delete`)
-      .then(() => {
-        refreshPortfolioView(null, portfolioId);
-      })
-      .catch((error) => console.log(error));
+    deletePortfolioStock(portfolioStockId, refreshPortfolioView, portfolioId);
   };
 
   return (
