@@ -2,7 +2,7 @@
 
 # Stock-Portfolio-App
 
-[![Stocks Portfolio App](https://i9.ytimg.com/vi_webp/RxihjXRp7cQ/mqdefault.webp?time=1615272600000&sqp=CJi1nIIG&rs=AOn4CLBGQbd-i_RKksCFj5yXoWUncA8NGA)](https://www.youtube.com/watch?v=RxihjXRp7cQ")
+[![Stocks Portfolio App](https://imgur.com/tRdstRz.png)](https://www.youtube.com/watch?v=RxihjXRp7cQ")
 
 Youtube Demo on how the app works.
 
