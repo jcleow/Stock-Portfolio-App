@@ -131,18 +131,29 @@ export default function portfolios(db) {
   const add = async (req, res) => {
     const { newSymbol } = req.body;
     const { portfolioId } = req.params;
-
-    // first find if this stock exists, if not create a new one
-    const stockToBeAdded = await db.Stock.findOne({
+    console.log(newSymbol, 'newSymbol');
+    // first find if this stock exists in DB records, if not create a new one
+    const stockInDB = await db.Stock.findOne({
       where:
     {
-      stockSymbol: newSymbol,
+      stockSymbol: newSymbol.toLowerCase(),
     },
     });
-
-    console.log('stock is already present');
-
-    if (!stockToBeAdded) {
+    console.log(stockInDB?.id, 'stockInDB.stock');
+    let stockInCurrPortfolio;
+    if (stockInDB) {
+      stockInCurrPortfolio = await db.PortfolioStock.findOne({
+        where:
+      {
+        portfolioId,
+        stockId: stockInDB.id,
+      },
+      });
+    }
+    console.log(stockInDB, 'stockToBeAdded');
+    console.log(stockInCurrPortfolio, 'stockInCurrPortfolio');
+    console.log(!stockInDB, 'stockToBeAdded not null');
+    if (!stockInCurrPortfolio && !stockInDB) {
       axios.get(`${GENERICURL}/${newSymbol}/quote?token=${SANDBOXTOKEN}`)
         .then((result) => db.Stock.create({
           stockName: result.data.companyName,
@@ -159,6 +170,11 @@ export default function portfolios(db) {
           console.log(err);
           res.send({ message: 'failure', err });
         });
+    } else if (stockInDB && !stockInCurrPortfolio) {
+      await db.PortfolioStock.create({
+        portfolioId: Number(portfolioId),
+        stockId: stockInDB.id,
+      });
     } else {
       res.send({ message: 'already exists' });
     }
