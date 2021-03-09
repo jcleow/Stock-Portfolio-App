@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import getInfoFromCookie from './helper.jsx';
 import PortfolioTable from './components/Portfolio/PortfolioTable.jsx';
 import SideBar from './components/SideBar/SideBar.jsx';
 import StockSearch from './components/StockSearch/StockSearch.jsx';
@@ -54,18 +55,18 @@ export default function App() {
   // For purposes of charting initial display of first (and all) portfolio equity curve
   const timeFrame = '1m';
 
-  const getInfoFromCookie = () => {
-    if (document.cookie) {
-      const splitCookieVal = document.cookie.split(' ');
-      const usernameStartPos = splitCookieVal[0].indexOf('=') + 1;
-      const usernameEndPos = splitCookieVal[0].indexOf(';');
-      const loggedInUsername = splitCookieVal[0].substring(usernameStartPos, usernameEndPos);
-      const idStartPos = splitCookieVal[3].indexOf('=') + 1;
-      const trackedPortfolioId = Number(splitCookieVal[3].substring(idStartPos));
-      return ({ loggedInUsername, trackedPortfolioId });
-    }
-    return null;
-  };
+  // const getInfoFromCookie = () => {
+  //   if (document.cookie) {
+  //     const splitCookieVal = document.cookie.split(' ');
+  //     const usernameStartPos = splitCookieVal[0].indexOf('=') + 1;
+  //     const usernameEndPos = splitCookieVal[0].indexOf(';');
+  //     const loggedInUsername = splitCookieVal[0].substring(usernameStartPos, usernameEndPos);
+  //     const idStartPos = splitCookieVal[3].indexOf('=') + 1;
+  //     const trackedPortfolioId = Number(splitCookieVal[3].substring(idStartPos));
+  //     return ({ loggedInUsername, trackedPortfolioId });
+  //   }
+  //   return null;
+  // };
 
   const refreshPortfolioView = (event, targetPortfolioId) => {
     let portfolioId;
@@ -136,13 +137,13 @@ export default function App() {
   //  * @param {Boolean} defaultView - 'Set to true if default view'
   //  */
 
-  function handleGetChart(timePeriod, symbolInput, defaultView) {
+  function handleGetChart(timePeriod, userInputSymbol, defaultView) {
     let coyInfoData;
     setLoadingCoyInfo(true);
     setLoadingChart(true);
     setLoadingKeyStats(true);
-    let selectedSymbol = symbolInput;
-    if (!symbolInput) {
+    let selectedSymbol = userInputSymbol;
+    if (!userInputSymbol) {
       selectedSymbol = symbol;
     }
 

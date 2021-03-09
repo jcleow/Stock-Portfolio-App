@@ -1,7 +1,6 @@
 import axios from 'axios';
 
 const SANDBOXTOKEN = 'Tsk_c0d79534cc3f4d8fa07478c311b898d2';
-// const GENERICURL = 'https://sandbox.iexapis.com/stable/stock';
 
 export default function trades(db) {
   // Update the trade details of a portfolioStock
