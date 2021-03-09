@@ -71,18 +71,35 @@ export default function SideBar({ sideBarProps }) {
 
   return (
     <div className="sidebar">
-      <ProSidebar collapsed={collapsed} onMouseOver={handleMouseOver} onMouseLeave={handleMouseLeave}>
+      <ProSidebar
+        collapsed={collapsed}
+        onMouseOver={handleMouseOver}
+        onMouseLeave={handleMouseLeave}
+      >
         <div className="text-center mt-5 logo-font">STONKS</div>
         <Menu iconShape="square">
           <MenuItem>{loggedIn ? `Welcome ${username}` : null }</MenuItem>
-          <MenuItem icon={<FaGem />} onClick={handleDisplayStockSearchView}>Search for Stock</MenuItem>
-          <SubMenu title="Portfolios" icon={<FaHeart />} onClick={handleDisplayPortfolioView}>
+          <MenuItem
+            icon={<FaGem />}
+            onClick={handleDisplayStockSearchView}
+          >
+            Search for Stock
+          </MenuItem>
+          <SubMenu
+            title="Portfolios"
+            icon={<FaHeart />}
+            onClick={handleDisplayPortfolioView}
+          >
             {portfolioButtonList}
-            <MenuItem><CreatePortfolioModal handleDisplayPortfolio={handleDisplayPortfolio} /></MenuItem>
+            <MenuItem>
+              <CreatePortfolioModal handleDisplayPortfolio={handleDisplayPortfolio} />
+            </MenuItem>
           </SubMenu>
           <SubMenu icon={<FaUserCircle />} title="Account Management">
             <MenuItem icon={<FaUserCircle />}>
-              {!loggedIn ? (<SignInButton signInButtonProps={signInButtonProps} />) : (<SignOutButton setLoggedIn={setLoggedIn} />) }
+              {!loggedIn
+                ? (<SignInButton signInButtonProps={signInButtonProps} />)
+                : (<SignOutButton setLoggedIn={setLoggedIn} />) }
             </MenuItem>
           </SubMenu>
         </Menu>

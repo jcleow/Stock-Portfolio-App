@@ -60,7 +60,13 @@ export default function SignInForm({ signInFormProps }) {
         </Form.Group>
         <div className="col d-flex justify-content-center">
           Don't have an account?
-          <button className="bg-transparent border-0 text-primary" onClick={handleRegistration}>Register</button>
+          <button
+            type="button"
+            className="bg-transparent border-0 text-primary"
+            onClick={handleRegistration}
+          >
+            Register
+          </button>
         </div>
         <div className="col d-flex justify-content-center">
           <Button variant="secondary" onClick={handleSignIn}>
