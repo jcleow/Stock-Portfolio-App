@@ -2,8 +2,8 @@
 
 # Stock-Portfolio-App
 
-![image alt text](https://example.com/link-to-image)
-https://i9.ytimg.com/vi/RxihjXRp7cQ/mq3.jpg?sqp=COyynIIG&rs=AOn4CLCf974f7f_CMZcHHh_xJzsk5Q3ZrQ
+[![image alt text]
+(https://i9.ytimg.com/vi/RxihjXRp7cQ/mq3.jpg?sqp=COyynIIG&rs=AOn4CLCf974f7f_CMZcHHh_xJzsk5Q3ZrQ)]
 (https://youtu.be/RxihjXRp7cQ "Stocks Portfolio App")
 
 
