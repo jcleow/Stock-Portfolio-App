@@ -1,11 +1,13 @@
 <!-- @format -->
 
 # Stock-Portfolio-App
+Web-app that allows users to retrieve US equity prices and track portfolios of stocks by their cumulative values  
+
 Deployed on: http://stocks-portfolio-app-7087.herokuapp.com/  
 
 Portfolio Page: https://jcleow.github.io/portfolio/stockPortfolio.html
 
-Youtube Demonstration of App Features (click on picture):
+Video Demonstration of Features (click on picture):
 [![Stocks Portfolio App](https://imgur.com/tRdstRz.png)](https://www.youtube.com/watch?v=RxihjXRp7cQ")
 
 ## Features ##
