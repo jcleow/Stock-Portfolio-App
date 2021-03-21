@@ -2,6 +2,7 @@
 
 # Stock-Portfolio-App
 Web-app that allows users to retrieve US equity prices and track portfolios of stocks by their cumulative values  
+\* *All financial data provided by IEX Cloud are sandboxed* 
 
 Deployed on Heroku: http://stocks-portfolio-app-7087.herokuapp.com/  
 
@@ -25,8 +26,8 @@ Video Demonstration of Features (click on picture):
 ## Technologies Used ##
 Frontend: React,React-Bootstrap,Bootstrap,CSS  
 Backend: PostgresQL,Sequelize,Express  
-External Library: React-vis(charting)
-External API: IEX Cloud (Financial Data API)
+External Library: React-vis(charting)  
+External API: IEX Cloud (Sandboxed Financial Data)
 
 Link to ERD:
 https://drive.google.com/file/d/1XRCJGJvbEBLF2PZeekeI0a3UzYbpflLf/view?usp=sharing
