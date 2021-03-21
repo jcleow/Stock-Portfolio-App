@@ -1,7 +1,8 @@
 <!-- @format -->
 
 # Stock-Portfolio-App
-Deployed on: http://stocks-portfolio-app-7087.herokuapp.com/
+Deployed on: http://stocks-portfolio-app-7087.herokuapp.com/  
+
 Portfolio Page: https://jcleow.github.io/portfolio/stockPortfolio.html
 
 Youtube Demonstration of App Features (click on picture):
@@ -18,6 +19,7 @@ Youtube Demonstration of App Features (click on picture):
 * Implemented React Hooks to store and manipulate front-end components’ states dynamically
 * Integrated React-vis for interactive charting of stock prices and portfolio values over multiple time horizons
 * Perform ETL operations using IEX Cloud’s sandboxed financial data API to display pertinent financial data
+
 
 Link to ERD:
 https://drive.google.com/file/d/1XRCJGJvbEBLF2PZeekeI0a3UzYbpflLf/view?usp=sharing
