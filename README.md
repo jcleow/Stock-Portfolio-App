@@ -23,8 +23,8 @@ Video Demonstration of Features (click on picture):
 * Perform ETL operations using IEX Cloud’s sandboxed financial data API to display pertinent financial data
 
 ## Technologies Used ##
-Frontend: React, CSS  
-Backend: PostgresQL, Sequelize  
+Frontend: React,React-Bootstrap,Bootstrap,CSS  
+Backend: PostgresQL,Sequelize,Express  
 External Library: React-vis(charting)
 External API: IEX Cloud (Financial Data API)
 
