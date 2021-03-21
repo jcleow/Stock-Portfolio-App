@@ -2,7 +2,7 @@
 
 # Stock-Portfolio-App
 Web-app that allows users to retrieve US equity prices and track portfolios of stocks by their cumulative values  
-\* *All financial data provided by IEX Cloud are sandboxed* 
+\* *All financial data provided by IEX Cloud is sandboxed* 
 
 Deployed on Heroku: http://stocks-portfolio-app-7087.herokuapp.com/  
 
